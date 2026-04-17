@@ -1,0 +1,9 @@
+syntax = "v1"
+
+info (
+	title: "博客系统api"
+	desc:  "测试，后续作为各个api的总描述文件"
+)
+
+// 引入依赖文件
+import "./login/login.api"

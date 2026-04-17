@@ -1,0 +1,72 @@
+syntax = "proto3"; //指定版本
+
+package login; // 默认包名：类似命名空间
+
+// 包名
+option go_package = "./pb";
+
+// 定义服务名
+service Login {
+  rpc Register(RegisterReq) returns (RegisterResp){};   //   注册
+  rpc Login(LoginReq) returns (LoginResp){};            //   登入
+  rpc EmailLogin(EmailLoginReq) returns (LoginResp){};  //   邮箱登入
+  rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};  //  忘记密码
+  rpc Logout(LogoutReq) returns (LogoutResp){};       //  登出
+  rpc EmailCaptcha(EmailCaptchaReq)returns(EmailCaptchaResp){};  //  邮箱部分
+}
+
+// =====================================================================================================================
+message LoginReq {
+  // 属性的类型 属性名 = 标识符
+  string name = 1;
+  string password = 2;
+}
+message EmailLoginReq {
+  // 属性的类型 属性名 = 标识符
+  string email = 1;
+  string captcha = 2;
+}
+message LoginResp {
+  uint64 id = 1;
+  string name =2;
+  string phone = 3;
+  string email = 4;
+  string uuid = 5;
+  string RefreshToken = 6;
+  string AccessToken = 7;
+  string avatar = 8;
+  string role =9;
+  string sex =10;
+  uint64 age = 11;
+}
+
+message RegisterReq{
+  string email=1;
+  string password = 2;
+  string captcha =3;
+  string name =4;
+}
+message RegisterResp{}
+
+message EmailCaptchaReq{
+  string email = 1;
+}
+message EmailCaptchaResp{}
+
+message ResetPasswordEmailReq{
+  string email = 1;
+  string password = 2;
+  string captcha = 3;
+}
+message ResetPasswordEmailResp{}
+
+message LogoutReq{
+  string  AccessToken = 1;
+  string  RefreshToken = 2;
+}
+message LogoutResp{}
+
+
+
+
+

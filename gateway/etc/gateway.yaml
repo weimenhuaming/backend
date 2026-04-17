@@ -1,0 +1,27 @@
+Name: Gateway
+Host: 127.0.0.1
+Port: 9000
+
+# 下面这个配置通过etcd服务发现和注册的配置UserRpc:
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: user.rpc
+#    User: root
+#    Pass: "123456"
+#
+#ArticleRpc:
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: article.rpc
+#    User: root
+#    Pass: "123456"
+
+
+
+Auth:
+  AccessSecret: "your-256-bit-secret"
+  AccessExpire: 86400        # Access Token 有效期：24 小时
+RefreshSecret: "another-random-secret"
+RefreshExpire: 604800        # Refresh Token 有效期：7 天

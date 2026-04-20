@@ -10,8 +10,8 @@ type Config struct {
 	CoreRpc zrpc.RpcClientConf
 	Auth    struct {
 		AccessSecret string
-		AccessToken  int64
+		AccessExpire uint64
 	}
-	RefreshToken  string
-	RefreshSecret int64
+	RefreshSecret string
+	RefreshExpire uint64
 }

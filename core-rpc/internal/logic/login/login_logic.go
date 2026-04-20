@@ -2,7 +2,6 @@ package login
 
 import (
 	"context"
-
 	"core-rpc/internal/svc"
 	"core-rpc/pb/pb"
 
@@ -24,7 +23,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
-	// todo: add your logic here and delete this line
 
 	return &pb.LoginResp{}, nil
 }

@@ -2,14 +2,13 @@ Name: Gateway
 Host: 127.0.0.1
 Port: 9000
 
-# 下面这个配置通过etcd服务发现和注册的配置UserRpc:
-#  Etcd:
-#    Hosts:
-#      - 127.0.0.1:2379
-#    Key: user.rpc
-#    User: root
-#    Pass: "123456"
-#
+# 下面这个配置通过etcd服务发现和注册的配置
+CoreRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: core.rpc
+
 #ArticleRpc:
 #  Etcd:
 #    Hosts:

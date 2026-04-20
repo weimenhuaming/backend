@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"gateway/internal/utils"
 
 	"gateway/internal/svc"
 	"gateway/internal/types"
@@ -24,7 +25,28 @@ func NewSendEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendEma
 }
 
 func (l *SendEmailLogic) SendEmail(req *types.EmailReq) (resp *types.EmailResp, err error) {
-	// todo: add your logic here and delete this line
+	// 1.拿到邮箱和生成验证码
+	email := req.Email
+	captcha, err := utils.GenerateCode()
+	if err != nil {
+		return nil, err
+	} else {
+		// todo 存入缓存中去
+		// 将验证码存入redis，设置一分钟自动过期
+		//if err = l.svcCtx.Rdb.SetexCtx(
+		//	l.ctx,
+		//	email,
+		//	captcha, // 值随意，存在即可
+		//	60,
+		//); err != nil {
+		//	return nil, err
+		//}
+	}
 
-	return
+	if err = utils.SendEmailVerificationCode(email, captcha); err != nil {
+		return nil, err
+	}
+	return &types.EmailResp{
+		Success: true,
+	}, nil
 }

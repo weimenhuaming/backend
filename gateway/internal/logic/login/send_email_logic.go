@@ -30,17 +30,16 @@ func (l *SendEmailLogic) SendEmail(req *types.EmailReq) (resp *types.EmailResp, 
 	captcha, err := utils.GenerateCode()
 	if err != nil {
 		return nil, err
-	} else {
-		// todo 存入缓存中去
-		// 将验证码存入redis，设置一分钟自动过期
-		//if err = l.svcCtx.Rdb.SetexCtx(
-		//	l.ctx,
-		//	email,
-		//	captcha, // 值随意，存在即可
-		//	60,
-		//); err != nil {
-		//	return nil, err
-		//}
+	}
+
+	// 2.存入缓存
+	if err = l.svcCtx.Cache.SetexCtx(
+		l.ctx,
+		email,
+		captcha, // 值随意，存在即可
+		60,
+	); err != nil {
+		return nil, err
 	}
 
 	if err = utils.SendEmailVerificationCode(email, captcha); err != nil {

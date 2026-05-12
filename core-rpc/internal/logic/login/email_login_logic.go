@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"fmt"
 
 	"core-rpc/internal/svc"
 	"core-rpc/pb/pb"
@@ -24,7 +25,10 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 }
 
 func (l *EmailLoginLogic) EmailLogin(in *pb.EmailLoginReq) (*pb.LoginResp, error) {
-	// todo: add your logic here and delete this line
-
+	msg, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(msg)
 	return &pb.LoginResp{}, nil
 }

@@ -9,15 +9,10 @@ CoreRpc:
       - 127.0.0.1:2379
     Key: core.rpc
 
-#ArticleRpc:
-#  Etcd:
-#    Hosts:
-#      - 127.0.0.1:2379
-#    Key: article.rpc
-#    User: root
-#    Pass: "123456"
-
-
+Cache:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass: ""
 
 Auth:
   AccessSecret: "your-256-bit-secret"

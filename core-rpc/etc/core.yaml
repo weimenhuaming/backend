@@ -6,4 +6,4 @@ Etcd:
   - 127.0.0.1:2379
   Key: core.rpc
 
-DataSource: "root:password@tcp(127.0.0.1:3306)/dbname?parseTime=true&loc=UTC"
+DataSource: "root:password@tcp(127.0.0.1:3306)/test?parseTime=true&loc=UTC"

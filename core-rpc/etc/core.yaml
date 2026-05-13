@@ -6,4 +6,9 @@ Etcd:
   - 127.0.0.1:2379
   Key: core.rpc
 
-DataSource: "root:password@tcp(127.0.0.1:3306)/test?parseTime=true&loc=UTC"
+DataSource: "root:123456@tcp(127.0.0.1:3307)/test?parseTime=true&loc=UTC"
+
+Cache:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass: ""

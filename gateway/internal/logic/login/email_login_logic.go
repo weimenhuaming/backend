@@ -32,7 +32,7 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 		return nil, errors.New("邮箱格式不正确")
 	}
 
-	// 2.从邮箱中获取验证码
+	// 2.从缓存中获取验证码
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
 		return nil, errors.New("验证码不存在或者已过期")

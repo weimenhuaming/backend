@@ -51,7 +51,8 @@ type RegisterReq struct {
 }
 
 type RegisterResp struct {
-	Success bool `json:"success"`
+	Code uint64 `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 type ResetPasswordReq struct {

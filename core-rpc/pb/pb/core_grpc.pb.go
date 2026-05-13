@@ -36,7 +36,7 @@ const (
 type CoreClient interface {
 	// 测试接口
 	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
-	// Login 服务的方法
+	// Login 服务
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -131,7 +131,7 @@ func (c *coreClient) EmailCaptcha(ctx context.Context, in *EmailCaptchaReq, opts
 type CoreServer interface {
 	// 测试接口
 	Test(context.Context, *TestRequest) (*TestResponse, error)
-	// Login 服务的方法
+	// Login 服务
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error)

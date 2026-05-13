@@ -2,9 +2,11 @@ package login
 
 import (
 	"context"
-
+	"core-rpc/internal/model/user"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/pb"
+	"database/sql"
+	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +25,33 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-// Login 服务的方法
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
-	// todo: add your logic here and delete this line
+	// 检查邮箱是否已存在
+	_, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
+	if err == nil {
+		return nil, errors.New("邮箱已存在")
+	}
+	if !errors.Is(err, user.ErrNotFound) {
+		return nil, err
+	}
+
+	// 创建用户
+	newUser := &user.User{
+		Name:      in.Name,
+		Email:     in.Email,
+		Password:  in.Password,
+		Role:      "user",
+		Sex:       "unknown",
+		Age:       0,
+		Phone:     "",
+		Avatar:    "",
+		DeletedAt: sql.NullTime{Valid: false},
+	}
+
+	_, err = l.svcCtx.UserModel.Insert(l.ctx, newUser)
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.RegisterResp{}, nil
 }

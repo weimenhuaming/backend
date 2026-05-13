@@ -58,8 +58,7 @@ message LoginResp {
 message RegisterReq{
   string email=1;
   string password = 2;
-  string captcha =3;
-  string name =4;
+  string name =3;
 }
 message RegisterResp{}
 

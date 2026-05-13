@@ -37,7 +37,8 @@ type (
 		Captcha  string `json:"captcha"`
 	}
 	RegisterResp {
-		success bool `json:"success"`
+		Code uint64 `json:"code"`
+		Msg  string `json:"msg"`
 	}
 	ResetPasswordReq {
 		Email    string `json:"email"`

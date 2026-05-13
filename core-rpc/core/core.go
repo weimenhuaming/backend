@@ -31,7 +31,7 @@ type (
 	Core interface {
 		// 测试接口
 		Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
-		// Login 服务的方法
+		// Login 服务
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -57,7 +57,7 @@ func (m *defaultCore) Test(ctx context.Context, in *TestRequest, opts ...grpc.Ca
 	return client.Test(ctx, in, opts...)
 }
 
-// Login 服务的方法
+// Login 服务
 func (m *defaultCore) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
 	client := pb.NewCoreClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)

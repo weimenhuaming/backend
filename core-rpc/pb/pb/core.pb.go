@@ -21,6 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Test 接口的请求和响应消息
 type TestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Msg           string                 `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
@@ -343,8 +344,7 @@ type RegisterReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	Captcha       string                 `protobuf:"bytes,3,opt,name=captcha,proto3" json:"captcha,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -393,13 +393,6 @@ func (x *RegisterReq) GetPassword() string {
 	return ""
 }
 
-func (x *RegisterReq) GetCaptcha() string {
-	if x != nil {
-		return x.Captcha
-	}
-	return ""
-}
-
 func (x *RegisterReq) GetName() string {
 	if x != nil {
 		return x.Name
@@ -409,6 +402,8 @@ func (x *RegisterReq) GetName() string {
 
 type RegisterResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int64                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -441,6 +436,20 @@ func (x *RegisterResp) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RegisterResp.ProtoReflect.Descriptor instead.
 func (*RegisterResp) Descriptor() ([]byte, []int) {
 	return file_desc_core_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RegisterResp) GetCode() int64 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *RegisterResp) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
 }
 
 type EmailCaptchaReq struct {
@@ -734,13 +743,14 @@ const file_desc_core_proto_rawDesc = "" +
 	"\x04role\x18\t \x01(\tR\x04role\x12\x10\n" +
 	"\x03sex\x18\n" +
 	" \x01(\tR\x03sex\x12\x10\n" +
-	"\x03age\x18\v \x01(\x04R\x03age\"m\n" +
+	"\x03age\x18\v \x01(\x04R\x03age\"S\n" +
 	"\vRegisterReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x18\n" +
-	"\acaptcha\x18\x03 \x01(\tR\acaptcha\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"\x0e\n" +
-	"\fRegisterResp\"'\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"4\n" +
+	"\fRegisterResp\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\"'\n" +
 	"\x0fEmailCaptchaReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"\x12\n" +
 	"\x10EmailCaptchaResp\"c\n" +

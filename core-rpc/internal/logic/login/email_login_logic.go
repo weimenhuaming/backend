@@ -25,10 +25,6 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 }
 
 func (l *EmailLoginLogic) EmailLogin(in *pb.EmailLoginReq) (*pb.LoginResp, error) {
-	if in.Email == "" {
-		return nil, errors.New("邮箱不能为空")
-	}
-
 	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err != nil {
 		if errors.Is(err, user.ErrNotFound) {

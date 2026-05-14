@@ -50,8 +50,8 @@ message EmailCaptchaResp{}
 
 message ResetPasswordEmailReq{
   string email = 1;
-  string password = 2;
-  string captcha = 3;
+  string password = 2; // 已由 gateway 做 bcrypt，core 仅落库
+  string captcha = 3; // 已废弃：验证码仅在 gateway 校验，保留字段兼容旧客户端
 }
 message ResetPasswordEmailResp{}
 

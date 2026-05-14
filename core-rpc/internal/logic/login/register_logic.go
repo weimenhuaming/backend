@@ -5,7 +5,6 @@ import (
 	"core-rpc/internal/model/user"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/pb"
-	"database/sql"
 	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,15 +36,14 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 
 	// 创建用户
 	newUser := &user.User{
-		Name:      in.Name,
-		Email:     in.Email,
-		Password:  in.Password,
-		Role:      "user",
-		Sex:       "unknown",
-		Age:       0,
-		Phone:     "",
-		Avatar:    "",
-		DeletedAt: sql.NullTime{Valid: false},
+		Name:     in.Name,
+		Email:    in.Email,
+		Password: in.Password,
+		Role:     "user",
+		Sex:      "unknown",
+		Age:      0,
+		Phone:    "",
+		Avatar:   "",
 	}
 
 	_, err = l.svcCtx.UserModel.Insert(l.ctx, newUser)

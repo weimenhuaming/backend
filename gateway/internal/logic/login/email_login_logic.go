@@ -3,7 +3,6 @@ package login
 import (
 	"context"
 	"core-rpc/core"
-	"errors"
 	"gateway/internal/utils"
 
 	"gateway/internal/svc"
@@ -27,18 +26,32 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 }
 
 func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.LoginResp, err error) {
-	// 1. 判断邮箱是否合理
 	if !utils.IsValidEmail(req.Email) {
-		return nil, errors.New("邮箱格式不正确")
+		return &types.LoginResp{
+			Code: 400,
+			Msg:  "邮箱格式不正确",
+		}, nil
+	}
+	if req.Captcha == "" {
+		return &types.LoginResp{
+			Code: 400,
+			Msg:  "验证码不能为空",
+		}, nil
 	}
 
-	// 2.从缓存中获取验证码
+	// 从缓存中获取验证码
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
-		return nil, errors.New("验证码不存在或者已过期")
+		return &types.LoginResp{
+			Code: 400,
+			Msg:  "验证码不存在或者已过期",
+		}, nil
 	}
 	if captcha != req.Captcha {
-		return nil, errors.New("验证码错误")
+		return &types.LoginResp{
+			Code: 400,
+			Msg:  "验证码错误",
+		}, nil
 	}
 
 	// 3.调用逻辑函数返回的是rpc中的返回值。
@@ -46,22 +59,31 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 		Email: req.Email,
 	})
 	if err != nil {
-		return nil, err
+		return &types.LoginResp{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 
 	// 4.签发token
 	jwt := utils.NewJWT(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.RefreshSecret)
 	accessToken, err := jwt.GetAccessToken(RpcResp.Id, l.svcCtx.Config.Auth.AccessExpire)
 	if err != nil {
-		return nil, err
+		return &types.LoginResp{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 	refreshToken, err := jwt.GetRefreshToken(RpcResp.Id, l.svcCtx.Config.RefreshExpire)
 	if err != nil {
-		return nil, err
+		return &types.LoginResp{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 
 	// 5.统一 API 响应
-	resp = &types.LoginResp{
+	return &types.LoginResp{
 		Code: 200,
 		Msg:  "登录成功",
 		Data: types.LoginData{
@@ -77,6 +99,5 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		},
-	}
-	return
+	}, nil
 }

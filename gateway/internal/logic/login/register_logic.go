@@ -26,12 +26,17 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	// 1. 判断邮箱是否合理
+	// 1. 参数与格式（BFF 层统一校验）
 	if !utils.IsValidEmail(req.Email) {
 		return &types.RegisterResp{
 			Code: 400,
 			Msg:  "邮箱格式不正确",
-			Data: types.RegisterData{},
+		}, nil
+	}
+	if req.Name == "" || req.Password == "" || req.Captcha == "" {
+		return &types.RegisterResp{
+			Code: 400,
+			Msg:  "用户名、密码或验证码不能为空",
 		}, nil
 	}
 
@@ -41,14 +46,12 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		return &types.RegisterResp{
 			Code: 400,
 			Msg:  "验证码不存在或已过期",
-			Data: types.RegisterData{},
 		}, nil
 	}
 	if captcha != req.Captcha {
 		return &types.RegisterResp{
 			Code: 400,
 			Msg:  "验证码错误",
-			Data: types.RegisterData{},
 		}, nil
 	}
 
@@ -62,13 +65,11 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		return &types.RegisterResp{
 			Code: 500,
 			Msg:  err.Error(),
-			Data: types.RegisterData{},
 		}, nil
 	}
 
 	return &types.RegisterResp{
 		Code: 200,
 		Msg:  "注册成功",
-		Data: types.RegisterData{},
 	}, nil
 }

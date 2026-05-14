@@ -7,19 +7,48 @@ info (
 
 // goctl api go -api desc/login/login.api -dir . -style gozero
 type (
-    RefreshReq{}
+    // 普通验证码
+    CaptchaResp {
+        Code int `json:"code"`
+        Msg  string `json:"msg"`
+        Data CaptchaData `json:"data"`
+    }
+    CaptchaData {
+        CaptchaId string `json:"captcha_id"`
+        PicBase64 string `json:"pic_base64"`
+    }
 
+    // 发送验证码到邮箱
+    EmailReq {
+        Email string `json:"email"`
+    }
+    EmailResp {
+        Code int `json:"code"`
+        Msg  string `json:"msg"`
+    }
+
+    // 注册请求和响应
+	RegisterReq {
+	    Name    string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Captcha  string `json:"captcha"`
+	}
+	RegisterResp {
+		Code int `json:"code"`
+		Msg  string `json:"msg"`
+	}
+
+    // 登入请求和响应
 	LoginEmailReq {
 		Email        string `json:"email"`
 		Captcha      string `json:"captcha"`
 	}
-	// 统一的响应结构：LoginResp
 	LoginResp {
 		Code int `json:"code"`
 		Msg  string `json:"msg"`
 		Data LoginData `json:"data"`
 	}
-	// LoginData：原来的 LoginResp 字段移入这里
 	LoginData {
 		Id           uint64 `json:"id"`
 		Name         string `json:"name"`
@@ -34,63 +63,19 @@ type (
 		RefreshToken string `json:"refresh_token"`
 	}
 
-	RegisterReq {
-	    Name    string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Captcha  string `json:"captcha"`
-	}
-	// 统一的响应结构：RegisterResp
-	RegisterResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
-		Data RegisterData `json:"data"`
-	}
-	// RegisterData：如果注册成功不需要额外数据，可以为空结构体
-	RegisterData {}
-
+    // 找回密码请求和响应
 	ResetPasswordReq {
 		Email    string `json:"email"`
 		Captcha  string `json:"captcha"`
 		Password string `json:"password"`
 		Confirm  string `json:"confirm"`
 	}
-	// 统一的响应结构：ResetPasswordResp
 	ResetPasswordResp {
 		Code int `json:"code"`
 		Msg  string `json:"msg"`
-		Data ResetPasswordData `json:"data"`
-	}
-	// ResetPasswordData：原来的 success 字段移入这里
-	ResetPasswordData {
-		Success bool `json:"success"`
 	}
 
-	// 统一的响应结构：CaptchaResp
-	CaptchaResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
-		Data CaptchaData `json:"data"`
-	}
-	// CaptchaData：原来的字段移入这里
-	CaptchaData {
-		CaptchaId string `json:"captcha_id"` // 验证码的唯一标识，用于提交验证时使用
-		PicBase64 string `json:"pic_base64"` // base64编码的图像内容，前端可直接用于 <img>
-	}
-
-	EmailReq {
-		Email string `json:"email"`
-	}
-	// 统一的响应结构：EmailResp
-	EmailResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
-		Data EmailData `json:"data"`
-	}
-	// EmailData：原来的 success 字段移入这里
-	EmailData {
-		Success bool `json:"success"`
-	}
+    RefreshReq{}
 )
 
 //======================================================================================================================

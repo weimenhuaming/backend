@@ -29,14 +29,18 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "邮箱格式不正确",
-			Data: types.ResetPasswordData{Success: false},
+		}, nil
+	}
+	if req.Password == "" || req.Captcha == "" {
+		return &types.ResetPasswordResp{
+			Code: 400,
+			Msg:  "密码或验证码不能为空",
 		}, nil
 	}
 	if req.Password != req.Confirm {
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "两次输入的密码不一致",
-			Data: types.ResetPasswordData{Success: false},
 		}, nil
 	}
 
@@ -45,33 +49,28 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "验证码不存在或已过期",
-			Data: types.ResetPasswordData{Success: false},
 		}, nil
 	}
 	if captcha != req.Captcha {
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "验证码错误",
-			Data: types.ResetPasswordData{Success: false},
 		}, nil
 	}
 
 	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core.ResetPasswordEmailReq{
 		Email:    req.Email,
 		Password: utils.Bcrypt(req.Password),
-		Captcha:  req.Captcha,
 	})
 	if err != nil {
 		return &types.ResetPasswordResp{
 			Code: 500,
 			Msg:  err.Error(),
-			Data: types.ResetPasswordData{Success: false},
 		}, nil
 	}
 
 	return &types.ResetPasswordResp{
 		Code: 200,
 		Msg:  "密码重置成功",
-		Data: types.ResetPasswordData{Success: true},
 	}, nil
 }

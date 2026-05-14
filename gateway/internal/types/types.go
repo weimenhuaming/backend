@@ -4,8 +4,8 @@
 package types
 
 type CaptchaData struct {
-	CaptchaId string `json:"captcha_id"` // 验证码的唯一标识，用于提交验证时使用
-	PicBase64 string `json:"pic_base64"` // base64编码的图像内容，前端可直接用于 <img>
+	CaptchaId string `json:"captcha_id"`
+	PicBase64 string `json:"pic_base64"`
 }
 
 type CaptchaResp struct {
@@ -14,18 +14,13 @@ type CaptchaResp struct {
 	Data CaptchaData `json:"data"`
 }
 
-type EmailData struct {
-	Success bool `json:"success"`
-}
-
 type EmailReq struct {
 	Email string `json:"email"`
 }
 
 type EmailResp struct {
-	Code int       `json:"code"`
-	Msg  string    `json:"msg"`
-	Data EmailData `json:"data"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 type LoginData struct {
@@ -56,9 +51,6 @@ type LoginResp struct {
 type RefreshReq struct {
 }
 
-type RegisterData struct {
-}
-
 type RegisterReq struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
@@ -67,13 +59,8 @@ type RegisterReq struct {
 }
 
 type RegisterResp struct {
-	Code int          `json:"code"`
-	Msg  string       `json:"msg"`
-	Data RegisterData `json:"data"`
-}
-
-type ResetPasswordData struct {
-	Success bool `json:"success"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 type ResetPasswordReq struct {
@@ -84,7 +71,6 @@ type ResetPasswordReq struct {
 }
 
 type ResetPasswordResp struct {
-	Code int               `json:"code"`
-	Msg  string            `json:"msg"`
-	Data ResetPasswordData `json:"data"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }

@@ -49,17 +49,28 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 		return nil, err
 	}
 
-	// 4.处理完之后返回即可，把rpc的Resp给api。
-	resp = &types.LoginResp{
-		Id:     RpcResp.Id,
-		Name:   RpcResp.Name,
-		Phone:  RpcResp.Phone,
-		Email:  RpcResp.Email,
-		Avatar: RpcResp.Avatar,
-		Uuid:   RpcResp.Uuid,
-		Role:   RpcResp.Role,
+	// 4.签发token
+	jwt := utils.NewJWT(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.RefreshSecret)
+	accessToken, err := jwt.GetAccessToken(RpcResp.Id, l.svcCtx.Config.Auth.AccessExpire)
+	if err != nil {
+		return nil, err
+	}
+	refreshToken, err := jwt.GetRefreshToken(RpcResp.Id, l.svcCtx.Config.RefreshExpire)
+	if err != nil {
+		return nil, err
 	}
 
-	// todo 处理 token
+	// 5.处理完之后返回即可，把rpc的Resp给api。
+	resp = &types.LoginResp{
+		Id:           RpcResp.Id,
+		Name:         RpcResp.Name,
+		Phone:        RpcResp.Phone,
+		Email:        RpcResp.Email,
+		Avatar:       RpcResp.Avatar,
+		Uuid:         RpcResp.Uuid,
+		Role:         RpcResp.Role,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
 	return
 }

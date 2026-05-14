@@ -29,15 +29,17 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Id     uint64 `json:"id"`
-	Name   string `json:"name"`
-	Phone  string `json:"phone"`
-	Email  string `json:"email"`
-	Uuid   string `json:"uuid"`
-	Avatar string `json:"avatar"`
-	Role   string `json:"role"`
-	Sex    string `json:"sex"`
-	Age    uint64 `json:"age"`
+	Id           uint64 `json:"id"`
+	Name         string `json:"name"`
+	Phone        string `json:"phone"`
+	Email        string `json:"email"`
+	Uuid         string `json:"uuid"`
+	Avatar       string `json:"avatar"`
+	Role         string `json:"role"`
+	Sex          string `json:"sex"`
+	Age          uint64 `json:"age"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type RefreshReq struct {

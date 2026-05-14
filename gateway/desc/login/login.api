@@ -29,7 +29,10 @@ type (
 		Role         string `json:"role"`
 		Sex          string `json:"sex"`
 		Age          uint64  `json:"age"`
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
 	}
+
 	RegisterReq {
 	    Name    string `json:"name"`
 		Email    string `json:"email"`
@@ -40,6 +43,7 @@ type (
 		Code uint64 `json:"code"`
 		Msg  string `json:"msg"`
 	}
+
 	ResetPasswordReq {
 		Email    string `json:"email"`
 		Captcha  string `json:"captcha"`
@@ -49,10 +53,12 @@ type (
 	ResetPasswordResp {
 		success bool `json:"success"`
 	}
+
 	CaptchaResp {
 		captchaId string `json:"captcha_id"` // 验证码的唯一标识，用于提交验证时使用
 		picBase64 string `json:"pic_base64"` // base64编码的图像内容，前端可直接用于 <img>
 	}
+
 	EmailReq {
 		email string `json:"email"`
 	}

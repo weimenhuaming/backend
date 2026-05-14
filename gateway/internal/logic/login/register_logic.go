@@ -47,7 +47,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		}, err
 	}
 
-	// 2.获得rpc响应
+	// 3.获得rpc响应
 	_, err = l.svcCtx.Core.Register(l.ctx, &core.RegisterReq{
 		Name:     req.Name,
 		Email:    req.Email,

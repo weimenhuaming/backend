@@ -2,10 +2,10 @@ package login
 
 import (
 	"context"
-	"fmt"
-
+	"core-rpc/internal/model/user"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/pb"
+	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,10 +25,28 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 }
 
 func (l *EmailLoginLogic) EmailLogin(in *pb.EmailLoginReq) (*pb.LoginResp, error) {
-	msg, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
-	if err != nil {
-		return nil, err
+	if in.Email == "" {
+		return nil, errors.New("邮箱不能为空")
 	}
-	fmt.Println(msg)
-	return &pb.LoginResp{}, nil
+
+	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
+	if err != nil {
+		if errors.Is(err, user.ErrNotFound) {
+			return nil, errors.New("该邮箱尚未注册")
+		}
+		logx.WithContext(l.ctx).Errorf("FindOneByEmail failed, email=%s, err=%v", in.Email, err)
+		return nil, errors.New("查询用户失败")
+	}
+
+	// token 由 gateway 层统一签发，这里只负责返回用户信息
+	return &pb.LoginResp{
+		Id:     u.Id,
+		Name:   u.Name,
+		Phone:  u.Phone,
+		Email:  u.Email,
+		Avatar: u.Avatar,
+		Role:   u.Role,
+		Sex:    u.Sex,
+		Age:    u.Age,
+	}, nil
 }

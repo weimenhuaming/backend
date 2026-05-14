@@ -6,21 +6,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func generateAccessToken(secret string, userId int64, role string) (string, error) {
-	now := time.Now()
-	claims := jwt.MapClaims{
-		"userId": userId,
-		"role":   role,
-		"iat":    now.Unix(),
-		"exp":    now.Add(24 * time.Hour).Unix(),
-	}
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).
-		SignedString([]byte(secret))
-}
-
 type MyClaims struct {
-	Id               uint64 `json:"id"`
-	AccessExpireTime uint64 `json:"access_expire_time"`
+	Id uint64 `json:"id"`
 	jwt.RegisteredClaims
 }
 
@@ -36,32 +23,30 @@ func NewJWT(ats, rts string) *JWT {
 	}
 }
 
-// GetRefreshToken 拿到refreshtoken
-func (j *JWT) GetRefreshToken(id uint64, as, rs uint64) (string, error) {
-	// 1.先生成accesstoken
-	AccessClaims := MyClaims{
-		Id:               id,
-		AccessExpireTime: rs,
+// GetAccessToken 用 AccessTokenSecret 签发 access token，expireSec 单位为秒
+func (j *JWT) GetAccessToken(id uint64, expireSec uint64) (string, error) {
+	claims := MyClaims{
+		Id: id,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Audience:  jwt.ClaimStrings{"TAP"}, // 受众
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(as) * time.Second)),
+			Audience:  jwt.ClaimStrings{"TAP"},
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireSec) * time.Second)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, AccessClaims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.AccessTokenSecret)
 }
 
-// GetAccessToken 拿到accesstoken
-func (j *JWT) GetAccessToken(id uint64, rs uint64) (string, error) {
-	RefreshClaims := MyClaims{
+// GetRefreshToken 用 RefreshTokenSecret 签发 refresh token，expireSec 单位为秒
+func (j *JWT) GetRefreshToken(id uint64, expireSec uint64) (string, error) {
+	claims := MyClaims{
 		Id: id,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Audience:  jwt.ClaimStrings{"TAP"}, // 受众
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(rs) * time.Second)),
+			Audience:  jwt.ClaimStrings{"TAP"},
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireSec) * time.Second)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, RefreshClaims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.RefreshTokenSecret)
 }

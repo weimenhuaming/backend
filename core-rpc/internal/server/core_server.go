@@ -36,11 +36,6 @@ func (s *CoreServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.Regi
 	return l.Register(in)
 }
 
-func (s *CoreServer) Login(ctx context.Context, in *pb.LoginReq) (*pb.LoginResp, error) {
-	l := login.NewLoginLogic(ctx, s.svcCtx)
-	return l.Login(in)
-}
-
 func (s *CoreServer) EmailLogin(ctx context.Context, in *pb.EmailLoginReq) (*pb.LoginResp, error) {
 	l := login.NewEmailLoginLogic(ctx, s.svcCtx)
 	return l.EmailLogin(in)
@@ -54,9 +49,4 @@ func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *pb.ResetPassw
 func (s *CoreServer) Logout(ctx context.Context, in *pb.LogoutReq) (*pb.LogoutResp, error) {
 	l := login.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
-}
-
-func (s *CoreServer) EmailCaptcha(ctx context.Context, in *pb.EmailCaptchaReq) (*pb.EmailCaptchaResp, error) {
-	l := login.NewEmailCaptchaLogic(ctx, s.svcCtx)
-	return l.EmailCaptcha(in)
 }

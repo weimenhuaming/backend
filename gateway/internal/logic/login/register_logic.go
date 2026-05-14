@@ -3,7 +3,6 @@ package login
 import (
 	"context"
 	"core-rpc/core"
-	"errors"
 	"gateway/internal/utils"
 
 	"gateway/internal/svc"
@@ -29,22 +28,28 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
 	// 1. 判断邮箱是否合理
 	if !utils.IsValidEmail(req.Email) {
-		return nil, errors.New("邮箱格式不正确")
+		return &types.RegisterResp{
+			Code: 400,
+			Msg:  "邮箱格式不正确",
+			Data: types.RegisterData{},
+		}, nil
 	}
 
 	// 2. 判断验证码是否有效
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
 		return &types.RegisterResp{
-			Code: 500,
-			Msg:  errors.New("验证码失效").Error(),
-		}, err
+			Code: 400,
+			Msg:  "验证码不存在或已过期",
+			Data: types.RegisterData{},
+		}, nil
 	}
 	if captcha != req.Captcha {
 		return &types.RegisterResp{
-			Code: 500,
-			Msg:  errors.New("验证码错误").Error(),
-		}, err
+			Code: 400,
+			Msg:  "验证码错误",
+			Data: types.RegisterData{},
+		}, nil
 	}
 
 	// 3.获得rpc响应
@@ -57,12 +62,13 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		return &types.RegisterResp{
 			Code: 500,
 			Msg:  err.Error(),
-		}, err
+			Data: types.RegisterData{},
+		}, nil
 	}
 
-	//3.处理响应
 	return &types.RegisterResp{
 		Code: 200,
 		Msg:  "注册成功",
+		Data: types.RegisterData{},
 	}, nil
 }

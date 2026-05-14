@@ -3,9 +3,19 @@
 
 package types
 
-type CaptchaResp struct {
+type CaptchaData struct {
 	CaptchaId string `json:"captcha_id"` // 验证码的唯一标识，用于提交验证时使用
 	PicBase64 string `json:"pic_base64"` // base64编码的图像内容，前端可直接用于 <img>
+}
+
+type CaptchaResp struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data CaptchaData `json:"data"`
+}
+
+type EmailData struct {
+	Success bool `json:"success"`
 }
 
 type EmailReq struct {
@@ -13,22 +23,12 @@ type EmailReq struct {
 }
 
 type EmailResp struct {
-	Success bool `json:"success"`
+	Code int       `json:"code"`
+	Msg  string    `json:"msg"`
+	Data EmailData `json:"data"`
 }
 
-type LoginEmailReq struct {
-	Email   string `json:"email"`
-	Captcha string `json:"captcha"`
-}
-
-type LoginReq struct {
-	Name      string `json:"name"`
-	Password  string `json:"password"`
-	Code      string `json:"code"`
-	CaptchaId string `json:"captcha_id"`
-}
-
-type LoginResp struct {
+type LoginData struct {
 	Id           uint64 `json:"id"`
 	Name         string `json:"name"`
 	Phone        string `json:"phone"`
@@ -42,7 +42,21 @@ type LoginResp struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+type LoginEmailReq struct {
+	Email   string `json:"email"`
+	Captcha string `json:"captcha"`
+}
+
+type LoginResp struct {
+	Code int       `json:"code"`
+	Msg  string    `json:"msg"`
+	Data LoginData `json:"data"`
+}
+
 type RefreshReq struct {
+}
+
+type RegisterData struct {
 }
 
 type RegisterReq struct {
@@ -53,8 +67,13 @@ type RegisterReq struct {
 }
 
 type RegisterResp struct {
-	Code uint64 `json:"code"`
-	Msg  string `json:"msg"`
+	Code int          `json:"code"`
+	Msg  string       `json:"msg"`
+	Data RegisterData `json:"data"`
+}
+
+type ResetPasswordData struct {
+	Success bool `json:"success"`
 }
 
 type ResetPasswordReq struct {
@@ -65,5 +84,7 @@ type ResetPasswordReq struct {
 }
 
 type ResetPasswordResp struct {
-	Success bool `json:"success"`
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data ResetPasswordData `json:"data"`
 }

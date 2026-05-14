@@ -35,7 +35,11 @@ func (l *CaptchaLogic) Captcha() (resp *types.CaptchaResp, err error) {
 	}
 
 	return &types.CaptchaResp{
-		CaptchaId: id,
-		PicBase64: b64s, // 直接给前端展示
+		Code: 200,
+		Msg:  "ok",
+		Data: types.CaptchaData{
+			CaptchaId: id,
+			PicBase64: b64s,
+		},
 	}, nil
 }

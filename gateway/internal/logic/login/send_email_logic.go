@@ -46,6 +46,10 @@ func (l *SendEmailLogic) SendEmail(req *types.EmailReq) (resp *types.EmailResp, 
 		return nil, err
 	}
 	return &types.EmailResp{
-		Success: true,
+		Code: 200,
+		Msg:  "发送成功",
+		Data: types.EmailData{
+			Success: true,
+		},
 	}, nil
 }

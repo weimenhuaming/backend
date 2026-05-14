@@ -24,7 +24,9 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return &types.LoginResp{
+		Code: 501,
+		Msg:  "刷新令牌功能暂未实现",
+		Data: types.LoginData{},
+	}, nil
 }

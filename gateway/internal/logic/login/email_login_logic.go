@@ -60,17 +60,23 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 		return nil, err
 	}
 
-	// 5.处理完之后返回即可，把rpc的Resp给api。
+	// 5.统一 API 响应
 	resp = &types.LoginResp{
-		Id:           RpcResp.Id,
-		Name:         RpcResp.Name,
-		Phone:        RpcResp.Phone,
-		Email:        RpcResp.Email,
-		Avatar:       RpcResp.Avatar,
-		Uuid:         RpcResp.Uuid,
-		Role:         RpcResp.Role,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Code: 200,
+		Msg:  "登录成功",
+		Data: types.LoginData{
+			Id:           RpcResp.Id,
+			Name:         RpcResp.Name,
+			Phone:        RpcResp.Phone,
+			Email:        RpcResp.Email,
+			Avatar:       RpcResp.Avatar,
+			Uuid:         RpcResp.Uuid,
+			Role:         RpcResp.Role,
+			Sex:          RpcResp.Sex,
+			Age:          RpcResp.Age,
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	}
 	return
 }

@@ -67,8 +67,8 @@ type (
 	ResetPasswordReq {
 		Email    string `json:"email"`
 		Captcha  string `json:"captcha"`
-		Password string `json:"password"`
-		Confirm  string `json:"confirm"`
+		NewPassword string `json:"newpassword"`
+		ConfirmPassword  string `json:"confirmpassword"`
 	}
 	ResetPasswordResp {
 		Code int `json:"code"`

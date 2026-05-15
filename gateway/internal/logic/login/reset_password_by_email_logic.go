@@ -31,13 +31,13 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 			Msg:  "邮箱格式不正确",
 		}, nil
 	}
-	if req.Password == "" || req.Captcha == "" {
+	if req.NewPassword == "" || req.Captcha == "" {
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "密码或验证码不能为空",
 		}, nil
 	}
-	if req.Password != req.Confirm {
+	if req.NewPassword != req.ConfirmPassword {
 		return &types.ResetPasswordResp{
 			Code: 400,
 			Msg:  "两次输入的密码不一致",
@@ -60,7 +60,7 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 
 	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core.ResetPasswordEmailReq{
 		Email:    req.Email,
-		Password: utils.Bcrypt(req.Password),
+		Password: utils.Bcrypt(req.NewPassword),
 	})
 	if err != nil {
 		return &types.ResetPasswordResp{

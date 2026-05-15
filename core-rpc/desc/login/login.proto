@@ -1,17 +1,15 @@
 syntax = "proto3"; //指定版本
 
-package login; // 默认包名：类似命名空间
-
+package core;
 // 包名
 option go_package = "./pb";
 
 // 定义服务名
-service Login {
+service Core {
   rpc Register(RegisterReq) returns (RegisterResp){};   //   注册
   rpc EmailLogin(EmailLoginReq) returns (LoginResp){};  //   邮箱登入
   rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};  //  忘记密码
   rpc Logout(LogoutReq) returns (LogoutResp){};       //  登出
-  rpc EmailCaptcha(EmailCaptchaReq)returns(EmailCaptchaResp){};  //  邮箱部分
 }
 
 // =====================================================================================================================
@@ -42,11 +40,6 @@ message RegisterReq{
   string name =4;
 }
 message RegisterResp{}
-
-message EmailCaptchaReq{
-  string email = 1;
-}
-message EmailCaptchaResp{}
 
 message ResetPasswordEmailReq{
   string email = 1;

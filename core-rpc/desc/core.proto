@@ -29,11 +29,6 @@ message TestResponse {
 //======================================================================================================================
 // 登入服务
 
-message LoginReq {
-  // 属性的类型 属性名 = 标识符
-  string name = 1;
-  string password = 2;
-}
 message EmailLoginReq {
   // 属性的类型 属性名 = 标识符
   string email = 1;

@@ -1,10 +1,10 @@
-package login
+package logic
 
 import (
 	"context"
 	"core-rpc/internal/model/user"
 	"core-rpc/internal/svc"
-	"core-rpc/pb/pb"
+	"core-rpc/pb/core"
 	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -24,7 +24,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
+func (l *RegisterLogic) Register(in *core.RegisterReq) (*core.RegisterResp, error) {
 	// 检查邮箱是否已存在
 	_, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err == nil {
@@ -51,5 +51,5 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return nil, err
 	}
 
-	return &pb.RegisterResp{}, nil
+	return &core.RegisterResp{}, nil
 }

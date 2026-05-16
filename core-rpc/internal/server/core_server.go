@@ -6,16 +6,14 @@ package server
 
 import (
 	"context"
-	"core-rpc/internal/logic/login"
-
 	"core-rpc/internal/logic"
 	"core-rpc/internal/svc"
-	"core-rpc/pb/pb"
+	"core-rpc/pb/core"
 )
 
 type CoreServer struct {
 	svcCtx *svc.ServiceContext
-	pb.UnimplementedCoreServer
+	core.UnimplementedCoreServer
 }
 
 func NewCoreServer(svcCtx *svc.ServiceContext) *CoreServer {
@@ -25,28 +23,28 @@ func NewCoreServer(svcCtx *svc.ServiceContext) *CoreServer {
 }
 
 // 测试接口
-func (s *CoreServer) Test(ctx context.Context, in *pb.TestRequest) (*pb.TestResponse, error) {
+func (s *CoreServer) Test(ctx context.Context, in *core.TestRequest) (*core.TestResponse, error) {
 	l := logic.NewTestLogic(ctx, s.svcCtx)
 	return l.Test(in)
 }
 
 // Login 服务的方法
-func (s *CoreServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
-	l := login.NewRegisterLogic(ctx, s.svcCtx)
+func (s *CoreServer) Register(ctx context.Context, in *core.RegisterReq) (*core.RegisterResp, error) {
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
-func (s *CoreServer) EmailLogin(ctx context.Context, in *pb.EmailLoginReq) (*pb.LoginResp, error) {
-	l := login.NewEmailLoginLogic(ctx, s.svcCtx)
+func (s *CoreServer) EmailLogin(ctx context.Context, in *core.EmailLoginReq) (*core.LoginResp, error) {
+	l := logic.NewEmailLoginLogic(ctx, s.svcCtx)
 	return l.EmailLogin(in)
 }
 
-func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *pb.ResetPasswordEmailReq) (*pb.ResetPasswordEmailResp, error) {
-	l := login.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
+func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *core.ResetPasswordEmailReq) (*core.ResetPasswordEmailResp, error) {
+	l := logic.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
 	return l.ResetPasswordByEmail(in)
 }
 
-func (s *CoreServer) Logout(ctx context.Context, in *pb.LogoutReq) (*pb.LogoutResp, error) {
-	l := login.NewLogoutLogic(ctx, s.svcCtx)
+func (s *CoreServer) Logout(ctx context.Context, in *core.LogoutReq) (*core.LogoutResp, error) {
+	l := logic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }

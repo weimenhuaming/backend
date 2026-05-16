@@ -1,10 +1,10 @@
-package login
+package logic
 
 import (
 	"context"
 	"core-rpc/internal/model/user"
 	"core-rpc/internal/svc"
-	"core-rpc/pb/pb"
+	"core-rpc/pb/core"
 	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -24,7 +24,7 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 	}
 }
 
-func (l *EmailLoginLogic) EmailLogin(in *pb.EmailLoginReq) (*pb.LoginResp, error) {
+func (l *EmailLoginLogic) EmailLogin(in *core.EmailLoginReq) (*core.LoginResp, error) {
 	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err != nil {
 		if errors.Is(err, user.ErrNotFound) {
@@ -35,7 +35,7 @@ func (l *EmailLoginLogic) EmailLogin(in *pb.EmailLoginReq) (*pb.LoginResp, error
 	}
 
 	// token 由 gateway 层统一签发，这里只负责返回用户信息
-	return &pb.LoginResp{
+	return &core.LoginResp{
 		Id:     u.Id,
 		Name:   u.Name,
 		Phone:  u.Phone,

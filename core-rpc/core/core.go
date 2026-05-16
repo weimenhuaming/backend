@@ -7,26 +7,26 @@ package core
 import (
 	"context"
 
-	"core-rpc/pb/pb"
+	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	EmailCaptchaReq        = pb.EmailCaptchaReq
-	EmailCaptchaResp       = pb.EmailCaptchaResp
-	EmailLoginReq          = pb.EmailLoginReq
-	LoginReq               = pb.LoginReq
-	LoginResp              = pb.LoginResp
-	LogoutReq              = pb.LogoutReq
-	LogoutResp             = pb.LogoutResp
-	RegisterReq            = pb.RegisterReq
-	RegisterResp           = pb.RegisterResp
-	ResetPasswordEmailReq  = pb.ResetPasswordEmailReq
-	ResetPasswordEmailResp = pb.ResetPasswordEmailResp
-	TestRequest            = pb.TestRequest
-	TestResponse           = pb.TestResponse
+	EmailCaptchaReq        = core.EmailCaptchaReq
+	EmailCaptchaResp       = core.EmailCaptchaResp
+	EmailLoginReq          = core.EmailLoginReq
+	LoginReq               = core.LoginReq
+	LoginResp              = core.LoginResp
+	LogoutReq              = core.LogoutReq
+	LogoutResp             = core.LogoutResp
+	RegisterReq            = core.RegisterReq
+	RegisterResp           = core.RegisterResp
+	ResetPasswordEmailReq  = core.ResetPasswordEmailReq
+	ResetPasswordEmailResp = core.ResetPasswordEmailResp
+	TestRequest            = core.TestRequest
+	TestResponse           = core.TestResponse
 
 	Core interface {
 		// 测试接口
@@ -53,37 +53,37 @@ func NewCore(cli zrpc.Client) Core {
 
 // 测试接口
 func (m *defaultCore) Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.Test(ctx, in, opts...)
 }
 
 // Login 服务
 func (m *defaultCore) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
 }
 
 func (m *defaultCore) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
 }
 
 func (m *defaultCore) EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.EmailLogin(ctx, in, opts...)
 }
 
 func (m *defaultCore) ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.ResetPasswordByEmail(ctx, in, opts...)
 }
 
 func (m *defaultCore) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
 }
 
 func (m *defaultCore) EmailCaptcha(ctx context.Context, in *EmailCaptchaReq, opts ...grpc.CallOption) (*EmailCaptchaResp, error) {
-	client := pb.NewCoreClient(m.cli.Conn())
+	client := core.NewCoreClient(m.cli.Conn())
 	return client.EmailCaptcha(ctx, in, opts...)
 }

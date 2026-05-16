@@ -2,7 +2,7 @@ syntax = "proto3"; //指定版本
 
 package core;
 // 包名
-option go_package = "./pb";
+option go_package = "./core";
 
 // 定义服务名
 service Core {

@@ -1,20 +1,25 @@
 syntax = "proto3";
 
 package core;
-option go_package = "./pb";
+option go_package = "./core";
 
 // 所有 RPC 方法统一定义在这里
 service Core {
   // 测试接口
   rpc Test(TestRequest) returns (TestResponse);
 
-  // Login 服务
+  // Login 部分
   rpc Register(RegisterReq) returns (RegisterResp){};
   rpc EmailLogin(EmailLoginReq) returns (LoginResp){};
   rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
-  // Article 服务
+  // Category 部分
+  rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
+  rpc DeleteCategory(DeleteCategoryReq) returns (DeleteCategoryResp){};  //  删除分类
+
+  // Article 部分
 
 }
 
@@ -27,7 +32,7 @@ message TestResponse {
 }
 
 //======================================================================================================================
-// 登入服务
+// 登入部分
 
 message EmailLoginReq {
   // 属性的类型 属性名 = 标识符
@@ -69,4 +74,26 @@ message LogoutReq{
 message LogoutResp{}
 
 //======================================================================================================================
-// 文章服务
+// 分类部分
+message CreateCategoryReq {
+  string name = 1;
+}
+message CreateCategoryResp {}
+
+message CategoryInfo {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message ListCategoriesReq {}
+message ListCategoriesResp {
+  repeated CategoryInfo categories = 1;
+}
+
+message DeleteCategoryReq {
+  uint64 id = 1;
+}
+message DeleteCategoryResp {}
+
+//======================================================================================================================
+// 文章部分

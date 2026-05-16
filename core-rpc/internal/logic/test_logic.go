@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"core-rpc/internal/svc"
-	"core-rpc/pb/pb"
+	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,8 +24,8 @@ func NewTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TestLogic {
 }
 
 // 测试接口
-func (l *TestLogic) Test(in *pb.TestRequest) (*pb.TestResponse, error) {
+func (l *TestLogic) Test(in *core.TestRequest) (*core.TestResponse, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.TestResponse{}, nil
+	return &core.TestResponse{}, nil
 }

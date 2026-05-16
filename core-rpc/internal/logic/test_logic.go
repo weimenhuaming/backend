@@ -25,7 +25,6 @@ func NewTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TestLogic {
 
 // 测试接口
 func (l *TestLogic) Test(in *core.TestRequest) (*core.TestResponse, error) {
-	// todo: add your logic here and delete this line
-
+	logx.Infof("test request success")
 	return &core.TestResponse{}, nil
 }

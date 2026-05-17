@@ -26,7 +26,7 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 func (l *LogoutLogic) Logout(in *core.LogoutReq) (*core.LogoutResp, error) {
 	// 后续如果用户量大，存数据库的黑名单表就行，目前先存缓存
 	LogoutKey := "blacklist:" + in.RefreshToken
-	err := l.svcCtx.Cache.Setex(LogoutKey, "", 604800)
+	err := l.svcCtx.Cache.Setex(LogoutKey, "1", 604800)
 	if err != nil {
 		return nil, err
 	}

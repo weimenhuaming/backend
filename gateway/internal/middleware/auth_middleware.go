@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
@@ -16,62 +17,95 @@ type AuthMiddleware struct {
 	AccessSecret  string
 	AccessExpire  uint64
 	RefreshSecret string
+	Cache         *redis.Redis
 }
 
-func NewAuthMiddleware(c config.Config) *AuthMiddleware {
+func NewAuthMiddleware(c config.Config, Cache *redis.Redis) *AuthMiddleware {
 	return &AuthMiddleware{
 		AccessSecret:  c.Auth.AccessSecret,
 		AccessExpire:  c.Auth.AccessExpire,
 		RefreshSecret: c.RefreshSecret,
+		Cache:         Cache,
 	}
+}
+
+// 定义统一的错误响应结构
+type ErrorResponse struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+// 返回 JSON 错误的辅助函数
+func jsonError(w http.ResponseWriter, statusCode int, msg string) {
+	httpx.WriteJson(w, statusCode, ErrorResponse{
+		Code: statusCode,
+		Msg:  msg,
+	})
 }
 
 func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		// 1.提取token
+
+		// 1. 提取 token
 		AccessToken := utils.GetAccessTokenFromRequest(r)
 		RefreshToken, err := utils.GetRefreshTokenFromRequest(r)
 		if err != nil {
 			logx.Errorf("Get refresh token err: %v", err)
+			jsonError(w, http.StatusUnauthorized, "refresh token 获取失败")
 			return
 		}
 
-		// 2.判断是不是在黑名单里
+		// 2. 判断是不是在黑名单里
+		v, err := m.Cache.Get("blacklist:" + RefreshToken)
+		if err != nil {
+			jsonError(w, http.StatusInternalServerError, "服务器内部错误")
+			return
+		}
+		if v == "1" {
+			logx.Errorf("RefreshToken 已被拉入黑名单")
+			utils.ClearRefreshToken(w)
+			jsonError(w, http.StatusUnauthorized, "token 已失效，请重新登录")
+			return
+		}
 
-		// 3.解析token
+		// 3. 解析 RefreshToken
 		Jwt := utils.NewJWT(m.AccessSecret, m.RefreshSecret)
 		RefreshClaims, err := Jwt.ParseToken(RefreshToken, m.RefreshSecret)
 		if err != nil {
-			// 判断这个RefreshToken是否有效
 			utils.ClearRefreshToken(w)
-			logx.Errorf("Refresh token expired or invalid")
+			logx.Errorf("Refresh token expired or invalid: %v", err)
+			jsonError(w, http.StatusUnauthorized, "refresh token 无效或已过期，请重新登录")
 			return
 		}
 
 		// 4. 解析和验证 AccessToken
-		// 判断AccessClaims有没有问题,如果有，就需要更具Refresh刷新
 		AccessClaims, err := Jwt.ParseToken(AccessToken, m.AccessSecret)
 		if err != nil {
-			// 1.过期了
+			// Access Token 过期了，自动续期
 			if errors.Is(err, utils.TokenExpired) || AccessToken == "" {
-				logx.Errorf("JWT 过期: %v", err)
-				// 刷新令牌
+				logx.Infof("Access Token 过期，使用 Refresh Token 续期")
+
+				// 刷新 Access Token
 				id := RefreshClaims.Id
-				// 这里可以根据需要调整过期时间
 				NewAccessToken, _ := Jwt.GetAccessToken(id, m.AccessExpire)
 
-				// 写入响应头（自定义 Header）
+				// 写入响应头
 				w.Header().Set("Authorization", NewAccessToken)
+
+				// 重新生成 claims 用于后续注入
+				AccessClaims, _ = Jwt.ParseToken(NewAccessToken, m.AccessSecret)
 			} else {
-				// 这里就是说，无效或者其它
-				httpx.Error(w, err)
+				// 其他错误（无效、格式错误等）
+				logx.Errorf("Access Token 无效: %v", err)
+				jsonError(w, http.StatusUnauthorized, "access token 无效")
 				return
 			}
 		}
-		// 5.继续处理请求,将用户信息注入上下文
-		ctx = context.WithValue(ctx, "X-user-Id", AccessClaims.Id)
 
+		// 5. 将用户信息注入上下文
+		ctx = context.WithValue(ctx, "X-user-Id", AccessClaims.Id)
+		ctx = context.WithValue(ctx, "access_token", AccessToken) // 存原始 token，方便登出时拉黑
 		r = r.WithContext(ctx)
 		next(w, r)
 	}

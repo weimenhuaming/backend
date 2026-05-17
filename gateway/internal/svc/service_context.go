@@ -26,6 +26,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:         c,
 		Core:           core_client.NewCore(zrpc.MustNewClient(c.CoreRpc)),
 		Cache:          cache,
-		AuthMiddleware: middleware.NewAuthMiddleware(c).Handle, // 创建实例，这边相当于是服务端
+		AuthMiddleware: middleware.NewAuthMiddleware(c, cache).Handle, // 创建实例，这边相当于是服务端
 	}
 }

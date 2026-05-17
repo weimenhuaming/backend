@@ -3,7 +3,6 @@ package login
 import (
 	"context"
 	"core-rpc/core_client"
-
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,8 +23,10 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 	}
 }
 
-func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.LogoutResp, err error) {
-	_, err = l.svcCtx.Core.Logout(l.ctx, &core_client.LogoutReq{})
+func (l *LogoutLogic) Logout(req *types.LogoutReq, token string) (resp *types.LogoutResp, err error) {
+	_, err = l.svcCtx.Core.Logout(l.ctx, &core_client.LogoutReq{
+		RefreshToken: token,
+	})
 	if err != nil {
 		return &types.LogoutResp{
 			Code: 500,

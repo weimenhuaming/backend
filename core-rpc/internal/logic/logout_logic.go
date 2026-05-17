@@ -23,22 +23,14 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 	}
 }
 
-// Logout 由 gateway 校验 token 是否传入；此处仅将非空 token 写入黑名单（空串跳过）。
 func (l *LogoutLogic) Logout(in *core.LogoutReq) (*core.LogoutResp, error) {
-	//if in.AccessToken != "" {
-	//	key := tokenblacklist.AccessKey(in.AccessToken)
-	//	if err := l.svcCtx.Cache.SetexCtx(l.ctx, key, "1", tokenblacklist.DefaultTTLSeconds); err != nil {
-	//		logx.WithContext(l.ctx).Errorf("blacklist access token failed: %v", err)
-	//		return nil, errors.New("登出失败")
-	//	}
-	//}
-	//if in.RefreshToken != "" {
-	//	key := tokenblacklist.RefreshKey(in.RefreshToken)
-	//	if err := l.svcCtx.Cache.SetexCtx(l.ctx, key, "1", tokenblacklist.DefaultTTLSeconds); err != nil {
-	//		logx.WithContext(l.ctx).Errorf("blacklist refresh token failed: %v", err)
-	//		return nil, errors.New("登出失败")
-	//	}
-	//}
+	// 后续如果用户量大，存数据库的黑名单表就行，目前先存缓存
+	LogoutKey := "blacklist:" + in.RefreshToken
+	err := l.svcCtx.Cache.Setex(LogoutKey, "", 604800)
+	if err != nil {
+		return nil, err
+	}
 
+	// 后续存入数据库
 	return &core.LogoutResp{}, nil
 }

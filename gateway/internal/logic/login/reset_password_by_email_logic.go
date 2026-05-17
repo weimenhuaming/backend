@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"core-rpc/core"
+	"core-rpc/core_client"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
@@ -58,7 +58,7 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		}, nil
 	}
 
-	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core.ResetPasswordEmailReq{
+	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core_client.ResetPasswordEmailReq{
 		Email:    req.Email,
 		Password: utils.Bcrypt(req.NewPassword),
 	})

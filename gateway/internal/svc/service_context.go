@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"core-rpc/core"
+	"core-rpc/core_client"
 	"gateway/internal/config"
 	"log"
 
@@ -10,9 +10,9 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	core.Core              // 加入user rpc的服务操作函数
-	Cache     *redis.Redis //使用gozero自带的，他本身就是对go-redis的一个封装
+	Config           config.Config
+	core_client.Core              // 加入user rpc的服务操作函数
+	Cache            *redis.Redis //使用gozero自带的，他本身就是对go-redis的一个封装
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -21,7 +21,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	return &ServiceContext{
 		Config: c,
-		Core:   core.NewCore(zrpc.MustNewClient(c.CoreRpc)),
+		Core:   core_client.NewCore(zrpc.MustNewClient(c.CoreRpc)),
 		Cache:  cache,
 	}
 }

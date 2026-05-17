@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"core-rpc/core"
+	"core-rpc/core_client"
 	"gateway/internal/utils"
 
 	"gateway/internal/svc"
@@ -56,7 +56,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 	}
 
 	// 3.获得rpc响应
-	_, err = l.svcCtx.Core.Register(l.ctx, &core.RegisterReq{
+	_, err = l.svcCtx.Core.Register(l.ctx, &core_client.RegisterReq{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: utils.Bcrypt(req.Password),

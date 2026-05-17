@@ -110,59 +110,6 @@ func (x *TestResponse) GetReply() string {
 	return ""
 }
 
-type LoginReq struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// 属性的类型 属性名 = 标识符
-	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Password      string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *LoginReq) Reset() {
-	*x = LoginReq{}
-	mi := &file_desc_core_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *LoginReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*LoginReq) ProtoMessage() {}
-
-func (x *LoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
-func (*LoginReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *LoginReq) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *LoginReq) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
 type EmailLoginReq struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 属性的类型 属性名 = 标识符
@@ -174,7 +121,7 @@ type EmailLoginReq struct {
 
 func (x *EmailLoginReq) Reset() {
 	*x = EmailLoginReq{}
-	mi := &file_desc_core_proto_msgTypes[3]
+	mi := &file_desc_core_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +133,7 @@ func (x *EmailLoginReq) String() string {
 func (*EmailLoginReq) ProtoMessage() {}
 
 func (x *EmailLoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[3]
+	mi := &file_desc_core_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +146,7 @@ func (x *EmailLoginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmailLoginReq.ProtoReflect.Descriptor instead.
 func (*EmailLoginReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{3}
+	return file_desc_core_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *EmailLoginReq) GetEmail() string {
@@ -235,7 +182,7 @@ type LoginResp struct {
 
 func (x *LoginResp) Reset() {
 	*x = LoginResp{}
-	mi := &file_desc_core_proto_msgTypes[4]
+	mi := &file_desc_core_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -247,7 +194,7 @@ func (x *LoginResp) String() string {
 func (*LoginResp) ProtoMessage() {}
 
 func (x *LoginResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[4]
+	mi := &file_desc_core_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -260,7 +207,7 @@ func (x *LoginResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResp.ProtoReflect.Descriptor instead.
 func (*LoginResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{4}
+	return file_desc_core_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LoginResp) GetId() uint64 {
@@ -351,7 +298,7 @@ type RegisterReq struct {
 
 func (x *RegisterReq) Reset() {
 	*x = RegisterReq{}
-	mi := &file_desc_core_proto_msgTypes[5]
+	mi := &file_desc_core_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -363,7 +310,7 @@ func (x *RegisterReq) String() string {
 func (*RegisterReq) ProtoMessage() {}
 
 func (x *RegisterReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[5]
+	mi := &file_desc_core_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -376,7 +323,7 @@ func (x *RegisterReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterReq.ProtoReflect.Descriptor instead.
 func (*RegisterReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{5}
+	return file_desc_core_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RegisterReq) GetEmail() string {
@@ -402,15 +349,13 @@ func (x *RegisterReq) GetName() string {
 
 type RegisterResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int64                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RegisterResp) Reset() {
 	*x = RegisterResp{}
-	mi := &file_desc_core_proto_msgTypes[6]
+	mi := &file_desc_core_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +367,7 @@ func (x *RegisterResp) String() string {
 func (*RegisterResp) ProtoMessage() {}
 
 func (x *RegisterResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[6]
+	mi := &file_desc_core_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,115 +380,20 @@ func (x *RegisterResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResp.ProtoReflect.Descriptor instead.
 func (*RegisterResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *RegisterResp) GetCode() int64 {
-	if x != nil {
-		return x.Code
-	}
-	return 0
-}
-
-func (x *RegisterResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-type EmailCaptchaReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EmailCaptchaReq) Reset() {
-	*x = EmailCaptchaReq{}
-	mi := &file_desc_core_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EmailCaptchaReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmailCaptchaReq) ProtoMessage() {}
-
-func (x *EmailCaptchaReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmailCaptchaReq.ProtoReflect.Descriptor instead.
-func (*EmailCaptchaReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *EmailCaptchaReq) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-type EmailCaptchaResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EmailCaptchaResp) Reset() {
-	*x = EmailCaptchaResp{}
-	mi := &file_desc_core_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EmailCaptchaResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmailCaptchaResp) ProtoMessage() {}
-
-func (x *EmailCaptchaResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmailCaptchaResp.ProtoReflect.Descriptor instead.
-func (*EmailCaptchaResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{8}
+	return file_desc_core_proto_rawDescGZIP(), []int{5}
 }
 
 type ResetPasswordEmailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	Captcha       string                 `protobuf:"bytes,3,opt,name=captcha,proto3" json:"captcha,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"` // 已由 gateway 做 bcrypt，core 仅落库
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResetPasswordEmailReq) Reset() {
 	*x = ResetPasswordEmailReq{}
-	mi := &file_desc_core_proto_msgTypes[9]
+	mi := &file_desc_core_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -555,7 +405,7 @@ func (x *ResetPasswordEmailReq) String() string {
 func (*ResetPasswordEmailReq) ProtoMessage() {}
 
 func (x *ResetPasswordEmailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[9]
+	mi := &file_desc_core_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,7 +418,7 @@ func (x *ResetPasswordEmailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordEmailReq.ProtoReflect.Descriptor instead.
 func (*ResetPasswordEmailReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{9}
+	return file_desc_core_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ResetPasswordEmailReq) GetEmail() string {
@@ -585,13 +435,6 @@ func (x *ResetPasswordEmailReq) GetPassword() string {
 	return ""
 }
 
-func (x *ResetPasswordEmailReq) GetCaptcha() string {
-	if x != nil {
-		return x.Captcha
-	}
-	return ""
-}
-
 type ResetPasswordEmailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -600,7 +443,7 @@ type ResetPasswordEmailResp struct {
 
 func (x *ResetPasswordEmailResp) Reset() {
 	*x = ResetPasswordEmailResp{}
-	mi := &file_desc_core_proto_msgTypes[10]
+	mi := &file_desc_core_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -612,7 +455,7 @@ func (x *ResetPasswordEmailResp) String() string {
 func (*ResetPasswordEmailResp) ProtoMessage() {}
 
 func (x *ResetPasswordEmailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[10]
+	mi := &file_desc_core_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -625,7 +468,7 @@ func (x *ResetPasswordEmailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordEmailResp.ProtoReflect.Descriptor instead.
 func (*ResetPasswordEmailResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{10}
+	return file_desc_core_proto_rawDescGZIP(), []int{7}
 }
 
 type LogoutReq struct {
@@ -638,7 +481,7 @@ type LogoutReq struct {
 
 func (x *LogoutReq) Reset() {
 	*x = LogoutReq{}
-	mi := &file_desc_core_proto_msgTypes[11]
+	mi := &file_desc_core_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -650,7 +493,7 @@ func (x *LogoutReq) String() string {
 func (*LogoutReq) ProtoMessage() {}
 
 func (x *LogoutReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[11]
+	mi := &file_desc_core_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -663,7 +506,7 @@ func (x *LogoutReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutReq.ProtoReflect.Descriptor instead.
 func (*LogoutReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{11}
+	return file_desc_core_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *LogoutReq) GetAccessToken() string {
@@ -688,7 +531,7 @@ type LogoutResp struct {
 
 func (x *LogoutResp) Reset() {
 	*x = LogoutResp{}
-	mi := &file_desc_core_proto_msgTypes[12]
+	mi := &file_desc_core_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -700,7 +543,7 @@ func (x *LogoutResp) String() string {
 func (*LogoutResp) ProtoMessage() {}
 
 func (x *LogoutResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[12]
+	mi := &file_desc_core_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -713,7 +556,1055 @@ func (x *LogoutResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutResp.ProtoReflect.Descriptor instead.
 func (*LogoutResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{9}
+}
+
+// ======================================================================================================================
+// 文章部分
+// 文章信息结构
+type ArticleInfo struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId       uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CategoryId   uint64                 `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	Title        string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	Summary      string                 `protobuf:"bytes,5,opt,name=summary,proto3" json:"summary,omitempty"`
+	Content      string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+	Cover        string                 `protobuf:"bytes,7,opt,name=cover,proto3" json:"cover,omitempty"`
+	ViewCount    uint32                 `protobuf:"varint,8,opt,name=view_count,json=viewCount,proto3" json:"view_count,omitempty"`
+	LikeCount    uint32                 `protobuf:"varint,9,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"`
+	FavorCount   uint32                 `protobuf:"varint,10,opt,name=favor_count,json=favorCount,proto3" json:"favor_count,omitempty"`
+	CommentCount uint32                 `protobuf:"varint,11,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
+	CreatedAt    string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // 创建时间
+	UpdatedAt    string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"` // 更新时间
+	// 作者信息（可根据需要扩展）
+	AuthorName    string `protobuf:"bytes,14,opt,name=author_name,json=authorName,proto3" json:"author_name,omitempty"`
+	AuthorAvatar  string `protobuf:"bytes,15,opt,name=author_avatar,json=authorAvatar,proto3" json:"author_avatar,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ArticleInfo) Reset() {
+	*x = ArticleInfo{}
+	mi := &file_desc_core_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ArticleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ArticleInfo) ProtoMessage() {}
+
+func (x *ArticleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ArticleInfo.ProtoReflect.Descriptor instead.
+func (*ArticleInfo) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ArticleInfo) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetCategoryId() uint64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetCover() string {
+	if x != nil {
+		return x.Cover
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetViewCount() uint32 {
+	if x != nil {
+		return x.ViewCount
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetLikeCount() uint32 {
+	if x != nil {
+		return x.LikeCount
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetFavorCount() uint32 {
+	if x != nil {
+		return x.FavorCount
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetCommentCount() uint32 {
+	if x != nil {
+		return x.CommentCount
+	}
+	return 0
+}
+
+func (x *ArticleInfo) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetAuthorName() string {
+	if x != nil {
+		return x.AuthorName
+	}
+	return ""
+}
+
+func (x *ArticleInfo) GetAuthorAvatar() string {
+	if x != nil {
+		return x.AuthorAvatar
+	}
+	return ""
+}
+
+// 创建文章
+type CreateArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CategoryId    uint64                 `protobuf:"varint,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Summary       string                 `protobuf:"bytes,3,opt,name=summary,proto3" json:"summary,omitempty"`
+	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	Cover         string                 `protobuf:"bytes,5,opt,name=cover,proto3" json:"cover,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateArticleReq) Reset() {
+	*x = CreateArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateArticleReq) ProtoMessage() {}
+
+func (x *CreateArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateArticleReq.ProtoReflect.Descriptor instead.
+func (*CreateArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CreateArticleReq) GetCategoryId() uint64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+func (x *CreateArticleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateArticleReq) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *CreateArticleReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *CreateArticleReq) GetCover() string {
+	if x != nil {
+		return x.Cover
+	}
+	return ""
+}
+
+type CreateArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateArticleResp) Reset() {
+	*x = CreateArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateArticleResp) ProtoMessage() {}
+
+func (x *CreateArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateArticleResp.ProtoReflect.Descriptor instead.
+func (*CreateArticleResp) Descriptor() ([]byte, []int) {
 	return file_desc_core_proto_rawDescGZIP(), []int{12}
+}
+
+// 更新文章
+type UpdateArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                   // 文章ID
+	CategoryId    uint64                 `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID（可选更新）
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`                              // 标题（可选更新）
+	Summary       string                 `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`                          // 摘要（可选更新）
+	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                          // 内容（可选更新）
+	Cover         string                 `protobuf:"bytes,6,opt,name=cover,proto3" json:"cover,omitempty"`                              // 封面（可选更新）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateArticleReq) Reset() {
+	*x = UpdateArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateArticleReq) ProtoMessage() {}
+
+func (x *UpdateArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateArticleReq.ProtoReflect.Descriptor instead.
+func (*UpdateArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UpdateArticleReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateArticleReq) GetCategoryId() uint64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+func (x *UpdateArticleReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *UpdateArticleReq) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *UpdateArticleReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *UpdateArticleReq) GetCover() string {
+	if x != nil {
+		return x.Cover
+	}
+	return ""
+}
+
+type UpdateArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateArticleResp) Reset() {
+	*x = UpdateArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateArticleResp) ProtoMessage() {}
+
+func (x *UpdateArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateArticleResp.ProtoReflect.Descriptor instead.
+func (*UpdateArticleResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{14}
+}
+
+// 删除文章（软删除）
+type DeleteArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteArticleReq) Reset() {
+	*x = DeleteArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteArticleReq) ProtoMessage() {}
+
+func (x *DeleteArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteArticleReq.ProtoReflect.Descriptor instead.
+func (*DeleteArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteArticleReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteArticleResp) Reset() {
+	*x = DeleteArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteArticleResp) ProtoMessage() {}
+
+func (x *DeleteArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteArticleResp.ProtoReflect.Descriptor instead.
+func (*DeleteArticleResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{16}
+}
+
+// 获取文章详情
+type GetArticleDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetArticleDetailReq) Reset() {
+	*x = GetArticleDetailReq{}
+	mi := &file_desc_core_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetArticleDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetArticleDetailReq) ProtoMessage() {}
+
+func (x *GetArticleDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetArticleDetailReq.ProtoReflect.Descriptor instead.
+func (*GetArticleDetailReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetArticleDetailReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetArticleDetailResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Article       *ArticleInfo           `protobuf:"bytes,1,opt,name=article,proto3" json:"article,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetArticleDetailResp) Reset() {
+	*x = GetArticleDetailResp{}
+	mi := &file_desc_core_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetArticleDetailResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetArticleDetailResp) ProtoMessage() {}
+
+func (x *GetArticleDetailResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetArticleDetailResp.ProtoReflect.Descriptor instead.
+func (*GetArticleDetailResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetArticleDetailResp) GetArticle() *ArticleInfo {
+	if x != nil {
+		return x.Article
+	}
+	return nil
+}
+
+// 文章列表（支持分页和筛选）
+type ListArticlesReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          uint32                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`                               // 页码，从1开始
+	PageSize      uint32                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`       // 每页数量
+	CategoryId    uint64                 `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 按分类筛选（0表示不筛选）
+	UserId        uint64                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 按作者筛选（0表示不筛选）
+	SortBy        string                 `protobuf:"bytes,5,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`              // 排序字段：created_at, view_count, like_count
+	SortOrder     string                 `protobuf:"bytes,6,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`     // 排序方式：asc, desc
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListArticlesReq) Reset() {
+	*x = ListArticlesReq{}
+	mi := &file_desc_core_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListArticlesReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListArticlesReq) ProtoMessage() {}
+
+func (x *ListArticlesReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListArticlesReq.ProtoReflect.Descriptor instead.
+func (*ListArticlesReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ListArticlesReq) GetPage() uint32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListArticlesReq) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListArticlesReq) GetCategoryId() uint64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+func (x *ListArticlesReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListArticlesReq) GetSortBy() string {
+	if x != nil {
+		return x.SortBy
+	}
+	return ""
+}
+
+func (x *ListArticlesReq) GetSortOrder() string {
+	if x != nil {
+		return x.SortOrder
+	}
+	return ""
+}
+
+type ListArticlesResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Articles      []*ArticleInfo         `protobuf:"bytes,1,rep,name=articles,proto3" json:"articles,omitempty"`
+	Total         uint32                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`                       // 总数量
+	Page          uint32                 `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`                         // 当前页码
+	PageSize      uint32                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"` // 每页数量
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListArticlesResp) Reset() {
+	*x = ListArticlesResp{}
+	mi := &file_desc_core_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListArticlesResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListArticlesResp) ProtoMessage() {}
+
+func (x *ListArticlesResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListArticlesResp.ProtoReflect.Descriptor instead.
+func (*ListArticlesResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ListArticlesResp) GetArticles() []*ArticleInfo {
+	if x != nil {
+		return x.Articles
+	}
+	return nil
+}
+
+func (x *ListArticlesResp) GetTotal() uint32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListArticlesResp) GetPage() uint32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListArticlesResp) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+// 搜索文章
+type SearchArticlesReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`                          // 搜索关键词（标题和内容）
+	Page          uint32                 `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`                               // 页码
+	PageSize      uint32                 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`       // 每页数量
+	CategoryId    uint64                 `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 按分类筛选（0表示不筛选）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchArticlesReq) Reset() {
+	*x = SearchArticlesReq{}
+	mi := &file_desc_core_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchArticlesReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchArticlesReq) ProtoMessage() {}
+
+func (x *SearchArticlesReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchArticlesReq.ProtoReflect.Descriptor instead.
+func (*SearchArticlesReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SearchArticlesReq) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *SearchArticlesReq) GetPage() uint32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *SearchArticlesReq) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *SearchArticlesReq) GetCategoryId() uint64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+type SearchArticlesResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Articles      []*ArticleInfo         `protobuf:"bytes,1,rep,name=articles,proto3" json:"articles,omitempty"`
+	Total         uint32                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Page          uint32                 `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      uint32                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchArticlesResp) Reset() {
+	*x = SearchArticlesResp{}
+	mi := &file_desc_core_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchArticlesResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchArticlesResp) ProtoMessage() {}
+
+func (x *SearchArticlesResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchArticlesResp.ProtoReflect.Descriptor instead.
+func (*SearchArticlesResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *SearchArticlesResp) GetArticles() []*ArticleInfo {
+	if x != nil {
+		return x.Articles
+	}
+	return nil
+}
+
+func (x *SearchArticlesResp) GetTotal() uint32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *SearchArticlesResp) GetPage() uint32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *SearchArticlesResp) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+// 点赞文章
+type LikeArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
+	IsLike        bool                   `protobuf:"varint,2,opt,name=is_like,json=isLike,proto3" json:"is_like,omitempty"` // true: 点赞, false: 取消点赞
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikeArticleReq) Reset() {
+	*x = LikeArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikeArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikeArticleReq) ProtoMessage() {}
+
+func (x *LikeArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikeArticleReq.ProtoReflect.Descriptor instead.
+func (*LikeArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *LikeArticleReq) GetArticleId() uint64 {
+	if x != nil {
+		return x.ArticleId
+	}
+	return 0
+}
+
+func (x *LikeArticleReq) GetIsLike() bool {
+	if x != nil {
+		return x.IsLike
+	}
+	return false
+}
+
+type LikeArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"` // 返回最新点赞数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikeArticleResp) Reset() {
+	*x = LikeArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikeArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikeArticleResp) ProtoMessage() {}
+
+func (x *LikeArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikeArticleResp.ProtoReflect.Descriptor instead.
+func (*LikeArticleResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *LikeArticleResp) GetLikeCount() uint32 {
+	if x != nil {
+		return x.LikeCount
+	}
+	return 0
+}
+
+// 收藏文章
+type FavoriteArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
+	IsFavorite    bool                   `protobuf:"varint,2,opt,name=is_favorite,json=isFavorite,proto3" json:"is_favorite,omitempty"` // true: 收藏, false: 取消收藏
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FavoriteArticleReq) Reset() {
+	*x = FavoriteArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FavoriteArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FavoriteArticleReq) ProtoMessage() {}
+
+func (x *FavoriteArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FavoriteArticleReq.ProtoReflect.Descriptor instead.
+func (*FavoriteArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *FavoriteArticleReq) GetArticleId() uint64 {
+	if x != nil {
+		return x.ArticleId
+	}
+	return 0
+}
+
+func (x *FavoriteArticleReq) GetIsFavorite() bool {
+	if x != nil {
+		return x.IsFavorite
+	}
+	return false
+}
+
+type FavoriteArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FavorCount    uint32                 `protobuf:"varint,1,opt,name=favor_count,json=favorCount,proto3" json:"favor_count,omitempty"` // 返回最新收藏数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FavoriteArticleResp) Reset() {
+	*x = FavoriteArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FavoriteArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FavoriteArticleResp) ProtoMessage() {}
+
+func (x *FavoriteArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FavoriteArticleResp.ProtoReflect.Descriptor instead.
+func (*FavoriteArticleResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *FavoriteArticleResp) GetFavorCount() uint32 {
+	if x != nil {
+		return x.FavorCount
+	}
+	return 0
 }
 
 var File_desc_core_proto protoreflect.FileDescriptor
@@ -724,10 +1615,7 @@ const file_desc_core_proto_rawDesc = "" +
 	"\vTestRequest\x12\x10\n" +
 	"\x03msg\x18\x01 \x01(\tR\x03msg\"$\n" +
 	"\fTestResponse\x12\x14\n" +
-	"\x05reply\x18\x01 \x01(\tR\x05reply\":\n" +
-	"\bLoginReq\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"?\n" +
+	"\x05reply\x18\x01 \x01(\tR\x05reply\"?\n" +
 	"\rEmailLoginReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x18\n" +
 	"\acaptcha\x18\x02 \x01(\tR\acaptcha\"\x85\x02\n" +
@@ -747,32 +1635,120 @@ const file_desc_core_proto_rawDesc = "" +
 	"\vRegisterReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"4\n" +
-	"\fRegisterResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\"'\n" +
-	"\x0fEmailCaptchaReq\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\"\x12\n" +
-	"\x10EmailCaptchaResp\"c\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"\x0e\n" +
+	"\fRegisterResp\"I\n" +
 	"\x15ResetPasswordEmailReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x18\n" +
-	"\acaptcha\x18\x03 \x01(\tR\acaptcha\"\x18\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x18\n" +
 	"\x16ResetPasswordEmailResp\"Q\n" +
 	"\tLogoutReq\x12 \n" +
 	"\vAccessToken\x18\x01 \x01(\tR\vAccessToken\x12\"\n" +
 	"\fRefreshToken\x18\x02 \x01(\tR\fRefreshToken\"\f\n" +
 	"\n" +
-	"LogoutResp2\x91\x03\n" +
+	"LogoutResp\"\xbf\x03\n" +
+	"\vArticleInfo\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1f\n" +
+	"\vcategory_id\x18\x03 \x01(\x04R\n" +
+	"categoryId\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\x12\x18\n" +
+	"\asummary\x18\x05 \x01(\tR\asummary\x12\x18\n" +
+	"\acontent\x18\x06 \x01(\tR\acontent\x12\x14\n" +
+	"\x05cover\x18\a \x01(\tR\x05cover\x12\x1d\n" +
+	"\n" +
+	"view_count\x18\b \x01(\rR\tviewCount\x12\x1d\n" +
+	"\n" +
+	"like_count\x18\t \x01(\rR\tlikeCount\x12\x1f\n" +
+	"\vfavor_count\x18\n" +
+	" \x01(\rR\n" +
+	"favorCount\x12#\n" +
+	"\rcomment_count\x18\v \x01(\rR\fcommentCount\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\f \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\r \x01(\tR\tupdatedAt\x12\x1f\n" +
+	"\vauthor_name\x18\x0e \x01(\tR\n" +
+	"authorName\x12#\n" +
+	"\rauthor_avatar\x18\x0f \x01(\tR\fauthorAvatar\"\x93\x01\n" +
+	"\x10CreateArticleReq\x12\x1f\n" +
+	"\vcategory_id\x18\x01 \x01(\x04R\n" +
+	"categoryId\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
+	"\asummary\x18\x03 \x01(\tR\asummary\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x12\x14\n" +
+	"\x05cover\x18\x05 \x01(\tR\x05cover\"\x13\n" +
+	"\x11CreateArticleResp\"\xa3\x01\n" +
+	"\x10UpdateArticleReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1f\n" +
+	"\vcategory_id\x18\x02 \x01(\x04R\n" +
+	"categoryId\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
+	"\asummary\x18\x04 \x01(\tR\asummary\x12\x18\n" +
+	"\acontent\x18\x05 \x01(\tR\acontent\x12\x14\n" +
+	"\x05cover\x18\x06 \x01(\tR\x05cover\"\x13\n" +
+	"\x11UpdateArticleResp\"\"\n" +
+	"\x10DeleteArticleReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\x13\n" +
+	"\x11DeleteArticleResp\"%\n" +
+	"\x13GetArticleDetailReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"C\n" +
+	"\x14GetArticleDetailResp\x12+\n" +
+	"\aarticle\x18\x01 \x01(\v2\x11.core.ArticleInfoR\aarticle\"\xb4\x01\n" +
+	"\x0fListArticlesReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\rR\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\rR\bpageSize\x12\x1f\n" +
+	"\vcategory_id\x18\x03 \x01(\x04R\n" +
+	"categoryId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x04R\x06userId\x12\x17\n" +
+	"\asort_by\x18\x05 \x01(\tR\x06sortBy\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x06 \x01(\tR\tsortOrder\"\x88\x01\n" +
+	"\x10ListArticlesResp\x12-\n" +
+	"\barticles\x18\x01 \x03(\v2\x11.core.ArticleInfoR\barticles\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\rR\x05total\x12\x12\n" +
+	"\x04page\x18\x03 \x01(\rR\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"\x7f\n" +
+	"\x11SearchArticlesReq\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\rR\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\rR\bpageSize\x12\x1f\n" +
+	"\vcategory_id\x18\x04 \x01(\x04R\n" +
+	"categoryId\"\x8a\x01\n" +
+	"\x12SearchArticlesResp\x12-\n" +
+	"\barticles\x18\x01 \x03(\v2\x11.core.ArticleInfoR\barticles\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\rR\x05total\x12\x12\n" +
+	"\x04page\x18\x03 \x01(\rR\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"H\n" +
+	"\x0eLikeArticleReq\x12\x1d\n" +
+	"\n" +
+	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x17\n" +
+	"\ais_like\x18\x02 \x01(\bR\x06isLike\"0\n" +
+	"\x0fLikeArticleResp\x12\x1d\n" +
+	"\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"T\n" +
+	"\x12FavoriteArticleReq\x12\x1d\n" +
+	"\n" +
+	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x1f\n" +
+	"\vis_favorite\x18\x02 \x01(\bR\n" +
+	"isFavorite\"6\n" +
+	"\x13FavoriteArticleResp\x12\x1f\n" +
+	"\vfavor_count\x18\x01 \x01(\rR\n" +
+	"favorCount2\xca\x06\n" +
 	"\x04Core\x12-\n" +
 	"\x04Test\x12\x11.core.TestRequest\x1a\x12.core.TestResponse\x123\n" +
-	"\bRegister\x12\x11.core.RegisterReq\x1a\x12.core.RegisterResp\"\x00\x12*\n" +
-	"\x05Login\x12\x0e.core.LoginReq\x1a\x0f.core.LoginResp\"\x00\x124\n" +
+	"\bRegister\x12\x11.core.RegisterReq\x1a\x12.core.RegisterResp\"\x00\x124\n" +
 	"\n" +
 	"EmailLogin\x12\x13.core.EmailLoginReq\x1a\x0f.core.LoginResp\"\x00\x12S\n" +
 	"\x14ResetPasswordByEmail\x12\x1b.core.ResetPasswordEmailReq\x1a\x1c.core.ResetPasswordEmailResp\"\x00\x12-\n" +
-	"\x06Logout\x12\x0f.core.LogoutReq\x1a\x10.core.LogoutResp\"\x00\x12?\n" +
-	"\fEmailCaptcha\x12\x15.core.EmailCaptchaReq\x1a\x16.core.EmailCaptchaResp\"\x00B\x06Z\x04./pbb\x06proto3"
+	"\x06Logout\x12\x0f.core.LogoutReq\x1a\x10.core.LogoutResp\"\x00\x12B\n" +
+	"\rCreateArticle\x12\x16.core.CreateArticleReq\x1a\x17.core.CreateArticleResp\"\x00\x12B\n" +
+	"\rUpdateArticle\x12\x16.core.UpdateArticleReq\x1a\x17.core.UpdateArticleResp\"\x00\x12B\n" +
+	"\rDeleteArticle\x12\x16.core.DeleteArticleReq\x1a\x17.core.DeleteArticleResp\"\x00\x12K\n" +
+	"\x10GetArticleDetail\x12\x19.core.GetArticleDetailReq\x1a\x1a.core.GetArticleDetailResp\"\x00\x12?\n" +
+	"\fListArticles\x12\x15.core.ListArticlesReq\x1a\x16.core.ListArticlesResp\"\x00\x12E\n" +
+	"\x0eSearchArticles\x12\x17.core.SearchArticlesReq\x1a\x18.core.SearchArticlesResp\"\x00\x12<\n" +
+	"\vLikeArticle\x12\x14.core.LikeArticleReq\x1a\x15.core.LikeArticleResp\"\x00\x12E\n" +
+	"\fFavorArticle\x12\x18.core.FavoriteArticleReq\x1a\x19.core.FavoriteArticleResp\"\x00B\bZ\x06./coreb\x06proto3"
 
 var (
 	file_desc_core_proto_rawDescOnce sync.Once
@@ -786,42 +1762,71 @@ func file_desc_core_proto_rawDescGZIP() []byte {
 	return file_desc_core_proto_rawDescData
 }
 
-var file_desc_core_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_desc_core_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_desc_core_proto_goTypes = []any{
 	(*TestRequest)(nil),            // 0: core.TestRequest
 	(*TestResponse)(nil),           // 1: core.TestResponse
-	(*LoginReq)(nil),               // 2: core.LoginReq
-	(*EmailLoginReq)(nil),          // 3: core.EmailLoginReq
-	(*LoginResp)(nil),              // 4: core.LoginResp
-	(*RegisterReq)(nil),            // 5: core.RegisterReq
-	(*RegisterResp)(nil),           // 6: core.RegisterResp
-	(*EmailCaptchaReq)(nil),        // 7: core.EmailCaptchaReq
-	(*EmailCaptchaResp)(nil),       // 8: core.EmailCaptchaResp
-	(*ResetPasswordEmailReq)(nil),  // 9: core.ResetPasswordEmailReq
-	(*ResetPasswordEmailResp)(nil), // 10: core.ResetPasswordEmailResp
-	(*LogoutReq)(nil),              // 11: core.LogoutReq
-	(*LogoutResp)(nil),             // 12: core.LogoutResp
+	(*EmailLoginReq)(nil),          // 2: core.EmailLoginReq
+	(*LoginResp)(nil),              // 3: core.LoginResp
+	(*RegisterReq)(nil),            // 4: core.RegisterReq
+	(*RegisterResp)(nil),           // 5: core.RegisterResp
+	(*ResetPasswordEmailReq)(nil),  // 6: core.ResetPasswordEmailReq
+	(*ResetPasswordEmailResp)(nil), // 7: core.ResetPasswordEmailResp
+	(*LogoutReq)(nil),              // 8: core.LogoutReq
+	(*LogoutResp)(nil),             // 9: core.LogoutResp
+	(*ArticleInfo)(nil),            // 10: core.ArticleInfo
+	(*CreateArticleReq)(nil),       // 11: core.CreateArticleReq
+	(*CreateArticleResp)(nil),      // 12: core.CreateArticleResp
+	(*UpdateArticleReq)(nil),       // 13: core.UpdateArticleReq
+	(*UpdateArticleResp)(nil),      // 14: core.UpdateArticleResp
+	(*DeleteArticleReq)(nil),       // 15: core.DeleteArticleReq
+	(*DeleteArticleResp)(nil),      // 16: core.DeleteArticleResp
+	(*GetArticleDetailReq)(nil),    // 17: core.GetArticleDetailReq
+	(*GetArticleDetailResp)(nil),   // 18: core.GetArticleDetailResp
+	(*ListArticlesReq)(nil),        // 19: core.ListArticlesReq
+	(*ListArticlesResp)(nil),       // 20: core.ListArticlesResp
+	(*SearchArticlesReq)(nil),      // 21: core.SearchArticlesReq
+	(*SearchArticlesResp)(nil),     // 22: core.SearchArticlesResp
+	(*LikeArticleReq)(nil),         // 23: core.LikeArticleReq
+	(*LikeArticleResp)(nil),        // 24: core.LikeArticleResp
+	(*FavoriteArticleReq)(nil),     // 25: core.FavoriteArticleReq
+	(*FavoriteArticleResp)(nil),    // 26: core.FavoriteArticleResp
 }
 var file_desc_core_proto_depIdxs = []int32{
-	0,  // 0: core.Core.Test:input_type -> core.TestRequest
-	5,  // 1: core.Core.Register:input_type -> core.RegisterReq
-	2,  // 2: core.Core.Login:input_type -> core.LoginReq
-	3,  // 3: core.Core.EmailLogin:input_type -> core.EmailLoginReq
-	9,  // 4: core.Core.ResetPasswordByEmail:input_type -> core.ResetPasswordEmailReq
-	11, // 5: core.Core.Logout:input_type -> core.LogoutReq
-	7,  // 6: core.Core.EmailCaptcha:input_type -> core.EmailCaptchaReq
-	1,  // 7: core.Core.Test:output_type -> core.TestResponse
-	6,  // 8: core.Core.Register:output_type -> core.RegisterResp
-	4,  // 9: core.Core.Login:output_type -> core.LoginResp
-	4,  // 10: core.Core.EmailLogin:output_type -> core.LoginResp
-	10, // 11: core.Core.ResetPasswordByEmail:output_type -> core.ResetPasswordEmailResp
-	12, // 12: core.Core.Logout:output_type -> core.LogoutResp
-	8,  // 13: core.Core.EmailCaptcha:output_type -> core.EmailCaptchaResp
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
-	0,  // [0:0] is the sub-list for extension type_name
-	0,  // [0:0] is the sub-list for extension extendee
-	0,  // [0:0] is the sub-list for field type_name
+	10, // 0: core.GetArticleDetailResp.article:type_name -> core.ArticleInfo
+	10, // 1: core.ListArticlesResp.articles:type_name -> core.ArticleInfo
+	10, // 2: core.SearchArticlesResp.articles:type_name -> core.ArticleInfo
+	0,  // 3: core.Core.Test:input_type -> core.TestRequest
+	4,  // 4: core.Core.Register:input_type -> core.RegisterReq
+	2,  // 5: core.Core.EmailLogin:input_type -> core.EmailLoginReq
+	6,  // 6: core.Core.ResetPasswordByEmail:input_type -> core.ResetPasswordEmailReq
+	8,  // 7: core.Core.Logout:input_type -> core.LogoutReq
+	11, // 8: core.Core.CreateArticle:input_type -> core.CreateArticleReq
+	13, // 9: core.Core.UpdateArticle:input_type -> core.UpdateArticleReq
+	15, // 10: core.Core.DeleteArticle:input_type -> core.DeleteArticleReq
+	17, // 11: core.Core.GetArticleDetail:input_type -> core.GetArticleDetailReq
+	19, // 12: core.Core.ListArticles:input_type -> core.ListArticlesReq
+	21, // 13: core.Core.SearchArticles:input_type -> core.SearchArticlesReq
+	23, // 14: core.Core.LikeArticle:input_type -> core.LikeArticleReq
+	25, // 15: core.Core.FavorArticle:input_type -> core.FavoriteArticleReq
+	1,  // 16: core.Core.Test:output_type -> core.TestResponse
+	5,  // 17: core.Core.Register:output_type -> core.RegisterResp
+	3,  // 18: core.Core.EmailLogin:output_type -> core.LoginResp
+	7,  // 19: core.Core.ResetPasswordByEmail:output_type -> core.ResetPasswordEmailResp
+	9,  // 20: core.Core.Logout:output_type -> core.LogoutResp
+	12, // 21: core.Core.CreateArticle:output_type -> core.CreateArticleResp
+	14, // 22: core.Core.UpdateArticle:output_type -> core.UpdateArticleResp
+	16, // 23: core.Core.DeleteArticle:output_type -> core.DeleteArticleResp
+	18, // 24: core.Core.GetArticleDetail:output_type -> core.GetArticleDetailResp
+	20, // 25: core.Core.ListArticles:output_type -> core.ListArticlesResp
+	22, // 26: core.Core.SearchArticles:output_type -> core.SearchArticlesResp
+	24, // 27: core.Core.LikeArticle:output_type -> core.LikeArticleResp
+	26, // 28: core.Core.FavorArticle:output_type -> core.FavoriteArticleResp
+	16, // [16:29] is the sub-list for method output_type
+	3,  // [3:16] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_desc_core_proto_init() }
@@ -835,7 +1840,7 @@ func file_desc_core_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_desc_core_proto_rawDesc), len(file_desc_core_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -6,6 +6,7 @@ package server
 
 import (
 	"context"
+
 	"core-rpc/internal/logic"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
@@ -28,7 +29,7 @@ func (s *CoreServer) Test(ctx context.Context, in *core.TestRequest) (*core.Test
 	return l.Test(in)
 }
 
-// Login 服务的方法
+// Login 部分
 func (s *CoreServer) Register(ctx context.Context, in *core.RegisterReq) (*core.RegisterResp, error) {
 	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
@@ -47,4 +48,46 @@ func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *core.ResetPas
 func (s *CoreServer) Logout(ctx context.Context, in *core.LogoutReq) (*core.LogoutResp, error) {
 	l := logic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
+}
+
+// Article 部分
+func (s *CoreServer) CreateArticle(ctx context.Context, in *core.CreateArticleReq) (*core.CreateArticleResp, error) {
+	l := logic.NewCreateArticleLogic(ctx, s.svcCtx)
+	return l.CreateArticle(in)
+}
+
+func (s *CoreServer) UpdateArticle(ctx context.Context, in *core.UpdateArticleReq) (*core.UpdateArticleResp, error) {
+	l := logic.NewUpdateArticleLogic(ctx, s.svcCtx)
+	return l.UpdateArticle(in)
+}
+
+func (s *CoreServer) DeleteArticle(ctx context.Context, in *core.DeleteArticleReq) (*core.DeleteArticleResp, error) {
+	l := logic.NewDeleteArticleLogic(ctx, s.svcCtx)
+	return l.DeleteArticle(in)
+}
+
+func (s *CoreServer) GetArticleDetail(ctx context.Context, in *core.GetArticleDetailReq) (*core.GetArticleDetailResp, error) {
+	l := logic.NewGetArticleDetailLogic(ctx, s.svcCtx)
+	return l.GetArticleDetail(in)
+}
+
+func (s *CoreServer) ListArticles(ctx context.Context, in *core.ListArticlesReq) (*core.ListArticlesResp, error) {
+	l := logic.NewListArticlesLogic(ctx, s.svcCtx)
+	return l.ListArticles(in)
+}
+
+func (s *CoreServer) SearchArticles(ctx context.Context, in *core.SearchArticlesReq) (*core.SearchArticlesResp, error) {
+	l := logic.NewSearchArticlesLogic(ctx, s.svcCtx)
+	return l.SearchArticles(in)
+}
+
+// interaction 部分
+func (s *CoreServer) LikeArticle(ctx context.Context, in *core.LikeArticleReq) (*core.LikeArticleResp, error) {
+	l := logic.NewLikeArticleLogic(ctx, s.svcCtx)
+	return l.LikeArticle(in)
+}
+
+func (s *CoreServer) FavorArticle(ctx context.Context, in *core.FavoriteArticleReq) (*core.FavoriteArticleResp, error) {
+	l := logic.NewFavorArticleLogic(ctx, s.svcCtx)
+	return l.FavorArticle(in)
 }

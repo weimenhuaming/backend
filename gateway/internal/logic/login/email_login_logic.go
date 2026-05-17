@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"core-rpc/core"
+	"core-rpc/core_client"
 	"gateway/internal/utils"
 
 	"gateway/internal/svc"
@@ -55,7 +55,7 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 	}
 
 	// 3.调用逻辑函数返回的是rpc中的返回值。
-	RpcResp, err := l.svcCtx.Core.EmailLogin(l.ctx, &core.EmailLoginReq{
+	RpcResp, err := l.svcCtx.Core.EmailLogin(l.ctx, &core_client.EmailLoginReq{
 		Email: req.Email,
 	})
 	if err != nil {

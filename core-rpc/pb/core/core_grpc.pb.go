@@ -21,11 +21,17 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Core_Test_FullMethodName                 = "/core.Core/Test"
 	Core_Register_FullMethodName             = "/core.Core/Register"
-	Core_Login_FullMethodName                = "/core.Core/Login"
 	Core_EmailLogin_FullMethodName           = "/core.Core/EmailLogin"
 	Core_ResetPasswordByEmail_FullMethodName = "/core.Core/ResetPasswordByEmail"
 	Core_Logout_FullMethodName               = "/core.Core/Logout"
-	Core_EmailCaptcha_FullMethodName         = "/core.Core/EmailCaptcha"
+	Core_CreateArticle_FullMethodName        = "/core.Core/CreateArticle"
+	Core_UpdateArticle_FullMethodName        = "/core.Core/UpdateArticle"
+	Core_DeleteArticle_FullMethodName        = "/core.Core/DeleteArticle"
+	Core_GetArticleDetail_FullMethodName     = "/core.Core/GetArticleDetail"
+	Core_ListArticles_FullMethodName         = "/core.Core/ListArticles"
+	Core_SearchArticles_FullMethodName       = "/core.Core/SearchArticles"
+	Core_LikeArticle_FullMethodName          = "/core.Core/LikeArticle"
+	Core_FavorArticle_FullMethodName         = "/core.Core/FavorArticle"
 )
 
 // CoreClient is the client API for Core service.
@@ -36,13 +42,21 @@ const (
 type CoreClient interface {
 	// 测试接口
 	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
-	// Login 服务
+	// Login 部分
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
-	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
-	EmailCaptcha(ctx context.Context, in *EmailCaptchaReq, opts ...grpc.CallOption) (*EmailCaptchaResp, error)
+	// Article 部分
+	CreateArticle(ctx context.Context, in *CreateArticleReq, opts ...grpc.CallOption) (*CreateArticleResp, error)
+	UpdateArticle(ctx context.Context, in *UpdateArticleReq, opts ...grpc.CallOption) (*UpdateArticleResp, error)
+	DeleteArticle(ctx context.Context, in *DeleteArticleReq, opts ...grpc.CallOption) (*DeleteArticleResp, error)
+	GetArticleDetail(ctx context.Context, in *GetArticleDetailReq, opts ...grpc.CallOption) (*GetArticleDetailResp, error)
+	ListArticles(ctx context.Context, in *ListArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+	SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error)
+	// interaction 部分
+	LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error)
+	FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error)
 }
 
 type coreClient struct {
@@ -67,16 +81,6 @@ func (c *coreClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RegisterResp)
 	err := c.cc.Invoke(ctx, Core_Register_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *coreClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LoginResp)
-	err := c.cc.Invoke(ctx, Core_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -113,10 +117,80 @@ func (c *coreClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *coreClient) EmailCaptcha(ctx context.Context, in *EmailCaptchaReq, opts ...grpc.CallOption) (*EmailCaptchaResp, error) {
+func (c *coreClient) CreateArticle(ctx context.Context, in *CreateArticleReq, opts ...grpc.CallOption) (*CreateArticleResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmailCaptchaResp)
-	err := c.cc.Invoke(ctx, Core_EmailCaptcha_FullMethodName, in, out, cOpts...)
+	out := new(CreateArticleResp)
+	err := c.cc.Invoke(ctx, Core_CreateArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdateArticle(ctx context.Context, in *UpdateArticleReq, opts ...grpc.CallOption) (*UpdateArticleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateArticleResp)
+	err := c.cc.Invoke(ctx, Core_UpdateArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) DeleteArticle(ctx context.Context, in *DeleteArticleReq, opts ...grpc.CallOption) (*DeleteArticleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteArticleResp)
+	err := c.cc.Invoke(ctx, Core_DeleteArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) GetArticleDetail(ctx context.Context, in *GetArticleDetailReq, opts ...grpc.CallOption) (*GetArticleDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetArticleDetailResp)
+	err := c.cc.Invoke(ctx, Core_GetArticleDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ListArticles(ctx context.Context, in *ListArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListArticlesResp)
+	err := c.cc.Invoke(ctx, Core_ListArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchArticlesResp)
+	err := c.cc.Invoke(ctx, Core_SearchArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LikeArticleResp)
+	err := c.cc.Invoke(ctx, Core_LikeArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FavoriteArticleResp)
+	err := c.cc.Invoke(ctx, Core_FavorArticle_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -131,13 +205,21 @@ func (c *coreClient) EmailCaptcha(ctx context.Context, in *EmailCaptchaReq, opts
 type CoreServer interface {
 	// 测试接口
 	Test(context.Context, *TestRequest) (*TestResponse, error)
-	// Login 服务
+	// Login 部分
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
-	Login(context.Context, *LoginReq) (*LoginResp, error)
 	EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error)
 	ResetPasswordByEmail(context.Context, *ResetPasswordEmailReq) (*ResetPasswordEmailResp, error)
 	Logout(context.Context, *LogoutReq) (*LogoutResp, error)
-	EmailCaptcha(context.Context, *EmailCaptchaReq) (*EmailCaptchaResp, error)
+	// Article 部分
+	CreateArticle(context.Context, *CreateArticleReq) (*CreateArticleResp, error)
+	UpdateArticle(context.Context, *UpdateArticleReq) (*UpdateArticleResp, error)
+	DeleteArticle(context.Context, *DeleteArticleReq) (*DeleteArticleResp, error)
+	GetArticleDetail(context.Context, *GetArticleDetailReq) (*GetArticleDetailResp, error)
+	ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error)
+	SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error)
+	// interaction 部分
+	LikeArticle(context.Context, *LikeArticleReq) (*LikeArticleResp, error)
+	FavorArticle(context.Context, *FavoriteArticleReq) (*FavoriteArticleResp, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -154,9 +236,6 @@ func (UnimplementedCoreServer) Test(context.Context, *TestRequest) (*TestRespons
 func (UnimplementedCoreServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedCoreServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
 func (UnimplementedCoreServer) EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailLogin not implemented")
 }
@@ -166,8 +245,29 @@ func (UnimplementedCoreServer) ResetPasswordByEmail(context.Context, *ResetPassw
 func (UnimplementedCoreServer) Logout(context.Context, *LogoutReq) (*LogoutResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedCoreServer) EmailCaptcha(context.Context, *EmailCaptchaReq) (*EmailCaptchaResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmailCaptcha not implemented")
+func (UnimplementedCoreServer) CreateArticle(context.Context, *CreateArticleReq) (*CreateArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
+}
+func (UnimplementedCoreServer) UpdateArticle(context.Context, *UpdateArticleReq) (*UpdateArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticle not implemented")
+}
+func (UnimplementedCoreServer) DeleteArticle(context.Context, *DeleteArticleReq) (*DeleteArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+}
+func (UnimplementedCoreServer) GetArticleDetail(context.Context, *GetArticleDetailReq) (*GetArticleDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticleDetail not implemented")
+}
+func (UnimplementedCoreServer) ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
+}
+func (UnimplementedCoreServer) SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchArticles not implemented")
+}
+func (UnimplementedCoreServer) LikeArticle(context.Context, *LikeArticleReq) (*LikeArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LikeArticle not implemented")
+}
+func (UnimplementedCoreServer) FavorArticle(context.Context, *FavoriteArticleReq) (*FavoriteArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FavorArticle not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 func (UnimplementedCoreServer) testEmbeddedByValue()              {}
@@ -226,24 +326,6 @@ func _Core_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Core_Login_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).Login(ctx, req.(*LoginReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Core_EmailLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmailLoginReq)
 	if err := dec(in); err != nil {
@@ -298,20 +380,146 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_EmailCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailCaptchaReq)
+func _Core_CreateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateArticleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).EmailCaptcha(ctx, in)
+		return srv.(CoreServer).CreateArticle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_EmailCaptcha_FullMethodName,
+		FullMethod: Core_CreateArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).EmailCaptcha(ctx, req.(*EmailCaptchaReq))
+		return srv.(CoreServer).CreateArticle(ctx, req.(*CreateArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdateArticle(ctx, req.(*UpdateArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).DeleteArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_DeleteArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).DeleteArticle(ctx, req.(*DeleteArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_GetArticleDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetArticleDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetArticleDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetArticleDetail(ctx, req.(*GetArticleDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ListArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListArticlesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ListArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_ListArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ListArticles(ctx, req.(*ListArticlesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_SearchArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchArticlesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).SearchArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_SearchArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).SearchArticles(ctx, req.(*SearchArticlesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_LikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).LikeArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_LikeArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).LikeArticle(ctx, req.(*LikeArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_FavorArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FavoriteArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).FavorArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_FavorArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).FavorArticle(ctx, req.(*FavoriteArticleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -332,10 +540,6 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_Register_Handler,
 		},
 		{
-			MethodName: "Login",
-			Handler:    _Core_Login_Handler,
-		},
-		{
 			MethodName: "EmailLogin",
 			Handler:    _Core_EmailLogin_Handler,
 		},
@@ -348,8 +552,36 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_Logout_Handler,
 		},
 		{
-			MethodName: "EmailCaptcha",
-			Handler:    _Core_EmailCaptcha_Handler,
+			MethodName: "CreateArticle",
+			Handler:    _Core_CreateArticle_Handler,
+		},
+		{
+			MethodName: "UpdateArticle",
+			Handler:    _Core_UpdateArticle_Handler,
+		},
+		{
+			MethodName: "DeleteArticle",
+			Handler:    _Core_DeleteArticle_Handler,
+		},
+		{
+			MethodName: "GetArticleDetail",
+			Handler:    _Core_GetArticleDetail_Handler,
+		},
+		{
+			MethodName: "ListArticles",
+			Handler:    _Core_ListArticles_Handler,
+		},
+		{
+			MethodName: "SearchArticles",
+			Handler:    _Core_SearchArticles_Handler,
+		},
+		{
+			MethodName: "LikeArticle",
+			Handler:    _Core_LikeArticle_Handler,
+		},
+		{
+			MethodName: "FavorArticle",
+			Handler:    _Core_FavorArticle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

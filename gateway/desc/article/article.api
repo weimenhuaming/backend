@@ -1,0 +1,172 @@
+syntax = "v1"
+
+info (
+    title: "文章服务api"
+    desc: "文章服务api内容"
+)
+
+type (
+    // 文章信息
+    ArticleInfo {
+        Id           uint64 `json:"id"`
+        UserId       uint64 `json:"user_id"`
+        CategoryId   uint64 `json:"category_id"`
+        Title        string `json:"title"`
+        Summary      string `json:"summary"`
+        Content      string `json:"content"`
+        Cover        string `json:"cover"`
+        ViewCount    uint32 `json:"view_count"`
+        LikeCount    uint32 `json:"like_count"`
+        FavorCount   uint32 `json:"favor_count"`
+        CommentCount uint32 `json:"comment_count"`
+        CreatedAt    string `json:"created_at"`
+        UpdatedAt    string `json:"updated_at"`
+        AuthorName   string `json:"author_name"`
+        AuthorAvatar string `json:"author_avatar"`
+    }
+
+    // 创建文章
+    CreateArticleReq {
+        CategoryId uint64 `json:"category_id"`
+        Title      string `json:"title"`
+        Summary    string `json:"summary"`
+        Content    string `json:"content"`
+        Cover      string `json:"cover"`
+        UserId     uint64 `json:"user_id"`
+    }
+    CreateArticleResp {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+    }
+
+    // 更新文章
+    UpdateArticleReq {
+        Id         uint64 `json:"id"`
+        CategoryId uint64 `json:"category_id,optional"`
+        Title      string `json:"title,optional"`
+        Summary    string `json:"summary,optional"`
+        Content    string `json:"content,optional"`
+        Cover      string `json:"cover,optional"`
+    }
+    UpdateArticleResp {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+    }
+
+    // 删除文章
+    DeleteArticleReq {
+        Id uint64 `json:"id"`
+    }
+    DeleteArticleResp {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+    }
+
+    // 获取文章详情
+    GetArticleDetailReq {
+        Id uint64 `json:"id"`
+    }
+    GetArticleDetailResp {
+        Code int         `json:"code"`
+        Msg  string      `json:"msg"`
+        Data ArticleInfo `json:"data"`
+    }
+
+    // 文章列表
+    ListArticlesReq {
+        Page       uint32 `json:"page"`
+        PageSize   uint32 `json:"page_size"`
+        CategoryId uint64 `json:"category_id,optional"`
+        UserId     uint64 `json:"user_id,optional"`
+        SortBy     string `json:"sort_by,optional"`
+        SortOrder  string `json:"sort_order,optional"`
+    }
+    ListArticlesResp {
+        Code int            `json:"code"`
+        Msg  string         `json:"msg"`
+        Data ListArticlesData `json:"data"`
+    }
+    ListArticlesData {
+        Articles []ArticleInfo `json:"articles"`
+        Total    uint32        `json:"total"`
+        Page     uint32        `json:"page"`
+        PageSize uint32        `json:"page_size"`
+    }
+
+    // 搜索文章
+    SearchArticlesReq {
+        Keyword    string `json:"keyword"`
+        Page       uint32 `json:"page"`
+        PageSize   uint32 `json:"page_size"`
+        CategoryId uint64 `json:"category_id,optional"`
+    }
+    SearchArticlesResp {
+        Code int              `json:"code"`
+        Msg  string           `json:"msg"`
+        Data SearchArticlesData `json:"data"`
+    }
+    SearchArticlesData {
+        Articles []ArticleInfo `json:"articles"`
+        Total    uint32        `json:"total"`
+        Page     uint32        `json:"page"`
+        PageSize uint32        `json:"page_size"`
+    }
+
+    // 点赞文章
+    LikeArticleReq {
+        ArticleId uint64 `json:"article_id"`
+        IsLike    bool   `json:"is_like"`
+    }
+    LikeArticleResp {
+        Code int         `json:"code"`
+        Msg  string      `json:"msg"`
+        Data LikeArticleData `json:"data"`
+    }
+    LikeArticleData {
+        LikeCount uint32 `json:"like_count"`
+    }
+
+    // 收藏文章
+    FavorArticleReq {
+        ArticleId  uint64 `json:"article_id"`
+        IsFavorite bool   `json:"is_favorite"`
+    }
+    FavorArticleResp {
+        Code int              `json:"code"`
+        Msg  string           `json:"msg"`
+        Data FavorArticleData `json:"data"`
+    }
+    FavorArticleData {
+        FavorCount uint32 `json:"favor_count"`
+    }
+)
+
+// 定义文章服务api的描述
+@server (
+    group: article
+)
+service Gateway {
+    @handler createArticle
+    post /article/create (CreateArticleReq) returns (CreateArticleResp)
+
+    @handler updateArticle
+    put /article/update (UpdateArticleReq) returns (UpdateArticleResp)
+
+    @handler deleteArticle
+    delete /article/delete (DeleteArticleReq) returns (DeleteArticleResp)
+
+    @handler getArticleDetail
+    get /article/detail (GetArticleDetailReq) returns (GetArticleDetailResp)
+
+    @handler listArticles
+    get /article/list (ListArticlesReq) returns (ListArticlesResp)
+
+    @handler searchArticles
+    get /article/search (SearchArticlesReq) returns (SearchArticlesResp)
+
+    @handler likeArticle
+    post /article/like (LikeArticleReq) returns (LikeArticleResp)
+
+    @handler favoriteArticle
+    post /article/favor (FavorArticleReq) returns (FavorArticleResp)
+}

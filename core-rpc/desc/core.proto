@@ -133,6 +133,7 @@ message CreateArticleReq {
   string summary = 3;
   string content = 4;
   string cover = 5;
+  uint64 user_id = 6;
 }
 message CreateArticleResp {}
 

@@ -76,6 +76,12 @@ type (
 	}
 
     RefreshReq{}
+
+    LogoutReq{}
+    LogoutResp {
+        Code int `json:"code"`
+        Msg  string `json:"msg"`
+    }
 )
 
 //======================================================================================================================
@@ -106,4 +112,13 @@ service Gateway {
     // 通过邮箱修改密码
 	@handler reset_password_by_email
 	post /reset_password_by_email (ResetPasswordReq) returns (ResetPasswordResp)
+}
+
+@server (
+    jwt: Auth // 开启 jwt 认证
+    group: login
+)
+service Gateway {
+  @handler logout
+  post /logout (LogoutReq) returns (LogoutResp)
 }

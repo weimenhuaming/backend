@@ -727,6 +727,7 @@ type CreateArticleReq struct {
 	Summary       string                 `protobuf:"bytes,3,opt,name=summary,proto3" json:"summary,omitempty"`
 	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
 	Cover         string                 `protobuf:"bytes,5,opt,name=cover,proto3" json:"cover,omitempty"`
+	UserId        uint64                 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -794,6 +795,13 @@ func (x *CreateArticleReq) GetCover() string {
 		return x.Cover
 	}
 	return ""
+}
+
+func (x *CreateArticleReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type CreateArticleResp struct {
@@ -1669,14 +1677,15 @@ const file_desc_core_proto_rawDesc = "" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x12\x1f\n" +
 	"\vauthor_name\x18\x0e \x01(\tR\n" +
 	"authorName\x12#\n" +
-	"\rauthor_avatar\x18\x0f \x01(\tR\fauthorAvatar\"\x93\x01\n" +
+	"\rauthor_avatar\x18\x0f \x01(\tR\fauthorAvatar\"\xac\x01\n" +
 	"\x10CreateArticleReq\x12\x1f\n" +
 	"\vcategory_id\x18\x01 \x01(\x04R\n" +
 	"categoryId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
 	"\asummary\x18\x03 \x01(\tR\asummary\x12\x18\n" +
 	"\acontent\x18\x04 \x01(\tR\acontent\x12\x14\n" +
-	"\x05cover\x18\x05 \x01(\tR\x05cover\"\x13\n" +
+	"\x05cover\x18\x05 \x01(\tR\x05cover\x12\x17\n" +
+	"\auser_id\x18\x06 \x01(\x04R\x06userId\"\x13\n" +
 	"\x11CreateArticleResp\"\xa3\x01\n" +
 	"\x10UpdateArticleReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1f\n" +

@@ -2,6 +2,7 @@ package svc
 
 import (
 	"core-rpc/internal/config"
+	"core-rpc/internal/model/article"
 	"core-rpc/internal/model/user"
 	"log"
 
@@ -10,9 +11,10 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	UserModel user.UserModel
-	Cache     *redis.Redis //使用gozero自带的，他本身就是对go-redis的一个封装
+	Config       config.Config
+	UserModel    user.UserModel
+	ArticleModel article.ArticleModel
+	Cache        *redis.Redis //使用gozero自带的，他本身就是对go-redis的一个封装
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -22,8 +24,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	cache := redis.MustNewRedis(c.Cache[0]) // 支持多结点，只用第一个
 	log.Println("Redis连接成功")
 	return &ServiceContext{
-		Config:    c,
-		UserModel: user.NewUserModel(conn),
-		Cache:     cache,
+		Config:       c,
+		UserModel:    user.NewUserModel(conn),
+		ArticleModel: article.NewArticleModel(conn),
+		Cache:        cache,
 	}
 }

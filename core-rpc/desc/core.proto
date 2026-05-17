@@ -15,11 +15,21 @@ service Core {
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
   // Category 部分
-  rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
-  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
-  rpc DeleteCategory(DeleteCategoryReq) returns (DeleteCategoryResp){};  //  删除分类
+//  rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
+//  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
+//  rpc DeleteCategory(DeleteCategoryReq) returns (DeleteCategoryResp){};  //  删除分类
 
   // Article 部分
+  rpc CreateArticle(CreateArticleReq) returns (CreateArticleResp){};           // 创建文章
+  rpc UpdateArticle(UpdateArticleReq) returns (UpdateArticleResp){};           // 更新文章
+  rpc DeleteArticle(DeleteArticleReq) returns (DeleteArticleResp){};           // 删除文章
+  rpc GetArticleDetail(GetArticleDetailReq) returns (GetArticleDetailResp){};  // 获取文章详情
+  rpc ListArticles(ListArticlesReq) returns (ListArticlesResp){};              // 文章列表
+  rpc SearchArticles(SearchArticlesReq) returns (SearchArticlesResp){};        // 搜索文章
+
+  // interaction 部分
+  rpc LikeArticle(LikeArticleReq) returns (LikeArticleResp){};                 // 点赞文章
+  rpc FavorArticle(FavoriteArticleReq) returns (FavoriteArticleResp){};        // 收藏文章
 
 }
 
@@ -63,7 +73,6 @@ message RegisterResp{}
 message ResetPasswordEmailReq{
   string email = 1;
   string password = 2; // 已由 gateway 做 bcrypt，core 仅落库
-  string captcha = 3; // 已废弃：验证码仅在 gateway 校验，保留字段兼容旧客户端
 }
 message ResetPasswordEmailResp{}
 
@@ -75,25 +84,127 @@ message LogoutResp{}
 
 //======================================================================================================================
 // 分类部分
-message CreateCategoryReq {
-  string name = 1;
-}
-message CreateCategoryResp {}
-
-message CategoryInfo {
-  uint64 id = 1;
-  string name = 2;
-}
-
-message ListCategoriesReq {}
-message ListCategoriesResp {
-  repeated CategoryInfo categories = 1;
-}
-
-message DeleteCategoryReq {
-  uint64 id = 1;
-}
-message DeleteCategoryResp {}
+//message CreateCategoryReq {
+//  string name = 1;
+//}
+//message CreateCategoryResp {}
+//
+//message CategoryInfo {
+//  uint64 id = 1;
+//  string name = 2;
+//}
+//
+//message ListCategoriesReq {}
+//message ListCategoriesResp {
+//  repeated CategoryInfo categories = 1;
+//}
+//
+//message DeleteCategoryReq {
+//  uint64 id = 1;
+//}
+//message DeleteCategoryResp {}
 
 //======================================================================================================================
 // 文章部分
+// 文章信息结构
+message ArticleInfo {
+  uint64 id = 1;
+  uint64 user_id = 2;
+  uint64 category_id = 3;
+  string title = 4;
+  string summary = 5;
+  string content = 6;
+  string cover = 7;
+  uint32 view_count = 8;
+  uint32 like_count = 9;
+  uint32 favor_count = 10;
+  uint32 comment_count = 11;
+  string created_at = 12;  // 创建时间
+  string updated_at = 13;  // 更新时间
+  // 作者信息（可根据需要扩展）
+  string author_name = 14;
+  string author_avatar = 15;
+}
+
+// 创建文章
+message CreateArticleReq {
+  uint64 category_id = 1;
+  string title = 2;
+  string summary = 3;
+  string content = 4;
+  string cover = 5;
+}
+message CreateArticleResp {}
+
+// 更新文章
+message UpdateArticleReq {
+  uint64 id = 1;                 // 文章ID
+  uint64 category_id = 2;        // 分类ID（可选更新）
+  string title = 3;              // 标题（可选更新）
+  string summary = 4;            // 摘要（可选更新）
+  string content = 5;            // 内容（可选更新）
+  string cover = 6;              // 封面（可选更新）
+}
+message UpdateArticleResp {}
+
+// 删除文章（软删除）
+message DeleteArticleReq {
+  uint64 id = 1;
+}
+message DeleteArticleResp {}
+
+// 获取文章详情
+message GetArticleDetailReq {
+  uint64 id = 1;
+}
+message GetArticleDetailResp {
+  ArticleInfo article = 1;
+}
+
+// 文章列表（支持分页和筛选）
+message ListArticlesReq {
+  uint32 page = 1;              // 页码，从1开始
+  uint32 page_size = 2;         // 每页数量
+  uint64 category_id = 3;       // 按分类筛选（0表示不筛选）
+  uint64 user_id = 4;           // 按作者筛选（0表示不筛选）
+  string sort_by = 5;           // 排序字段：created_at, view_count, like_count
+  string sort_order = 6;        // 排序方式：asc, desc
+}
+message ListArticlesResp {
+  repeated ArticleInfo articles = 1;
+  uint32 total = 2;             // 总数量
+  uint32 page = 3;              // 当前页码
+  uint32 page_size = 4;         // 每页数量
+}
+
+// 搜索文章
+message SearchArticlesReq {
+  string keyword = 1;           // 搜索关键词（标题和内容）
+  uint32 page = 2;              // 页码
+  uint32 page_size = 3;         // 每页数量
+  uint64 category_id = 4;       // 按分类筛选（0表示不筛选）
+}
+message SearchArticlesResp {
+  repeated ArticleInfo articles = 1;
+  uint32 total = 2;
+  uint32 page = 3;
+  uint32 page_size = 4;
+}
+
+// 点赞文章
+message LikeArticleReq {
+  uint64 article_id = 1;
+  bool is_like = 2;             // true: 点赞, false: 取消点赞
+}
+message LikeArticleResp {
+  uint32 like_count = 1;        // 返回最新点赞数
+}
+
+// 收藏文章
+message FavoriteArticleReq {
+  uint64 article_id = 1;
+  bool is_favorite = 2;         // true: 收藏, false: 取消收藏
+}
+message FavoriteArticleResp {
+  uint32 favor_count = 1;       // 返回最新收藏数
+}

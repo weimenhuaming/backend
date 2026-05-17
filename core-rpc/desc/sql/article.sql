@@ -11,9 +11,7 @@ CREATE TABLE `article` (
    `cover` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '封面图URL',
    `view_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览量',
    `like_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '点赞数',
-   `bookmark_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '收藏数',
+   `favor_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '收藏数',
    `comment_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '评论数',
-   PRIMARY KEY (`id`),
-   KEY `idx_user_id` (`user_id`) COMMENT '作者索引',
-   KEY `idx_category_id` (`category_id`) COMMENT '分类索引',
+   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章表';

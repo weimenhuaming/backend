@@ -105,7 +105,6 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		// 5. 将用户信息注入上下文
 		ctx = context.WithValue(ctx, "X-user-Id", AccessClaims.Id)
-		ctx = context.WithValue(ctx, "access_token", AccessToken) // 存原始 token，方便登出时拉黑
 		r = r.WithContext(ctx)
 		next(w, r)
 	}

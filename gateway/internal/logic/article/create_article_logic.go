@@ -26,7 +26,7 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 
 func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *types.CreateArticleResp, err error) {
 	// basic validation
-	if req.Title == "" || req.Content == "" {
+	if req.Title == "" && req.Content == "" {
 		return &types.CreateArticleResp{
 			Code: 400,
 			Msg:  "title is required",

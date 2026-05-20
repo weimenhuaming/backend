@@ -9,7 +9,7 @@ CREATE TABLE `user` (
     `avatar` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '头像URL',
     `email` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '邮箱',
     `role` VARCHAR(32) NOT NULL DEFAULT 'user' COMMENT '权限：admin/user/guest',
-    `sex` VARCHAR(8) NOT NULL DEFAULT 'unknown' COMMENT '性别：male/female/unknown',
+    `sex` VARCHAR(8) NOT NULL DEFAULT '未知' COMMENT '性别：男/女/未知',
     `age` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '年龄',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_name` (`name`) COMMENT '用户名唯一索引',

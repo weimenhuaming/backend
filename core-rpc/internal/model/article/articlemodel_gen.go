@@ -30,6 +30,7 @@ type (
 		Update(ctx context.Context, data *Article) error
 		Delete(ctx context.Context, id uint64) error
 		SoftDelete(ctx context.Context, id uint64) error
+		CountByCategory(ctx context.Context, categoryId uint64) (int64, error)
 	}
 
 	defaultArticleModel struct {
@@ -92,6 +93,16 @@ func (m *defaultArticleModel) Update(ctx context.Context, data *Article) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, articleRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.CategoryId, data.Title, data.Summary, data.Content, data.Cover, data.ViewCount, data.LikeCount, data.FavorCount, data.CommentCount, data.Id)
 	return err
+}
+
+func (m *defaultArticleModel) CountByCategory(ctx context.Context, categoryId uint64) (int64, error) {
+	query := fmt.Sprintf("select count(1) from %s where `category_id` = ? and deleted_at IS NULL", m.table)
+	var cnt int64
+	err := m.conn.QueryRowCtx(ctx, &cnt, query, categoryId)
+	if err != nil {
+		return 0, err
+	}
+	return cnt, nil
 }
 
 func (m *defaultArticleModel) tableName() string {

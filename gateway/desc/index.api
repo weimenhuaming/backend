@@ -8,3 +8,4 @@ info (
 // 引入依赖文件
 import "./login/login.api"
 import "./article/article.api"
+import "./article/category.api"

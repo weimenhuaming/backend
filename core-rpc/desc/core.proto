@@ -151,6 +151,7 @@ message UpdateArticleResp {}
 // 删除文章（软删除）
 message DeleteArticleReq {
   uint64 id = 1;
+  uint64 user_id=2;
 }
 message DeleteArticleResp {}
 

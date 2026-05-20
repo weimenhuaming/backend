@@ -16,7 +16,7 @@ type (
 	ArticleModel interface {
 		articleModel
 		withSession(session sqlx.Session) ArticleModel
-		SoftDelete(ctx context.Context, id uint64) error
+		SoftDelete(ctx context.Context, id uint64, userId uint64) error
 	}
 
 	customArticleModel struct {
@@ -35,9 +35,9 @@ func (m *customArticleModel) withSession(session sqlx.Session) ArticleModel {
 	return NewArticleModel(sqlx.NewSqlConnFromSession(session))
 }
 
-// SoftDelete 设置 deleted_at 字段（软删除）
-func (m *defaultArticleModel) SoftDelete(ctx context.Context, id uint64) error {
-	query := fmt.Sprintf("UPDATE %s SET deleted_at = ? WHERE id = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, time.Now(), id)
+// SoftDelete 设置 deleted_at 字段（软删除），仅当 article.id 和 article.user_id 同时匹配时执行
+func (m *defaultArticleModel) SoftDelete(ctx context.Context, id uint64, userId uint64) error {
+	query := fmt.Sprintf("UPDATE %s SET deleted_at = ? WHERE id = ? AND user_id = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, time.Now(), id, userId)
 	return err
 }

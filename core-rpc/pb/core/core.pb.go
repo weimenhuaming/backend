@@ -965,6 +965,7 @@ func (*UpdateArticleResp) Descriptor() ([]byte, []int) {
 type DeleteArticleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1002,6 +1003,13 @@ func (*DeleteArticleReq) Descriptor() ([]byte, []int) {
 func (x *DeleteArticleReq) GetId() uint64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *DeleteArticleReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -1695,9 +1703,10 @@ const file_desc_core_proto_rawDesc = "" +
 	"\asummary\x18\x04 \x01(\tR\asummary\x12\x18\n" +
 	"\acontent\x18\x05 \x01(\tR\acontent\x12\x14\n" +
 	"\x05cover\x18\x06 \x01(\tR\x05cover\"\x13\n" +
-	"\x11UpdateArticleResp\"\"\n" +
+	"\x11UpdateArticleResp\";\n" +
 	"\x10DeleteArticleReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x13\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"\x13\n" +
 	"\x11DeleteArticleResp\"%\n" +
 	"\x13GetArticleDetailReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"C\n" +

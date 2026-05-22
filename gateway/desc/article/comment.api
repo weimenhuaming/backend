@@ -128,7 +128,10 @@ type (
 )
 service Gateway {
     @handler getArticleComments
-    get /comment/article/list (GetArticleCommentsReq) returns (GetArticleCommentsResp)
+    get /comment/article_list (GetArticleCommentsReq) returns (GetArticleCommentsResp)
+
+    @handler getCommentReplies
+    get /comment/art_replies_list (GetCommentRepliesReq) returns (GetCommentRepliesResp)
 }
 
 // 需要认证的接口
@@ -145,9 +148,6 @@ service Gateway {
 
     @handler deleteComment
     delete /comment/delete (DeleteCommentReq) returns (DeleteCommentResp)
-
-    @handler getCommentReplies
-    get /comment/replies/list (GetCommentRepliesReq) returns (GetCommentRepliesResp)
 
     @handler getUserComments
     get /comment/user/list (GetUserCommentsReq) returns (GetUserCommentsResp)

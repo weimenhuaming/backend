@@ -36,15 +36,16 @@ type CommentInfo struct {
 	Id          uint64        `json:"id"`
 	ArticleId   uint64        `json:"article_id"`
 	UserId      uint64        `json:"user_id"`
-	ParentId    uint64        `json:"parent_id"`              // 0表示一级评论，非0表示回复的评论ID
-	ReplyToId   uint64        `json:"reply_to_id,optional"`   // 回复的目标用户ID
-	ReplyToName string        `json:"reply_to_name,optional"` // 回复的目标用户名
+	ParentId    uint64        `json:"parent_id"` // 父评论ID，0表示一级评论
+	RootId      uint64        `json:"root_id"`   // 根评论ID，一级评论时等于id
+	ReplyToId   uint64        `json:"reply_to_id,optional"`
+	ReplyToName string        `json:"reply_to_name,optional"`
 	Content     string        `json:"content"`
-	LikeCount   uint32        `json:"like_count"` // 点赞数
+	LikeCount   uint32        `json:"like_count"`
+	ChildCount  uint32        `json:"child_count"` // 子评论数量
 	CreatedAt   string        `json:"created_at"`
 	UserName    string        `json:"user_name"`
 	UserAvatar  string        `json:"user_avatar"`
-	ReplyCount  uint32        `json:"reply_count"`      // 回复数量（仅一级评论有效）
 	Replies     []CommentInfo `json:"replies,optional"` // 回复列表（最多显示3条）
 }
 
@@ -83,10 +84,11 @@ type CreateReplyData struct {
 }
 
 type CreateReplyReq struct {
-	CommentId   uint64 `json:"comment_id"` // 被回复的一级评论ID
+	RootId      uint64 `json:"root_id"`   // 根评论ID（一级评论的ID）
+	ParentId    uint64 `json:"parent_id"` // 被回复的评论ID
 	UserId      uint64 `json:"user_id"`
-	ReplyToId   uint64 `json:"reply_to_id"`   // 回复的目标用户ID
-	ReplyToName string `json:"reply_to_name"` // 回复的目标用户名
+	ReplyToId   uint64 `json:"reply_to_id"`
+	ReplyToName string `json:"reply_to_name"`
 	Content     string `json:"content"`
 }
 
@@ -176,9 +178,9 @@ type GetCommentRepliesData struct {
 }
 
 type GetCommentRepliesReq struct {
-	CommentId uint64 `json:"comment_id"`
-	Page      uint32 `json:"page"`
-	PageSize  uint32 `json:"page_size"`
+	RootId   uint64 `json:"root_id"` // 根评论ID
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
 }
 
 type GetCommentRepliesResp struct {

@@ -1,0 +1,20 @@
+CREATE TABLE `comment` (
+                           `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+                           `article_id` bigint unsigned NOT NULL COMMENT '文章ID',
+                           `user_id` bigint unsigned NOT NULL COMMENT '用户ID',
+                           `parent_id` bigint unsigned NOT NULL DEFAULT 0 COMMENT '父评论ID（一级评论=0，二级评论=一级评论ID）',
+                           `root_id` bigint unsigned NOT NULL DEFAULT 0 COMMENT '根评论ID（一级评论=id，二级评论=一级评论ID）',
+                           `reply_to_id` bigint unsigned DEFAULT 0 COMMENT '回复目标用户ID',
+                           `reply_to_name` varchar(100) DEFAULT '' COMMENT '回复目标用户名',
+                           `content` text NOT NULL COMMENT '评论内容',
+                           `like_count` int unsigned NOT NULL DEFAULT 0 COMMENT '点赞数',
+                           `child_count` int unsigned NOT NULL DEFAULT 0 COMMENT '子评论数',
+                           `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                           `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+                           PRIMARY KEY (`id`),
+                           KEY `idx_article_parent` (`article_id`, `parent_id`),
+                           KEY `idx_root_id` (`root_id`),
+                           KEY `idx_article_created` (`article_id`, `created_at`),
+                           KEY `idx_user_id` (`user_id`),
+                           KEY `idx_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论表';

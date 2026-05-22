@@ -88,7 +88,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/comment/article/list",
+				Path:    "/comment/art_replies_list",
+				Handler: comment.GetCommentRepliesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/comment/article_list",
 				Handler: comment.GetArticleCommentsHandler(serverCtx),
 			},
 		},
@@ -107,11 +112,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodDelete,
 					Path:    "/comment/delete",
 					Handler: comment.DeleteCommentHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/comment/replies/list",
-					Handler: comment.GetCommentRepliesHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

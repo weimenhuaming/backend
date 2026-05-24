@@ -13,7 +13,6 @@ type CategoryModel interface {
 	Insert(ctx context.Context, data *Category) (sql.Result, error)
 	FindAll(ctx context.Context) ([]*Category, error)
 	FindOneByName(ctx context.Context, name string) (*Category, error)
-	FindOneBySlug(ctx context.Context, slug string) (*Category, error)
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -26,7 +25,6 @@ type defaultCategoryModel struct {
 type Category struct {
 	Id          uint64         `db:"id"`
 	Name        string         `db:"name"`
-	Slug        string         `db:"slug"`
 	Description sql.NullString `db:"description"`
 	CreatedAt   time.Time      `db:"created_at"`
 	UpdatedAt   time.Time      `db:"updated_at"`
@@ -42,17 +40,17 @@ func NewCategoryModel(conn sqlx.SqlConn) CategoryModel {
 }
 
 func (m *defaultCategoryModel) Insert(ctx context.Context, data *Category) (sql.Result, error) {
-	query := "insert into `category` (`name`, `slug`, `description`, `created_at`, `updated_at`, `deleted_at`) values (?, ?, ?, ?, ?, ?)"
+	query := "insert into `category` (`name`, `description`, `created_at`, `updated_at`, `deleted_at`) values (?, ?, ?, ?, ?)"
 	now := data.CreatedAt
 	if now.IsZero() {
 		now = time.Now()
 	}
-	ret, err := m.conn.ExecCtx(ctx, query, data.Name, data.Slug, data.Description, now, now, data.DeletedAt)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Name, data.Description, now, now, data.DeletedAt)
 	return ret, err
 }
 
 func (m *defaultCategoryModel) FindAll(ctx context.Context) ([]*Category, error) {
-	query := "select `id`, `name`, `slug`, `description`, `created_at`, `updated_at`, `deleted_at` from `category` where deleted_at IS NULL order by id desc"
+	query := "select `id`, `name`, `description`, `created_at`, `updated_at`, `deleted_at` from `category` where deleted_at IS NULL order by id desc"
 	var resp []*Category
 	err := m.conn.QueryRowsCtx(ctx, &resp, query)
 	return resp, err
@@ -60,22 +58,8 @@ func (m *defaultCategoryModel) FindAll(ctx context.Context) ([]*Category, error)
 
 func (m *defaultCategoryModel) FindOneByName(ctx context.Context, name string) (*Category, error) {
 	var resp Category
-	query := "select `id`, `name`, `slug`, `description`, `created_at`, `updated_at`, `deleted_at` from `category` where `name` = ? limit 1"
+	query := "select `id`, `name`, `description`, `created_at`, `updated_at`, `deleted_at` from `category` where `name` = ? limit 1"
 	err := m.conn.QueryRowCtx(ctx, &resp, query, name)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlx.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
-func (m *defaultCategoryModel) FindOneBySlug(ctx context.Context, slug string) (*Category, error) {
-	var resp Category
-	query := "select `id`, `name`, `slug`, `description`, `created_at`, `updated_at`, `deleted_at` from `category` where `slug` = ? limit 1"
-	err := m.conn.QueryRowCtx(ctx, &resp, query, slug)
 	switch err {
 	case nil:
 		return &resp, nil

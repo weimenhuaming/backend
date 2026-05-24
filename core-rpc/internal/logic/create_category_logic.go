@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strings"
 
 	"core-rpc/internal/model/category"
 	"core-rpc/internal/svc"
@@ -35,12 +34,9 @@ func (l *CreateCategoryLogic) CreateCategory(in *core.CreateCategoryReq) (*core.
 		return nil, errors.New("category name is required")
 	}
 
-	// prepare slug: if provided in request name contains spaces, create slug
-	slug := strings.ToLower(strings.ReplaceAll(in.Name, " ", "-"))
-
 	var err error
 
-	// check by name or slug
+	// check by name
 	_, err = l.svcCtx.CategoryModel.FindOneByName(l.ctx, in.Name)
 	if err == nil {
 		return nil, errors.New("category already exists")
@@ -48,17 +44,8 @@ func (l *CreateCategoryLogic) CreateCategory(in *core.CreateCategoryReq) (*core.
 	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
 		return nil, err
 	}
-	_, err = l.svcCtx.CategoryModel.FindOneBySlug(l.ctx, slug)
-	if err == nil {
-		return nil, errors.New("category slug already exists")
-	}
-	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
-		return nil, err
-	}
-
 	newCat := &category.Category{
 		Name:        in.Name,
-		Slug:        slug,
 		Description: sql.NullString{String: "", Valid: false},
 	}
 

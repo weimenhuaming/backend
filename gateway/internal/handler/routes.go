@@ -60,23 +60,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/category/create",
-				Handler: article.CreateCategoryHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodDelete,
-				Path:    "/category/delete",
-				Handler: article.DeleteCategoryHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/category/list",
-				Handler: article.ListCategoriesHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/category/create",
+					Handler: article.CreateCategoryHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/category/delete",
+					Handler: article.DeleteCategoryHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/category/list",
+					Handler: article.ListCategoriesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
 	server.AddRoutes(

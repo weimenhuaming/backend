@@ -7,5 +7,5 @@ CREATE TABLE `interaction_comment` (
        `article_id` BIGINT UNSIGNED NOT NULL COMMENT '文章ID',
        `content` TEXT NOT NULL COMMENT '评论内容',
        PRIMARY KEY (`id`),
-       KEY `idx_article_id` (`article_id`) COMMENT '文章索引',
+       KEY `idx_article_id` (`article_id`) COMMENT '文章索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论互动表';

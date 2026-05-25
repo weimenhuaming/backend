@@ -27,7 +27,7 @@ func NewGetArticleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (*core.GetArticleDetailResp, error) {
 	// 读取文章
-	a, err := l.svcCtx.ArticleModel.FindOne(l.ctx, in.GetId())
+	a, err := l.svcCtx.ArticleModel.FindOneActive(l.ctx, in.GetId())
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
 			return nil, nil

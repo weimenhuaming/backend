@@ -30,7 +30,7 @@ func (l *DeleteArticleLogic) DeleteArticle(in *core.DeleteArticleReq) (*core.Del
 		return nil, errors.New("missing user id")
 	}
 
-	a, err := l.svcCtx.ArticleModel.FindOne(l.ctx, in.GetId())
+	a, err := l.svcCtx.ArticleModel.FindOneActive(l.ctx, in.GetId())
 	if err != nil {
 		return nil, err
 	}

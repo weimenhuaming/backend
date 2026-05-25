@@ -112,26 +112,6 @@ message DeleteCategoryReq {
 }
 message DeleteCategoryResp {}
 
-//message CreateCategoryReq {
-//  string name = 1;
-//}
-//message CreateCategoryResp {}
-//
-//message CategoryInfo {
-//  uint64 id = 1;
-//  string name = 2;
-//}
-//
-//message ListCategoriesReq {}
-//message ListCategoriesResp {
-//  repeated CategoryInfo categories = 1;
-//}
-//
-//message DeleteCategoryReq {
-//  uint64 id = 1;
-//}
-//message DeleteCategoryResp {}
-
 //======================================================================================================================
 // 文章部分
 

@@ -15,9 +15,9 @@ service Core {
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
   // Category 部分
-//  rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
-//  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
-//  rpc DeleteCategory(DeleteCategoryReq) returns (DeleteCategoryResp){};  //  删除分类
+  rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
+  rpc DeleteCategory(DeleteCategoryReq) returns (DeleteCategoryResp){};  //  删除分类
 
   // Article 部分
   rpc CreateArticle(CreateArticleReq) returns (CreateArticleResp){};           // 创建文章
@@ -92,6 +92,25 @@ message LogoutResp{}
 
 //======================================================================================================================
 // 分类部分
+message CreateCategoryReq {
+  string name = 1;
+}
+message CreateCategoryResp {}
+
+message CategoryInfo {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message ListCategoriesReq {}
+message ListCategoriesResp {
+  repeated CategoryInfo categories = 1;
+}
+
+message DeleteCategoryReq {
+  uint64 id = 1;
+}
+message DeleteCategoryResp {}
 
 //message CreateCategoryReq {
 //  string name = 1;

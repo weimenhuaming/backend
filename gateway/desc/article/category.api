@@ -1,0 +1,60 @@
+syntax = "v1"
+
+info (
+	title: "分类服务api"
+	desc: "博客分类（如 前端/后端/Java/Go 等）相关接口"
+)
+
+type (
+	// 分类信息
+	CategoryInfo {
+		Id   uint64 `json:"id"`
+		Name string `json:"name"`
+	}
+
+	// 创建分类
+	CreateCategoryReq {
+		Name string `json:"name"`
+	}
+	CreateCategoryResp {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
+
+	// 列出分类
+	ListCategoriesReq {
+	}
+	ListCategoriesResp {
+		Code int               `json:"code"`
+		Msg  string            `json:"msg"`
+		Data ListCategoriesData `json:"data"`
+	}
+	ListCategoriesData {
+		Categories []CategoryInfo `json:"categories"`
+	}
+
+	// 删除分类
+	DeleteCategoryReq {
+		Id uint64 `json:"id"`
+	}
+	DeleteCategoryResp {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
+)
+
+@server (
+	group: article
+)
+service Gateway {
+	@handler createCategory
+	post /category/create (CreateCategoryReq) returns (CreateCategoryResp)
+
+	@handler listCategories
+	get /category/list (ListCategoriesReq) returns (ListCategoriesResp)
+
+	@handler deleteCategory
+	delete /category/delete (DeleteCategoryReq) returns (DeleteCategoryResp)
+}
+
+

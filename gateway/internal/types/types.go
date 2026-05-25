@@ -32,6 +32,11 @@ type CaptchaResp struct {
 	Data CaptchaData `json:"data"`
 }
 
+type CategoryInfo struct {
+	Id   uint64 `json:"id"`
+	Name string `json:"name"`
+}
+
 type CommentInfo struct {
 	Id          uint64        `json:"id"`
 	ArticleId   uint64        `json:"article_id"`
@@ -59,6 +64,15 @@ type CreateArticleReq struct {
 }
 
 type CreateArticleResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type CreateCategoryReq struct {
+	Name string `json:"name"`
+}
+
+type CreateCategoryResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -103,6 +117,15 @@ type DeleteArticleReq struct {
 }
 
 type DeleteArticleResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type DeleteCategoryReq struct {
+	Id uint64 `json:"id"`
+}
+
+type DeleteCategoryResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -243,6 +266,19 @@ type ListArticlesResp struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data ListArticlesData `json:"data"`
+}
+
+type ListCategoriesData struct {
+	Categories []CategoryInfo `json:"categories"`
+}
+
+type ListCategoriesReq struct {
+}
+
+type ListCategoriesResp struct {
+	Code int                `json:"code"`
+	Msg  string             `json:"msg"`
+	Data ListCategoriesData `json:"data"`
 }
 
 type LoginData struct {

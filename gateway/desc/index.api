@@ -9,3 +9,4 @@ info (
 import "./login/login.api"
 import "./article/article.api"
 import "./article/comment.api"
+import "./article/category.api"

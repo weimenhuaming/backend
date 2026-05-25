@@ -18,16 +18,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodPost,
-				Path:    "/article/create",
-				Handler: article.CreateArticleHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodDelete,
-				Path:    "/article/delete",
-				Handler: article.DeleteArticleHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodGet,
 				Path:    "/article/detail",
 				Handler: article.GetArticleDetailHandler(serverCtx),
@@ -52,12 +42,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/article/search",
 				Handler: article.SearchArticlesHandler(serverCtx),
 			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/article/update",
-				Handler: article.UpdateArticleHandler(serverCtx),
-			},
 		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/article/create",
+					Handler: article.CreateArticleHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/article/delete",
+					Handler: article.DeleteArticleHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/article/update",
+					Handler: article.UpdateArticleHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 
 	server.AddRoutes(
@@ -168,6 +176,5 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }

@@ -111,34 +111,6 @@ type (
         Page     uint32        `json:"page"`
         PageSize uint32        `json:"page_size"`
     }
-
-    // 点赞文章
-    LikeArticleReq {
-        ArticleId uint64 `json:"article_id"`
-        IsLike    bool   `json:"is_like"`
-    }
-    LikeArticleResp {
-        Code int         `json:"code"`
-        Msg  string      `json:"msg"`
-        Data LikeArticleData `json:"data"`
-    }
-    LikeArticleData {
-        LikeCount uint32 `json:"like_count"`
-    }
-
-    // 收藏文章
-    FavorArticleReq {
-        ArticleId  uint64 `json:"article_id"`
-        IsFavorite bool   `json:"is_favorite"`
-    }
-    FavorArticleResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data FavorArticleData `json:"data"`
-    }
-    FavorArticleData {
-        FavorCount uint32 `json:"favor_count"`
-    }
 )
 
 // 定义文章服务api的描述
@@ -146,15 +118,6 @@ type (
     group: article
 )
 service Gateway {
-    @handler createArticle
-    post /article/create (CreateArticleReq) returns (CreateArticleResp)
-
-    @handler updateArticle
-    put /article/update (UpdateArticleReq) returns (UpdateArticleResp)
-
-    @handler deleteArticle
-    delete /article/delete (DeleteArticleReq) returns (DeleteArticleResp)
-
     @handler getArticleDetail
     get /article/detail (GetArticleDetailReq) returns (GetArticleDetailResp)
 
@@ -163,10 +126,21 @@ service Gateway {
 
     @handler searchArticles
     get /article/search (SearchArticlesReq) returns (SearchArticlesResp)
+}
 
-    @handler likeArticle
-    post /article/like (LikeArticleReq) returns (LikeArticleResp)
 
-    @handler favoriteArticle
-    post /article/favor (FavorArticleReq) returns (FavorArticleResp)
+@server (
+    middleware: AuthMiddleware // 认证中间件，所有请求都需要经过这个中间件进行认证
+    group: article
+)
+service Gateway {
+     @handler createArticle
+     post /article/create (CreateArticleReq) returns (CreateArticleResp)
+
+     @handler updateArticle
+     put /article/update (UpdateArticleReq) returns (UpdateArticleResp)
+
+     @handler deleteArticle
+     delete /article/delete (DeleteArticleReq) returns (DeleteArticleResp)
+
 }

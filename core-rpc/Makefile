@@ -15,3 +15,6 @@ core-mysql-user-like:
 
 core-mysql-user-favor:
 	goctl model mysql ddl -src desc/sql/interaction_favor.sql -dir ./internal/model/favor
+
+core-mysql-user-category:
+	goctl model mysql ddl -src desc/sql/category.sql -dir ./internal/model/category

@@ -29,7 +29,6 @@ type (
 		FindOne(ctx context.Context, id uint64) (*Article, error)
 		Update(ctx context.Context, data *Article) error
 		Delete(ctx context.Context, id uint64) error
-		SoftDelete(ctx context.Context, id uint64) error
 		CountByCategory(ctx context.Context, categoryId uint64) (int64, error)
 	}
 

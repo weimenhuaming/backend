@@ -40,7 +40,7 @@ func (l *RegisterLogic) Register(in *core.RegisterReq) (*core.RegisterResp, erro
 		Email:    in.Email,
 		Password: in.Password,
 		Role:     "user",
-		Sex:      "unknown",
+		Sex:      "未知",
 		Age:      0,
 		Phone:    "",
 		Avatar:   "",

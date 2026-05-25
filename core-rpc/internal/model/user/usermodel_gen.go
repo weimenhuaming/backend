@@ -39,17 +39,17 @@ type (
 
 	User struct {
 		Id        uint64       `db:"id"`         // 主键ID
+		CreatedAt time.Time    `db:"created_at"` // 创建时间
+		UpdatedAt time.Time    `db:"updated_at"` // 更新时间
+		DeletedAt sql.NullTime `db:"deleted_at"` // 软删除时间
 		Name      string       `db:"name"`       // 用户名
 		Password  string       `db:"password"`   // 密码
 		Phone     string       `db:"phone"`      // 手机号
 		Avatar    string       `db:"avatar"`     // 头像URL
 		Email     string       `db:"email"`      // 邮箱
 		Role      string       `db:"role"`       // 权限：admin/user/guest
-		Sex       string       `db:"sex"`        // 性别：male/female/unknown
+		Sex       string       `db:"sex"`        // 性别：男/女/未知
 		Age       uint64       `db:"age"`        // 年龄
-		CreatedAt time.Time    `db:"created_at"` // 创建时间
-		UpdatedAt time.Time    `db:"updated_at"` // 更新时间
-		DeletedAt sql.NullTime `db:"deleted_at"` // 软删除时间
 	}
 )
 
@@ -96,13 +96,13 @@ func (m *defaultUserModel) FindOneByName(ctx context.Context, name string) (*Use
 
 func (m *defaultUserModel) Insert(ctx context.Context, data *User) (sql.Result, error) {
 	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Name, data.Password, data.Phone, data.Avatar, data.Email, data.Role, data.Sex, data.Age, data.DeletedAt)
+	ret, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.Name, data.Password, data.Phone, data.Avatar, data.Email, data.Role, data.Sex, data.Age)
 	return ret, err
 }
 
 func (m *defaultUserModel) Update(ctx context.Context, newData *User) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.Name, newData.Password, newData.Phone, newData.Avatar, newData.Email, newData.Role, newData.Sex, newData.Age, newData.DeletedAt, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.DeletedAt, newData.Name, newData.Password, newData.Phone, newData.Avatar, newData.Email, newData.Role, newData.Sex, newData.Age, newData.Id)
 	return err
 }
 

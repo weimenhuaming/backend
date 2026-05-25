@@ -75,8 +75,6 @@ type (
 		Msg  string `json:"msg"`
 	}
 
-    RefreshReq{}
-
     LogoutReq{}
     LogoutResp {
         Code int `json:"code"`
@@ -90,9 +88,6 @@ type (
 	group: login
 )
 service Gateway {
-    @handler RefreshToken
-    post /refresh (RefreshReq) returns (LoginResp)
-
     // 邮箱登入操作
 	@handler emailLogin
 	post /emaillogin (LoginEmailReq) returns (LoginResp)

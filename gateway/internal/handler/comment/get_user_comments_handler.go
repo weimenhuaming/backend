@@ -1,24 +1,27 @@
-package login
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
+package comment
 
 import (
 	"net/http"
 
-	"gateway/internal/logic/login"
+	"gateway/internal/logic/comment"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func RefreshTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetUserCommentsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.RefreshReq
+		var req types.GetUserCommentsReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := login.NewRefreshTokenLogic(r.Context(), svcCtx)
-		resp, err := l.RefreshToken(&req)
+		l := comment.NewGetUserCommentsLogic(r.Context(), svcCtx)
+		resp, err := l.GetUserComments(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

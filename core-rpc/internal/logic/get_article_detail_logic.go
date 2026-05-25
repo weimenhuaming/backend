@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type GetArticleDetailLogic struct {
@@ -27,6 +29,9 @@ func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (
 	// 读取文章
 	a, err := l.svcCtx.ArticleModel.FindOne(l.ctx, in.GetId())
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

@@ -24,18 +24,6 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListCategoriesLogic) ListCategories(in *core.ListCategoriesReq) (*core.ListCategoriesResp, error) {
-	cats, err := l.svcCtx.CategoryModel.FindAll(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 
-	resp := &core.ListCategoriesResp{}
-	for _, c := range cats {
-		resp.Categories = append(resp.Categories, &core.CategoryInfo{
-			Id:   c.Id,
-			Name: c.Name,
-		})
-	}
-
-	return resp, nil
+	return nil, nil
 }

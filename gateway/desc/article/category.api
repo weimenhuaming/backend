@@ -45,7 +45,7 @@ type (
 
 @server (
 	middleware: AuthMiddleware // 认证中间件，所有请求都需要经过这个中间件进行认证
-	group: article
+	group: category
 )
 service Gateway {
 	@handler createCategory
@@ -56,7 +56,7 @@ service Gateway {
 }
 
 @server (
-	group: article
+	group: category
 )
 service Gateway {
 	@handler listCategories

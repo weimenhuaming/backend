@@ -37,6 +37,23 @@ type CategoryInfo struct {
 	Name string `json:"name"`
 }
 
+type CommentInfo struct {
+	Id          uint64        `json:"id"`
+	ArticleId   uint64        `json:"article_id"`
+	UserId      uint64        `json:"user_id"`
+	ParentId    uint64        `json:"parent_id"` // 父评论ID，0表示一级评论
+	RootId      uint64        `json:"root_id"`   // 根评论ID，一级评论时等于id
+	ReplyToId   uint64        `json:"reply_to_id,optional"`
+	ReplyToName string        `json:"reply_to_name,optional"`
+	Content     string        `json:"content"`
+	LikeCount   uint32        `json:"like_count"`
+	ChildCount  uint32        `json:"child_count"` // 子评论数量
+	CreatedAt   string        `json:"created_at"`
+	UserName    string        `json:"user_name"`
+	UserAvatar  string        `json:"user_avatar"`
+	Replies     []CommentInfo `json:"replies,optional"` // 回复列表（最多显示3条）
+}
+
 type CreateArticleReq struct {
 	CategoryId uint64 `json:"category_id"`
 	Title      string `json:"title"`
@@ -60,6 +77,41 @@ type CreateCategoryResp struct {
 	Msg  string `json:"msg"`
 }
 
+type CreateCommentData struct {
+	CommentId uint64 `json:"comment_id"`
+}
+
+type CreateCommentReq struct {
+	ArticleId uint64 `json:"article_id"`
+	UserId    uint64 `json:"user_id"`
+	Content   string `json:"content"`
+}
+
+type CreateCommentResp struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data CreateCommentData `json:"data"`
+}
+
+type CreateReplyData struct {
+	ReplyId uint64 `json:"reply_id"`
+}
+
+type CreateReplyReq struct {
+	RootId      uint64 `json:"root_id"`   // 根评论ID（一级评论的ID）
+	ParentId    uint64 `json:"parent_id"` // 被回复的评论ID
+	UserId      uint64 `json:"user_id"`
+	ReplyToId   uint64 `json:"reply_to_id"`
+	ReplyToName string `json:"reply_to_name"`
+	Content     string `json:"content"`
+}
+
+type CreateReplyResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data CreateReplyData `json:"data"`
+}
+
 type DeleteArticleReq struct {
 	Id uint64 `json:"id"`
 }
@@ -74,6 +126,15 @@ type DeleteCategoryReq struct {
 }
 
 type DeleteCategoryResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type DeleteCommentReq struct {
+	Id uint64 `json:"id"`
+}
+
+type DeleteCommentResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -102,6 +163,26 @@ type FavorArticleResp struct {
 	Data FavorArticleData `json:"data"`
 }
 
+type GetArticleCommentsData struct {
+	Comments []CommentInfo `json:"comments"`
+	Total    uint32        `json:"total"`
+	Page     uint32        `json:"page"`
+	PageSize uint32        `json:"page_size"`
+}
+
+type GetArticleCommentsReq struct {
+	ArticleId uint64 `json:"article_id"`
+	Page      uint32 `json:"page"`
+	PageSize  uint32 `json:"page_size"`
+	OrderBy   string `json:"order_by,optional"` // hot, time
+}
+
+type GetArticleCommentsResp struct {
+	Code int                    `json:"code"`
+	Msg  string                 `json:"msg"`
+	Data GetArticleCommentsData `json:"data"`
+}
+
 type GetArticleDetailReq struct {
 	Id uint64 `json:"id"`
 }
@@ -110,6 +191,44 @@ type GetArticleDetailResp struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data ArticleInfo `json:"data"`
+}
+
+type GetCommentRepliesData struct {
+	Replies  []CommentInfo `json:"replies"`
+	Total    uint32        `json:"total"`
+	Page     uint32        `json:"page"`
+	PageSize uint32        `json:"page_size"`
+}
+
+type GetCommentRepliesReq struct {
+	RootId   uint64 `json:"root_id"` // 根评论ID
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
+}
+
+type GetCommentRepliesResp struct {
+	Code int                   `json:"code"`
+	Msg  string                `json:"msg"`
+	Data GetCommentRepliesData `json:"data"`
+}
+
+type GetUserCommentsData struct {
+	Comments []CommentInfo `json:"comments"`
+	Total    uint32        `json:"total"`
+	Page     uint32        `json:"page"`
+	PageSize uint32        `json:"page_size"`
+}
+
+type GetUserCommentsReq struct {
+	UserId   uint64 `json:"user_id"`
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
+}
+
+type GetUserCommentsResp struct {
+	Code int                 `json:"code"`
+	Msg  string              `json:"msg"`
+	Data GetUserCommentsData `json:"data"`
 }
 
 type LikeArticleData struct {
@@ -193,9 +312,6 @@ type LogoutReq struct {
 type LogoutResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
-}
-
-type RefreshReq struct {
 }
 
 type RegisterReq struct {

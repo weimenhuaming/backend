@@ -30,7 +30,15 @@ service Core {
   // interaction 部分
   rpc LikeArticle(LikeArticleReq) returns (LikeArticleResp){};                 // 点赞文章
   rpc FavorArticle(FavoriteArticleReq) returns (FavoriteArticleResp){};        // 收藏文章
+  rpc LikeComment(LikeCommentReq) returns(LikeCommentResp){};
 
+  // comment 部分
+  rpc CreateComment(CreateCommentReq) returns(CreateCommentResp){};
+  rpc CreateReply(CreateReplyReq) returns(CreateReplyResp){};
+  rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentResp){};
+  rpc GetArticleComments(GetArticleCommentsReq) returns(GetArticleCommentsResp){};
+  rpc GetCommentReplies(GetCommentRepliesReq) returns(GetCommentRepliesResp){};
+  rpc GetUserComments(GetUserCommentsReq) returns(GetUserCommentsResp){};
 }
 
 // Test 接口的请求和响应消息
@@ -104,8 +112,29 @@ message DeleteCategoryReq {
 }
 message DeleteCategoryResp {}
 
+//message CreateCategoryReq {
+//  string name = 1;
+//}
+//message CreateCategoryResp {}
+//
+//message CategoryInfo {
+//  uint64 id = 1;
+//  string name = 2;
+//}
+//
+//message ListCategoriesReq {}
+//message ListCategoriesResp {
+//  repeated CategoryInfo categories = 1;
+//}
+//
+//message DeleteCategoryReq {
+//  uint64 id = 1;
+//}
+//message DeleteCategoryResp {}
+
 //======================================================================================================================
 // 文章部分
+
 // 文章信息结构
 message ArticleInfo {
   uint64 id = 1;
@@ -193,6 +222,9 @@ message SearchArticlesResp {
   uint32 page_size = 4;
 }
 
+//======================================================================================================================
+// 互动部分
+
 // 点赞文章
 message LikeArticleReq {
   uint64 article_id = 1;
@@ -209,4 +241,104 @@ message FavoriteArticleReq {
 }
 message FavoriteArticleResp {
   uint32 favor_count = 1;       // 返回最新收藏数
+}
+
+// 点赞评论
+message LikeCommentReq {
+  uint64 commentId = 1;    // 评论ID
+  uint64 userId = 2;       // 用户ID
+  bool isLike = 3;         // true=点赞，false=取消点赞
+}
+message LikeCommentResp {
+  uint32 likeCount = 1;    // 最新的点赞数
+}
+
+//======================================================================================================================
+// 评论部分
+
+// 评论信息
+message CommentInfo {
+  uint64 id = 1;                      // 评论ID
+  uint64 articleId = 2;               // 文章ID
+  uint64 userId = 3;                  // 用户ID
+  uint64 parentId = 4;                // 父评论ID（0=一级评论，非0=回复）
+  uint64 rootId = 5;                  // 根评论ID（一级评论时=id，回复时=一级评论ID）
+  uint64 replyToId = 6;               // 回复目标用户ID
+  string replyToName = 7;             // 回复目标用户名
+  string content = 8;                 // 评论内容
+  uint32 likeCount = 9;               // 点赞数
+  uint32 childCount = 10;             // 子评论数量（仅一级评论有效）
+  string createdAt = 11;              // 创建时间
+  string userName = 12;               // 用户名
+  string userAvatar = 13;             // 用户头像
+  repeated CommentInfo replies = 14;  // 回复列表（最多显示3条）
+}
+
+// 发表一级评论
+message CreateCommentReq {
+  uint64 articleId = 1;   // 文章ID
+  uint64 userId = 2;      // 用户ID
+  string content = 3;      // 评论内容
+}
+message CreateCommentResp {
+  uint64 commentId = 1;    // 评论ID
+}
+
+// 发表回复（二级评论）
+message CreateReplyReq {
+  uint64 rootId = 1;       // 根评论ID（一级评论的ID）
+  uint64 parentId = 2;     // 被回复的评论ID
+  uint64 userId = 3;       // 用户ID
+  uint64 replyToId = 4;    // 回复目标用户ID
+  string replyToName = 5;  // 回复目标用户名
+  string content = 6;      // 回复内容
+}
+message CreateReplyResp {
+  uint64 replyId = 1;      // 回复ID
+}
+
+// 删除评论
+message DeleteCommentReq {
+  uint64 id = 1;           // 评论ID
+}
+message DeleteCommentResp {}
+
+// 获取文章评论列表（只返回一级评论）
+message GetArticleCommentsReq {
+  uint64 articleId = 1;    // 文章ID
+  int32 page = 2;          // 页码，默认1
+  int32 size = 3;          // 每页条数，默认10
+  string orderBy = 4;      // 排序方式：hot=热门，time=最新，默认time
+}
+message GetArticleCommentsResp {
+  repeated CommentInfo comments = 1;  // 评论列表
+  int32 page = 2;                      // 当前页
+  int32 size = 3;                      // 每页条数
+  int32 total = 4;                     // 总条数
+}
+
+// 获取评论的回复列表
+message GetCommentRepliesReq {
+  uint64 rootId = 1;       // 根评论ID（一级评论的ID）
+  int32 page = 2;          // 页码，默认1
+  int32 size = 3;          // 每页条数，默认10
+}
+message GetCommentRepliesResp {
+  repeated CommentInfo replies = 1;   // 回复列表
+  int32 page = 2;                      // 当前页
+  int32 size = 3;                      // 每页条数
+  int32 total = 4;                     // 总条数
+}
+
+// 获取用户的所有评论
+message GetUserCommentsReq {
+  uint64 userId = 1;       // 用户ID
+  int32 page = 2;          // 页码，默认1
+  int32 size = 3;          // 每页条数，默认10
+}
+message GetUserCommentsResp {
+  repeated CommentInfo comments = 1;   // 评论列表
+  int32 page = 2;                       // 当前页
+  int32 size = 3;                       // 每页条数
+  int32 total = 4;                      // 总条数
 }

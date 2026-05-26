@@ -107,3 +107,39 @@ func (s *CoreServer) FavorArticle(ctx context.Context, in *core.FavoriteArticleR
 	l := logic.NewFavorArticleLogic(ctx, s.svcCtx)
 	return l.FavorArticle(in)
 }
+
+func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (*core.LikeCommentResp, error) {
+	l := logic.NewLikeCommentLogic(ctx, s.svcCtx)
+	return l.LikeComment(in)
+}
+
+// comment 部分
+func (s *CoreServer) CreateComment(ctx context.Context, in *core.CreateCommentReq) (*core.CreateCommentResp, error) {
+	l := logic.NewCreateCommentLogic(ctx, s.svcCtx)
+	return l.CreateComment(in)
+}
+
+func (s *CoreServer) CreateReply(ctx context.Context, in *core.CreateReplyReq) (*core.CreateReplyResp, error) {
+	l := logic.NewCreateReplyLogic(ctx, s.svcCtx)
+	return l.CreateReply(in)
+}
+
+func (s *CoreServer) DeleteComment(ctx context.Context, in *core.DeleteCommentReq) (*core.DeleteCommentResp, error) {
+	l := logic.NewDeleteCommentLogic(ctx, s.svcCtx)
+	return l.DeleteComment(in)
+}
+
+func (s *CoreServer) GetArticleComments(ctx context.Context, in *core.GetArticleCommentsReq) (*core.GetArticleCommentsResp, error) {
+	l := logic.NewGetArticleCommentsLogic(ctx, s.svcCtx)
+	return l.GetArticleComments(in)
+}
+
+func (s *CoreServer) GetCommentReplies(ctx context.Context, in *core.GetCommentRepliesReq) (*core.GetCommentRepliesResp, error) {
+	l := logic.NewGetCommentRepliesLogic(ctx, s.svcCtx)
+	return l.GetCommentReplies(in)
+}
+
+func (s *CoreServer) GetUserComments(ctx context.Context, in *core.GetUserCommentsReq) (*core.GetUserCommentsResp, error) {
+	l := logic.NewGetUserCommentsLogic(ctx, s.svcCtx)
+	return l.GetUserComments(in)
+}

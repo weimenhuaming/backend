@@ -16,21 +16,36 @@ import (
 type (
 	ArticleInfo            = core.ArticleInfo
 	CategoryInfo           = core.CategoryInfo
+	CommentInfo            = core.CommentInfo
 	CreateArticleReq       = core.CreateArticleReq
 	CreateArticleResp      = core.CreateArticleResp
 	CreateCategoryReq      = core.CreateCategoryReq
 	CreateCategoryResp     = core.CreateCategoryResp
+	CreateCommentReq       = core.CreateCommentReq
+	CreateCommentResp      = core.CreateCommentResp
+	CreateReplyReq         = core.CreateReplyReq
+	CreateReplyResp        = core.CreateReplyResp
 	DeleteArticleReq       = core.DeleteArticleReq
 	DeleteArticleResp      = core.DeleteArticleResp
 	DeleteCategoryReq      = core.DeleteCategoryReq
 	DeleteCategoryResp     = core.DeleteCategoryResp
+	DeleteCommentReq       = core.DeleteCommentReq
+	DeleteCommentResp      = core.DeleteCommentResp
 	EmailLoginReq          = core.EmailLoginReq
 	FavoriteArticleReq     = core.FavoriteArticleReq
 	FavoriteArticleResp    = core.FavoriteArticleResp
+	GetArticleCommentsReq  = core.GetArticleCommentsReq
+	GetArticleCommentsResp = core.GetArticleCommentsResp
 	GetArticleDetailReq    = core.GetArticleDetailReq
 	GetArticleDetailResp   = core.GetArticleDetailResp
+	GetCommentRepliesReq   = core.GetCommentRepliesReq
+	GetCommentRepliesResp  = core.GetCommentRepliesResp
+	GetUserCommentsReq     = core.GetUserCommentsReq
+	GetUserCommentsResp    = core.GetUserCommentsResp
 	LikeArticleReq         = core.LikeArticleReq
 	LikeArticleResp        = core.LikeArticleResp
+	LikeCommentReq         = core.LikeCommentReq
+	LikeCommentResp        = core.LikeCommentResp
 	ListArticlesReq        = core.ListArticlesReq
 	ListArticlesResp       = core.ListArticlesResp
 	ListCategoriesReq      = core.ListCategoriesReq
@@ -71,6 +86,14 @@ type (
 		// interaction 部分
 		LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error)
 		FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error)
+		LikeComment(ctx context.Context, in *LikeCommentReq, opts ...grpc.CallOption) (*LikeCommentResp, error)
+		// comment 部分
+		CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error)
+		CreateReply(ctx context.Context, in *CreateReplyReq, opts ...grpc.CallOption) (*CreateReplyResp, error)
+		DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentResp, error)
+		GetArticleComments(ctx context.Context, in *GetArticleCommentsReq, opts ...grpc.CallOption) (*GetArticleCommentsResp, error)
+		GetCommentReplies(ctx context.Context, in *GetCommentRepliesReq, opts ...grpc.CallOption) (*GetCommentRepliesResp, error)
+		GetUserComments(ctx context.Context, in *GetUserCommentsReq, opts ...grpc.CallOption) (*GetUserCommentsResp, error)
 	}
 
 	defaultCore struct {
@@ -167,4 +190,40 @@ func (m *defaultCore) LikeArticle(ctx context.Context, in *LikeArticleReq, opts 
 func (m *defaultCore) FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error) {
 	client := core.NewCoreClient(m.cli.Conn())
 	return client.FavorArticle(ctx, in, opts...)
+}
+
+func (m *defaultCore) LikeComment(ctx context.Context, in *LikeCommentReq, opts ...grpc.CallOption) (*LikeCommentResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.LikeComment(ctx, in, opts...)
+}
+
+// comment 部分
+func (m *defaultCore) CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.CreateComment(ctx, in, opts...)
+}
+
+func (m *defaultCore) CreateReply(ctx context.Context, in *CreateReplyReq, opts ...grpc.CallOption) (*CreateReplyResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.CreateReply(ctx, in, opts...)
+}
+
+func (m *defaultCore) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.DeleteComment(ctx, in, opts...)
+}
+
+func (m *defaultCore) GetArticleComments(ctx context.Context, in *GetArticleCommentsReq, opts ...grpc.CallOption) (*GetArticleCommentsResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.GetArticleComments(ctx, in, opts...)
+}
+
+func (m *defaultCore) GetCommentReplies(ctx context.Context, in *GetCommentRepliesReq, opts ...grpc.CallOption) (*GetCommentRepliesResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.GetCommentReplies(ctx, in, opts...)
+}
+
+func (m *defaultCore) GetUserComments(ctx context.Context, in *GetUserCommentsReq, opts ...grpc.CallOption) (*GetUserCommentsResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.GetUserComments(ctx, in, opts...)
 }

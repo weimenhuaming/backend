@@ -30,15 +30,13 @@ service Core {
   // interaction 部分
   rpc LikeArticle(LikeArticleReq) returns (LikeArticleResp){};                 // 点赞文章
   rpc FavorArticle(FavoriteArticleReq) returns (FavoriteArticleResp){};        // 收藏文章
-  rpc LikeComment(LikeCommentReq) returns(LikeCommentResp){};
-
-  // comment 部分
-  rpc CreateComment(CreateCommentReq) returns(CreateCommentResp){};
-  rpc CreateReply(CreateReplyReq) returns(CreateReplyResp){};
-  rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentResp){};
-  rpc GetArticleComments(GetArticleCommentsReq) returns(GetArticleCommentsResp){};
-  rpc GetCommentReplies(GetCommentRepliesReq) returns(GetCommentRepliesResp){};
-  rpc GetUserComments(GetUserCommentsReq) returns(GetUserCommentsResp){};
+  rpc LikeComment(LikeCommentReq) returns (LikeCommentResp){};                 // 点赞评论
+  rpc CreateComment(CreateCommentReq) returns (CreateCommentResp){};           // 发表一级评论
+  rpc CreateReply(CreateReplyReq) returns (CreateReplyResp){};                 // 发表回复
+  rpc DeleteComment(DeleteCommentReq) returns (DeleteCommentResp){};            // 删除评论（软删除）
+  rpc GetArticleComments(GetArticleCommentsReq) returns (GetArticleCommentsResp){};
+  rpc GetCommentReplies(GetCommentRepliesReq) returns (GetCommentRepliesResp){};
+  rpc GetUserComments(GetUserCommentsReq) returns (GetUserCommentsResp){};
 }
 
 // Test 接口的请求和响应消息
@@ -280,6 +278,7 @@ message CreateReplyResp {
 // 删除评论
 message DeleteCommentReq {
   uint64 id = 1;           // 评论ID
+  uint64 userId = 2;       // 用户ID（鉴权）
 }
 message DeleteCommentResp {}
 

@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"core-rpc/internal/model/category"
@@ -45,8 +44,7 @@ func (l *CreateCategoryLogic) CreateCategory(in *core.CreateCategoryReq) (*core.
 		return nil, err
 	}
 	newCat := &category.Category{
-		Name:        in.Name,
-		Description: sql.NullString{String: "", Valid: false},
+		Name: in.Name,
 	}
 
 	_, err = l.svcCtx.CategoryModel.Insert(l.ctx, newCat)

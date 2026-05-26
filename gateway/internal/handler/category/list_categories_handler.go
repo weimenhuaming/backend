@@ -1,12 +1,9 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
-package article
+package category
 
 import (
 	"net/http"
 
-	"gateway/internal/logic/article"
+	"gateway/internal/logic/category"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -20,7 +17,7 @@ func ListCategoriesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := article.NewListCategoriesLogic(r.Context(), svcCtx)
+		l := category.NewListCategoriesLogic(r.Context(), svcCtx)
 		resp, err := l.ListCategories(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

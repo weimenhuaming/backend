@@ -88,7 +88,8 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 				// 刷新 Access Token
 				id := RefreshClaims.Id
-				NewAccessToken, _ := Jwt.GetAccessToken(id, m.AccessExpire)
+				role := RefreshClaims.Role
+				NewAccessToken, _ := Jwt.GetAccessToken(id, role, m.AccessExpire)
 
 				// 写入响应头
 				w.Header().Set("Authorization", NewAccessToken)
@@ -105,6 +106,7 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		// 5. 将用户信息注入上下文
 		ctx = context.WithValue(ctx, "X-user-Id", AccessClaims.Id)
+		ctx = context.WithValue(ctx, "X-user-Role", AccessClaims.Role)
 		r = r.WithContext(ctx)
 		next(w, r)
 	}

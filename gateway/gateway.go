@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"gateway/internal/middleware"
 
 	"gateway/internal/config"
 	"gateway/internal/handler"
@@ -21,6 +22,8 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 
 	server := rest.MustNewServer(c.RestConf)
+	// 注册中间件（在 RegisterHandlers 之前）
+	server.Use(middleware.CorsMiddleware())
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)

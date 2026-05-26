@@ -1,7 +1,4 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
-package article
+package category
 
 import (
 	"context"
@@ -49,4 +46,6 @@ func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp
 		Code: 200,
 		Msg:  "ok",
 	}, nil
+
+	return
 }

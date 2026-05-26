@@ -16,7 +16,8 @@ var (
 )
 
 type MyClaims struct {
-	Id uint64 `json:"id"`
+	Id   uint64 `json:"id"`
+	Role string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -33,9 +34,10 @@ func NewJWT(ats, rts string) *JWT {
 }
 
 // GetAccessToken 用 AccessTokenSecret 签发 access token，expireSec 单位为秒
-func (j *JWT) GetAccessToken(userId uint64, expireSec uint64) (string, error) {
+func (j *JWT) GetAccessToken(userId uint64, role string, expireSec uint64) (string, error) {
 	claims := MyClaims{
-		Id: userId,
+		Id:   userId,
+		Role: role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Audience:  jwt.ClaimStrings{"TAP"},
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireSec) * time.Second)),
@@ -47,9 +49,10 @@ func (j *JWT) GetAccessToken(userId uint64, expireSec uint64) (string, error) {
 }
 
 // GetRefreshToken 用 RefreshTokenSecret 签发 refresh token，expireSec 单位为秒
-func (j *JWT) GetRefreshToken(userId uint64, expireSec uint64) (string, error) {
+func (j *JWT) GetRefreshToken(userId uint64, role string, expireSec uint64) (string, error) {
 	claims := MyClaims{
-		Id: userId,
+		Id:   userId,
+		Role: role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Audience:  jwt.ClaimStrings{"TAP"},
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireSec) * time.Second)),

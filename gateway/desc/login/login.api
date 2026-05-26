@@ -111,7 +111,6 @@ service Gateway {
 
 @server (
     middleware: AuthMiddleware // 认证中间件，所有请求都需要经过这个中间件进行认证
-    jwt: Auth // 开启 jwt 认证
     group: login
 )
 service Gateway {

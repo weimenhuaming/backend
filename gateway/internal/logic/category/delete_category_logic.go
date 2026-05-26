@@ -1,7 +1,4 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
-package article
+package category
 
 import (
 	"context"
@@ -50,4 +47,6 @@ func (l *DeleteCategoryLogic) DeleteCategory(req *types.DeleteCategoryReq) (resp
 		Code: 200,
 		Msg:  "ok",
 	}, nil
+
+	return
 }

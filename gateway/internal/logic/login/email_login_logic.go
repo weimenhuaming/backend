@@ -67,14 +67,14 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 
 	// 4.签发token
 	jwt := utils.NewJWT(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.RefreshSecret)
-	accessToken, err := jwt.GetAccessToken(RpcResp.Id, l.svcCtx.Config.Auth.AccessExpire)
+	accessToken, err := jwt.GetAccessToken(RpcResp.Id, RpcResp.Role, l.svcCtx.Config.Auth.AccessExpire)
 	if err != nil {
 		return &types.LoginResp{
 			Code: 500,
 			Msg:  err.Error(),
 		}, nil
 	}
-	refreshToken, err := jwt.GetRefreshToken(RpcResp.Id, l.svcCtx.Config.RefreshExpire)
+	refreshToken, err := jwt.GetRefreshToken(RpcResp.Id, RpcResp.Role, l.svcCtx.Config.RefreshExpire)
 	if err != nil {
 		return &types.LoginResp{
 			Code: 500,

@@ -1,7 +1,4 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
-package article
+package category
 
 import (
 	"context"
@@ -50,4 +47,6 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 		Msg:  "ok",
 		Data: types.ListCategoriesData{Categories: cats},
 	}, nil
+
+	return
 }

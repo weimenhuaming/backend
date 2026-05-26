@@ -24,6 +24,7 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListCategoriesLogic) ListCategories(in *core.ListCategoriesReq) (*core.ListCategoriesResp, error) {
+	// todo: add your logic here and delete this line
 
-	return nil, nil
+	return &core.ListCategoriesResp{}, nil
 }

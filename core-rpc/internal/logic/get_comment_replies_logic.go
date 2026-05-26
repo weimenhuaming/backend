@@ -24,21 +24,7 @@ func NewGetCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetCommentRepliesLogic) GetCommentReplies(in *core.GetCommentRepliesReq) (*core.GetCommentRepliesResp, error) {
-	page, size := normalizePageSize(in.GetPage(), in.GetSize())
+	// todo: add your logic here and delete this line
 
-	rows, err := l.svcCtx.CommentModel.ListRepliesByRoot(l.ctx, in.GetRootId(), page, size)
-	if err != nil {
-		return nil, err
-	}
-	total, err := l.svcCtx.CommentModel.CountRepliesByRoot(l.ctx, in.GetRootId())
-	if err != nil {
-		return nil, err
-	}
-
-	return &core.GetCommentRepliesResp{
-		Replies: buildCommentInfoList(l.ctx, l.svcCtx, rows),
-		Page:    page,
-		Size:    size,
-		Total:   int32(total),
-	}, nil
+	return &core.GetCommentRepliesResp{}, nil
 }

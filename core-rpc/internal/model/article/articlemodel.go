@@ -24,6 +24,7 @@ type (
 		List(ctx context.Context, page, pageSize uint32, categoryId, userId uint64, sortBy, sortOrder string) ([]*Article, error)
 		// Count returns total number of articles matching filters (excludes soft-deleted rows)
 		Count(ctx context.Context, categoryId, userId uint64) (int64, error)
+		IncCommentCount(ctx context.Context, id uint64, delta int64) error
 	}
 
 	customArticleModel struct {
@@ -132,4 +133,10 @@ func (m *defaultArticleModel) Count(ctx context.Context, categoryId, userId uint
 		return 0, err
 	}
 	return cnt, nil
+}
+
+func (m *defaultArticleModel) IncCommentCount(ctx context.Context, id uint64, delta int64) error {
+	query := fmt.Sprintf("UPDATE %s SET comment_count = GREATEST(CAST(comment_count AS SIGNED) + ?, 0) WHERE id = ? AND deleted_at IS NULL", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, delta, id)
+	return err
 }

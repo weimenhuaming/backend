@@ -4,6 +4,7 @@ import (
 	"core-rpc/internal/config"
 	"core-rpc/internal/model/article"
 	"core-rpc/internal/model/category"
+	"core-rpc/internal/model/comment"
 	"core-rpc/internal/model/user"
 	"log"
 
@@ -16,6 +17,7 @@ type ServiceContext struct {
 	UserModel     user.UserModel
 	CategoryModel category.CategoryModel
 	ArticleModel  article.ArticleModel
+	CommentModel  comment.CommentModel
 	Cache         *redis.Redis //使用gozero自带的，他本身就是对go-redis的一个封装
 }
 
@@ -29,6 +31,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:        c,
 		UserModel:     user.NewUserModel(conn),
 		ArticleModel:  article.NewArticleModel(conn),
+		CommentModel:  comment.NewCommentModel(conn),
 		CategoryModel: category.NewCategoryModel(conn),
 		Cache:         cache,
 	}

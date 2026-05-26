@@ -2406,7 +2406,8 @@ func (x *CreateReplyResp) GetReplyId() uint64 {
 // 删除评论
 type DeleteCommentReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 评论ID
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`         // 评论ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=userId,proto3" json:"userId,omitempty"` // 用户ID（鉴权）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2444,6 +2445,13 @@ func (*DeleteCommentReq) Descriptor() ([]byte, []int) {
 func (x *DeleteCommentReq) GetId() uint64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *DeleteCommentReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -3064,7 +3072,8 @@ const file_desc_core_proto_rawDesc = "" +
 	"\x0fCreateReplyResp\x12\x18\n" +
 	"\areplyId\x18\x01 \x01(\x04R\areplyId\"\"\n" +
 	"\x10DeleteCommentReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x13\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\x04R\x06userId\"\x13\n" +
 	"\x11DeleteCommentResp\"w\n" +
 	"\x15GetArticleCommentsReq\x12\x1c\n" +
 	"\tarticleId\x18\x01 \x01(\x04R\tarticleId\x12\x12\n" +

@@ -8,6 +8,17 @@ Etcd:
 
 DataSource: "root:123456@tcp(127.0.0.1:3307)/test?parseTime=true&loc=UTC"
 
+Mysql:
+  Host: 127.0.0.1
+  Port: "3307"
+  Username: root
+  Password: "123456"
+  Config: charset=utf8mb4&parseTime=True&loc=Local
+  Dbname: gozero
+  Max_Idle_Conn: 10
+  Max_Open_Conn: 100
+  Log_Mode: info
+
 Cache:
   - Host: 127.0.0.1:6379
     Type: node

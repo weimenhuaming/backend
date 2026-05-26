@@ -5,7 +5,6 @@ package comment
 
 import (
 	"context"
-
 	core_client "core-rpc/core_client"
 	"gateway/internal/svc"
 	"gateway/internal/types"

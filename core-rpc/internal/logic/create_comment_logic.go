@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"core-rpc/internal/model/comment"
 	"core-rpc/internal/svc"
@@ -26,6 +27,7 @@ func NewCreateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateCommentLogic) CreateComment(in *core.CreateCommentReq) (*core.CreateCommentResp, error) {
+	fmt.Println("here")
 	if in.GetUserId() == 0 {
 		return nil, errors.New("missing user id")
 	}

@@ -3,6 +3,10 @@ package model
 import (
 	"os"
 	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func InitGorm(Dsn string, LogLevel logger.LogLevel, MaxIdleConn, MaxOpenConn int) *gorm.DB {

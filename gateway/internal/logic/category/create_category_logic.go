@@ -25,6 +25,14 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp *types.CreateCategoryResp, err error) {
+	role := l.ctx.Value("X-user-Role")
+	if role != "admin" {
+		return &types.CreateCategoryResp{
+			Code: 403,
+			Msg:  "非管理员，没有权限执行",
+		}, nil
+	}
+
 	if req == nil || req.Name == "" {
 		return &types.CreateCategoryResp{
 			Code: 400,
@@ -46,6 +54,4 @@ func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp
 		Code: 200,
 		Msg:  "ok",
 	}, nil
-
-	return
 }

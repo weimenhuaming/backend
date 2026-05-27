@@ -27,11 +27,14 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateCategoryLogic) CreateCategory(in *core.CreateCategoryReq) (*core.CreateCategoryResp, error) {
+	// 除去两边的空格
 	name := strings.TrimSpace(in.Name)
 	if name == "" {
 		return nil, errors.New("分类名称不能为空")
 	}
 
+	// 这里会有个问题gorm就算失败也会导致id自增
+	// 要么就是先查后增，或者就是允许空洞
 	c := &entity.Category{Name: name}
 	if err := l.svcCtx.Db.Create(c).Error; err != nil {
 		if strings.Contains(err.Error(), "Duplicate") || strings.Contains(err.Error(), "duplicate") {

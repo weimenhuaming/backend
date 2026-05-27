@@ -25,36 +25,19 @@ func NewDeleteArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteArticleLogic) DeleteArticle(req *types.DeleteArticleReq) (resp *types.DeleteArticleResp, err error) {
-	// extract user id from context (set by auth middleware)
-	uidVal := l.ctx.Value("X-user-Id")
-	if uidVal == nil {
+	role := l.ctx.Value("X-user-Role")
+	if role != "admin" {
 		return &types.DeleteArticleResp{
-			Code: 401,
-			Msg:  "missing user id",
+			Code: 403,
+			Msg:  "非管理员，没有权限执行",
 		}, nil
 	}
 
-	uid, ok := uidVal.(uint64)
-	if !ok {
-		// try if it was stored as int64 or int
-		switch v := uidVal.(type) {
-		case int:
-			uid = uint64(v)
-			ok = true
-		case int64:
-			uid = uint64(v)
-			ok = true
-		case float64:
-			uid = uint64(v)
-			ok = true
-		default:
-			ok = false
-		}
-	}
-	if !ok {
+	uid := l.ctx.Value("X-user-Id").(uint64)
+	if uid == 0 {
 		return &types.DeleteArticleResp{
 			Code: 401,
-			Msg:  "invalid user id",
+			Msg:  "该用户不存在",
 		}, nil
 	}
 

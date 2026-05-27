@@ -3030,19 +3030,21 @@ const file_desc_core_proto_rawDesc = "" +
 	"\barticles\x18\x01 \x03(\v2\x11.core.ArticleInfoR\barticles\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\rR\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\rR\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"H\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"a\n" +
 	"\x0eLikeArticleReq\x12\x1d\n" +
 	"\n" +
 	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x17\n" +
-	"\ais_like\x18\x02 \x01(\bR\x06isLike\"0\n" +
+	"\ais_like\x18\x02 \x01(\bR\x06isLike\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x04R\x06userId\"0\n" +
 	"\x0fLikeArticleResp\x12\x1d\n" +
 	"\n" +
-	"like_count\x18\x01 \x01(\rR\tlikeCount\"T\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"m\n" +
 	"\x12FavoriteArticleReq\x12\x1d\n" +
 	"\n" +
 	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x1f\n" +
 	"\vis_favorite\x18\x02 \x01(\bR\n" +
-	"isFavorite\"6\n" +
+	"isFavorite\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x04R\x06userId\"6\n" +
 	"\x13FavoriteArticleResp\x12\x1f\n" +
 	"\vfavor_count\x18\x01 \x01(\rR\n" +
 	"favorCount\"^\n" +

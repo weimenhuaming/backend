@@ -10,9 +10,8 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql      DatabaseConf
-	DataSource string
-	Cache      []redis.RedisConf
+	Mysql DatabaseConf
+	Cache []redis.RedisConf
 }
 
 type DatabaseConf struct {

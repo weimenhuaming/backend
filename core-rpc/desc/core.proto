@@ -31,6 +31,8 @@ service Core {
   rpc LikeArticle(LikeArticleReq) returns (LikeArticleResp){};                 // 点赞文章
   rpc FavorArticle(FavoriteArticleReq) returns (FavoriteArticleResp){};        // 收藏文章
   rpc LikeComment(LikeCommentReq) returns (LikeCommentResp){};                 // 点赞评论
+  
+  // comment 部分
   rpc CreateComment(CreateCommentReq) returns (CreateCommentResp){};           // 发表一级评论
   rpc CreateReply(CreateReplyReq) returns (CreateReplyResp){};                 // 发表回复
   rpc DeleteComment(DeleteCommentReq) returns (DeleteCommentResp){};            // 删除评论（软删除）

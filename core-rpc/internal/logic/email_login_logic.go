@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
-	"core-rpc/internal/model/user"
-	"core-rpc/internal/svc"
-	"core-rpc/pb/core"
 	"errors"
 
+	"core-rpc/internal/model/entity"
+	"core-rpc/internal/svc"
+	"core-rpc/pb/core"
+
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type EmailLoginLogic struct {
@@ -25,18 +27,18 @@ func NewEmailLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailL
 }
 
 func (l *EmailLoginLogic) EmailLogin(in *core.EmailLoginReq) (*core.LoginResp, error) {
-	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
+	var u entity.User
+	err := l.svcCtx.Db.Where("email = ?", in.Email).First(&u).Error
 	if err != nil {
-		if errors.Is(err, user.ErrNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("该邮箱尚未注册")
 		}
-		logx.WithContext(l.ctx).Errorf("FindOneByEmail failed, email=%s, err=%v", in.Email, err)
+		logx.WithContext(l.ctx).Errorf("find user by email failed: %v", err)
 		return nil, errors.New("查询用户失败")
 	}
 
-	// token 由 gateway 层统一签发，这里只负责返回用户信息
 	return &core.LoginResp{
-		Id:     u.Id,
+		Id:     u.ID,
 		Name:   u.Name,
 		Phone:  u.Phone,
 		Email:  u.Email,

@@ -2,10 +2,11 @@ package logic
 
 import (
 	"context"
-	"core-rpc/internal/model/user"
+	"errors"
+
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
-	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,31 +26,23 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *core.RegisterReq) (*core.RegisterResp, error) {
-	// 检查邮箱是否已存在
-	_, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
-	if err == nil {
-		return nil, errors.New("邮箱已存在")
-	}
-	if !errors.Is(err, user.ErrNotFound) {
+	var count int64
+	if err := l.svcCtx.Db.Model(&entity.User{}).Where("email = ?", in.Email).Count(&count).Error; err != nil {
 		return nil, err
 	}
+	if count > 0 {
+		return nil, errors.New("邮箱已存在")
+	}
 
-	// 创建用户
-	newUser := &user.User{
+	u := &entity.User{
 		Name:     in.Name,
 		Email:    in.Email,
 		Password: in.Password,
 		Role:     "user",
 		Sex:      "未知",
-		Age:      0,
-		Phone:    "",
-		Avatar:   "",
 	}
-
-	_, err = l.svcCtx.UserModel.Insert(l.ctx, newUser)
-	if err != nil {
+	if err := l.svcCtx.Db.Create(u).Error; err != nil {
 		return nil, err
 	}
-
 	return &core.RegisterResp{}, nil
 }

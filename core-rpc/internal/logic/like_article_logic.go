@@ -2,11 +2,14 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type LikeArticleLogic struct {
@@ -23,9 +26,30 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 	}
 }
 
-// interaction 部分
 func (l *LikeArticleLogic) LikeArticle(in *core.LikeArticleReq) (*core.LikeArticleResp, error) {
-	// todo: add your logic here and delete this line
+	if in.UserId == 0 || in.ArticleId == 0 {
+		return nil, errors.New("参数无效")
+	}
 
-	return &core.LikeArticleResp{}, nil
+	var count int64
+	if err := l.svcCtx.Db.Model(&entity.Article{}).Where("id = ?", in.ArticleId).Count(&count).Error; err != nil {
+		return nil, err
+	}
+	if count == 0 {
+		return nil, errors.New("文章不存在")
+	}
+
+	var likeCount uint32
+	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
+		delta, err := toggleArticleLike(tx, in.UserId, in.ArticleId, in.IsLike)
+		if err != nil {
+			return err
+		}
+		likeCount, err = adjustArticleCounter(tx, in.ArticleId, "like_count", delta)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &core.LikeArticleResp{LikeCount: likeCount}, nil
 }

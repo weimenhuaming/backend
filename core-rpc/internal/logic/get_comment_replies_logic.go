@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -24,7 +25,33 @@ func NewGetCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetCommentRepliesLogic) GetCommentReplies(in *core.GetCommentRepliesReq) (*core.GetCommentRepliesResp, error) {
-	// todo: add your logic here and delete this line
+	page := normalizePage(in.Page)
+	size := normalizeSize(in.Size, 10)
+	off, limit := offsetLimit(page, size)
 
-	return &core.GetCommentRepliesResp{}, nil
+	q := l.svcCtx.Db.Model(&entity.Comment{}).
+		Where("root_id = ? AND parent_id > 0", in.RootId).
+		Order("created_at ASC")
+
+	var total int64
+	if err := q.Count(&total).Error; err != nil {
+		return nil, err
+	}
+
+	var replies []entity.Comment
+	if err := q.Offset(off).Limit(limit).Find(&replies).Error; err != nil {
+		return nil, err
+	}
+
+	userMap, err := fetchUserMap(l.svcCtx.Db, collectUserIDsFromComments(replies))
+	if err != nil {
+		return nil, err
+	}
+
+	return &core.GetCommentRepliesResp{
+		Replies: commentsToProtoList(replies, userMap, nil),
+		Page:    int32(page),
+		Size:    int32(size),
+		Total:   int32(total),
+	}, nil
 }

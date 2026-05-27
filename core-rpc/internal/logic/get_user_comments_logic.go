@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -24,7 +25,33 @@ func NewGetUserCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetUserCommentsLogic) GetUserComments(in *core.GetUserCommentsReq) (*core.GetUserCommentsResp, error) {
-	// todo: add your logic here and delete this line
+	page := normalizePage(in.Page)
+	size := normalizeSize(in.Size, 10)
+	off, limit := offsetLimit(page, size)
 
-	return &core.GetUserCommentsResp{}, nil
+	q := l.svcCtx.Db.Model(&entity.Comment{}).
+		Where("user_id = ?", in.UserId).
+		Order("created_at DESC")
+
+	var total int64
+	if err := q.Count(&total).Error; err != nil {
+		return nil, err
+	}
+
+	var comments []entity.Comment
+	if err := q.Offset(off).Limit(limit).Find(&comments).Error; err != nil {
+		return nil, err
+	}
+
+	userMap, err := fetchUserMap(l.svcCtx.Db, collectUserIDsFromComments(comments))
+	if err != nil {
+		return nil, err
+	}
+
+	return &core.GetUserCommentsResp{
+		Comments: commentsToProtoList(comments, userMap, nil),
+		Page:     int32(page),
+		Size:     int32(size),
+		Total:    int32(total),
+	}, nil
 }

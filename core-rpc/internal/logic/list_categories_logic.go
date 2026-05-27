@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -24,7 +25,17 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListCategoriesLogic) ListCategories(in *core.ListCategoriesReq) (*core.ListCategoriesResp, error) {
-	// todo: add your logic here and delete this line
+	var categories []entity.Category
+	if err := l.svcCtx.Db.Order("id ASC").Find(&categories).Error; err != nil {
+		return nil, err
+	}
 
-	return &core.ListCategoriesResp{}, nil
+	list := make([]*core.CategoryInfo, 0, len(categories))
+	for _, c := range categories {
+		list = append(list, &core.CategoryInfo{
+			Id:   c.ID,
+			Name: c.Name,
+		})
+	}
+	return &core.ListCategoriesResp{Categories: list}, nil
 }

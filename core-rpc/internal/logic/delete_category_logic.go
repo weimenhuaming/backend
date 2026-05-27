@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -24,7 +26,12 @@ func NewDeleteCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DeleteCategoryLogic) DeleteCategory(in *core.DeleteCategoryReq) (*core.DeleteCategoryResp, error) {
-	// todo: add your logic here and delete this line
-
+	res := l.svcCtx.Db.Delete(&entity.Category{}, in.Id)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return nil, errors.New("分类不存在")
+	}
 	return &core.DeleteCategoryResp{}, nil
 }

@@ -2,11 +2,14 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type GetArticleDetailLogic struct {
@@ -24,7 +27,25 @@ func NewGetArticleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (*core.GetArticleDetailResp, error) {
-	// todo: add your logic here and delete this line
+	var article entity.Article
+	if err := l.svcCtx.Db.First(&article, in.Id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("文章不存在")
+		}
+		return nil, err
+	}
 
-	return &core.GetArticleDetailResp{}, nil
+	_ = l.svcCtx.Db.Model(&article).Update("view_count", gorm.Expr("view_count + ?", 1))
+	article.ViewCount++
+
+	var author entity.User
+	authorName, authorAvatar := "", ""
+	if err := l.svcCtx.Db.Select("name", "avatar").First(&author, article.UserID).Error; err == nil {
+		authorName = author.Name
+		authorAvatar = author.Avatar
+	}
+
+	return &core.GetArticleDetailResp{
+		Article: articleToProto(&article, authorName, authorAvatar),
+	}, nil
 }

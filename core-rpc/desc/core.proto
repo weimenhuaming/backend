@@ -207,6 +207,7 @@ message SearchArticlesResp {
 message LikeArticleReq {
   uint64 article_id = 1;
   bool is_like = 2;             // true: 点赞, false: 取消点赞
+  uint64 user_id = 3;           // 操作用户ID
 }
 message LikeArticleResp {
   uint32 like_count = 1;        // 返回最新点赞数
@@ -216,6 +217,7 @@ message LikeArticleResp {
 message FavoriteArticleReq {
   uint64 article_id = 1;
   bool is_favorite = 2;         // true: 收藏, false: 取消收藏
+  uint64 user_id = 3;           // 操作用户ID
 }
 message FavoriteArticleResp {
   uint32 favor_count = 1;       // 返回最新收藏数

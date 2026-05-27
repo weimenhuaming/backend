@@ -1726,6 +1726,7 @@ type LikeArticleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
 	IsLike        bool                   `protobuf:"varint,2,opt,name=is_like,json=isLike,proto3" json:"is_like,omitempty"` // true: 点赞, false: 取消点赞
+	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // 操作用户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1772,6 +1773,13 @@ func (x *LikeArticleReq) GetIsLike() bool {
 		return x.IsLike
 	}
 	return false
+}
+
+func (x *LikeArticleReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type LikeArticleResp struct {
@@ -1823,6 +1831,7 @@ type FavoriteArticleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
 	IsFavorite    bool                   `protobuf:"varint,2,opt,name=is_favorite,json=isFavorite,proto3" json:"is_favorite,omitempty"` // true: 收藏, false: 取消收藏
+	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 操作用户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1869,6 +1878,13 @@ func (x *FavoriteArticleReq) GetIsFavorite() bool {
 		return x.IsFavorite
 	}
 	return false
+}
+
+func (x *FavoriteArticleReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type FavoriteArticleResp struct {

@@ -1,0 +1,30 @@
+package logic
+
+import (
+	"context"
+
+	"other-rpc/internal/svc"
+	"other-rpc/pb/agent"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type TestLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TestLogic {
+	return &TestLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+func (l *TestLogic) Test(in *agent.TestRequest) (*agent.TestResponse, error) {
+	// todo: add your logic here and delete this line
+
+	return &agent.TestResponse{}, nil
+}

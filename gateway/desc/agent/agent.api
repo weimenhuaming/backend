@@ -1,0 +1,48 @@
+syntax = "v1"
+
+info(
+    title: "Agent Server"
+    desc: "基于 LangChainGo 的 Agent 服务，个人知识库问答"
+)
+
+type (
+
+    CreateSessionReq {
+        session_id string `json:"session_id"`
+        user_id string `json:"user_id"`
+    }
+
+    CreateSessionResp {
+        session_id string `json:"session_id"`
+        user_id string `json:"user_id"`
+        created_at int64 `json:"created_at"`
+        message string `json:"message"`
+    }
+
+    AgentChatReq {
+        session_id string `json:"session_id"`
+        user_id string `json:"user_id"`
+        question string `json:"question"`
+    }
+
+    AgentChatResp {
+        session_id string `json:"session_id"`
+        answer string `json:"answer"`
+        message_id string `json:"message_id"`
+        timestamp int64 `json:"timestamp"`
+    }
+)
+
+@server(
+    group: agent
+)
+service Gateway {
+
+    @handler CreateSession
+    post /agent/session/create (CreateSessionReq)
+        returns (CreateSessionResp)
+
+    @handler AgentChat
+    post /agent/chat (AgentChatReq)
+        returns (AgentChatResp)
+}

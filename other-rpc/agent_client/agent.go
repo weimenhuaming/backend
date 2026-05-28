@@ -14,11 +14,15 @@ import (
 )
 
 type (
+	ChatRequest  = agent.ChatRequest
+	ChatResponse = agent.ChatResponse
 	TestRequest  = agent.TestRequest
 	TestResponse = agent.TestResponse
 
 	Agent interface {
 		Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
+		// Chat 基于知识库检索的问答，入参仅为用户问题
+		Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	}
 
 	defaultAgent struct {
@@ -35,4 +39,10 @@ func NewAgent(cli zrpc.Client) Agent {
 func (m *defaultAgent) Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error) {
 	client := agent.NewAgentClient(m.cli.Conn())
 	return client.Test(ctx, in, opts...)
+}
+
+// Chat 基于知识库检索的问答，入参仅为用户问题
+func (m *defaultAgent) Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
+	client := agent.NewAgentClient(m.cli.Conn())
+	return client.Chat(ctx, in, opts...)
 }

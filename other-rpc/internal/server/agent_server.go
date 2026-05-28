@@ -27,3 +27,9 @@ func (s *AgentServer) Test(ctx context.Context, in *agent.TestRequest) (*agent.T
 	l := logic.NewTestLogic(ctx, s.svcCtx)
 	return l.Test(in)
 }
+
+// Chat 基于知识库检索的问答，入参仅为用户问题
+func (s *AgentServer) Chat(ctx context.Context, in *agent.ChatRequest) (*agent.ChatResponse, error) {
+	l := logic.NewChatLogic(ctx, s.svcCtx)
+	return l.Chat(in)
+}

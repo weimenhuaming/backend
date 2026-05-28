@@ -20,13 +20,18 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Agent_Test_FullMethodName = "/agent.Agent/Test"
+	Agent_Chat_FullMethodName = "/agent.Agent/Chat"
 )
 
 // AgentClient is the client API for Agent service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Agent 个人知识库问答服务
 type AgentClient interface {
 	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
+	// Chat 基于知识库检索的问答，入参仅为用户问题
+	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 }
 
 type agentClient struct {
@@ -47,11 +52,25 @@ func (c *agentClient) Test(ctx context.Context, in *TestRequest, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *agentClient) Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatResponse)
+	err := c.cc.Invoke(ctx, Agent_Chat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServer is the server API for Agent service.
 // All implementations must embed UnimplementedAgentServer
 // for forward compatibility.
+//
+// Agent 个人知识库问答服务
 type AgentServer interface {
 	Test(context.Context, *TestRequest) (*TestResponse, error)
+	// Chat 基于知识库检索的问答，入参仅为用户问题
+	Chat(context.Context, *ChatRequest) (*ChatResponse, error)
 	mustEmbedUnimplementedAgentServer()
 }
 
@@ -64,6 +83,9 @@ type UnimplementedAgentServer struct{}
 
 func (UnimplementedAgentServer) Test(context.Context, *TestRequest) (*TestResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Test not implemented")
+}
+func (UnimplementedAgentServer) Chat(context.Context, *ChatRequest) (*ChatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Chat not implemented")
 }
 func (UnimplementedAgentServer) mustEmbedUnimplementedAgentServer() {}
 func (UnimplementedAgentServer) testEmbeddedByValue()               {}
@@ -104,6 +126,24 @@ func _Agent_Test_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Agent_Chat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServer).Chat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Agent_Chat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServer).Chat(ctx, req.(*ChatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Agent_ServiceDesc is the grpc.ServiceDesc for Agent service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +154,10 @@ var Agent_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Test",
 			Handler:    _Agent_Test_Handler,
+		},
+		{
+			MethodName: "Chat",
+			Handler:    _Agent_Chat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

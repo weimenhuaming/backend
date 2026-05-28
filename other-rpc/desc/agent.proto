@@ -4,14 +4,24 @@ package agent;
 
 option go_package = "./agent";
 
+// Agent 个人知识库问答服务
 service Agent {
   rpc Test(TestRequest) returns (TestResponse);
+  // Chat 基于知识库检索的问答，入参仅为用户问题
+  rpc Chat(ChatRequest) returns (ChatResponse);
 }
 
-// Test 接口的请求和响应消息
 message TestRequest {
   string msg = 1;
 }
 message TestResponse {
   string reply = 1;
+}
+
+message ChatRequest {
+  string question = 1;
+}
+
+message ChatResponse {
+  string answer = 1;
 }

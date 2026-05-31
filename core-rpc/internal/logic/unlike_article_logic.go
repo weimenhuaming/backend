@@ -12,21 +12,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type FavorArticleLogic struct {
+type UnlikeArticleLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewFavorArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FavorArticleLogic {
-	return &FavorArticleLogic{
+func NewUnlikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnlikeArticleLogic {
+	return &UnlikeArticleLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *FavorArticleLogic) FavorArticle(in *core.FavoriteArticleReq) (*core.FavoriteArticleResp, error) {
+func (l *UnlikeArticleLogic) UnlikeArticle(in *core.UnlikeArticleReq) (*core.UnlikeArticleResp, error) {
 	if in.UserId == 0 || in.ArticleId == 0 {
 		return nil, errors.New("参数无效")
 	}
@@ -39,17 +39,17 @@ func (l *FavorArticleLogic) FavorArticle(in *core.FavoriteArticleReq) (*core.Fav
 		return nil, errors.New("文章不存在")
 	}
 
-	var favorCount uint32
+	var likeCount uint32
 	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		delta, err := toggleArticleFavor(tx, in.UserId, in.ArticleId, in.IsFavorite)
+		delta, err := removeArticleLike(tx, in.UserId, in.ArticleId)
 		if err != nil {
 			return err
 		}
-		favorCount, err = adjustArticleCounter(tx, in.ArticleId, "favor_count", delta)
+		likeCount, err = adjustArticleCounter(tx, in.ArticleId, "like_count", delta)
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &core.FavoriteArticleResp{FavorCount: favorCount}, nil
+	return &core.UnlikeArticleResp{LikeCount: likeCount}, nil
 }

@@ -1754,8 +1754,7 @@ func (x *SearchArticlesResp) GetPageSize() uint32 {
 type LikeArticleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
-	IsLike        bool                   `protobuf:"varint,2,opt,name=is_like,json=isLike,proto3" json:"is_like,omitempty"` // true: 点赞, false: 取消点赞
-	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // 操作用户ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1797,13 +1796,6 @@ func (x *LikeArticleReq) GetArticleId() uint64 {
 	return 0
 }
 
-func (x *LikeArticleReq) GetIsLike() bool {
-	if x != nil {
-		return x.IsLike
-	}
-	return false
-}
-
 func (x *LikeArticleReq) GetUserId() uint64 {
 	if x != nil {
 		return x.UserId
@@ -1813,7 +1805,7 @@ func (x *LikeArticleReq) GetUserId() uint64 {
 
 type LikeArticleResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"` // 返回最新点赞数
+	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1855,30 +1847,29 @@ func (x *LikeArticleResp) GetLikeCount() uint32 {
 	return 0
 }
 
-// 收藏文章
-type FavoriteArticleReq struct {
+// 取消点赞文章
+type UnlikeArticleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
-	IsFavorite    bool                   `protobuf:"varint,2,opt,name=is_favorite,json=isFavorite,proto3" json:"is_favorite,omitempty"` // true: 收藏, false: 取消收藏
-	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 操作用户ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FavoriteArticleReq) Reset() {
-	*x = FavoriteArticleReq{}
+func (x *UnlikeArticleReq) Reset() {
+	*x = UnlikeArticleReq{}
 	mi := &file_desc_core_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FavoriteArticleReq) String() string {
+func (x *UnlikeArticleReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FavoriteArticleReq) ProtoMessage() {}
+func (*UnlikeArticleReq) ProtoMessage() {}
 
-func (x *FavoriteArticleReq) ProtoReflect() protoreflect.Message {
+func (x *UnlikeArticleReq) ProtoReflect() protoreflect.Message {
 	mi := &file_desc_core_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1890,53 +1881,46 @@ func (x *FavoriteArticleReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FavoriteArticleReq.ProtoReflect.Descriptor instead.
-func (*FavoriteArticleReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnlikeArticleReq.ProtoReflect.Descriptor instead.
+func (*UnlikeArticleReq) Descriptor() ([]byte, []int) {
 	return file_desc_core_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *FavoriteArticleReq) GetArticleId() uint64 {
+func (x *UnlikeArticleReq) GetArticleId() uint64 {
 	if x != nil {
 		return x.ArticleId
 	}
 	return 0
 }
 
-func (x *FavoriteArticleReq) GetIsFavorite() bool {
-	if x != nil {
-		return x.IsFavorite
-	}
-	return false
-}
-
-func (x *FavoriteArticleReq) GetUserId() uint64 {
+func (x *UnlikeArticleReq) GetUserId() uint64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-type FavoriteArticleResp struct {
+type UnlikeArticleResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FavorCount    uint32                 `protobuf:"varint,1,opt,name=favor_count,json=favorCount,proto3" json:"favor_count,omitempty"` // 返回最新收藏数
+	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FavoriteArticleResp) Reset() {
-	*x = FavoriteArticleResp{}
+func (x *UnlikeArticleResp) Reset() {
+	*x = UnlikeArticleResp{}
 	mi := &file_desc_core_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FavoriteArticleResp) String() string {
+func (x *UnlikeArticleResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FavoriteArticleResp) ProtoMessage() {}
+func (*UnlikeArticleResp) ProtoMessage() {}
 
-func (x *FavoriteArticleResp) ProtoReflect() protoreflect.Message {
+func (x *UnlikeArticleResp) ProtoReflect() protoreflect.Message {
 	mi := &file_desc_core_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1948,14 +1932,14 @@ func (x *FavoriteArticleResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FavoriteArticleResp.ProtoReflect.Descriptor instead.
-func (*FavoriteArticleResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnlikeArticleResp.ProtoReflect.Descriptor instead.
+func (*UnlikeArticleResp) Descriptor() ([]byte, []int) {
 	return file_desc_core_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *FavoriteArticleResp) GetFavorCount() uint32 {
+func (x *UnlikeArticleResp) GetLikeCount() uint32 {
 	if x != nil {
-		return x.FavorCount
+		return x.LikeCount
 	}
 	return 0
 }
@@ -1963,9 +1947,8 @@ func (x *FavoriteArticleResp) GetFavorCount() uint32 {
 // 点赞评论
 type LikeCommentReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CommentId     uint64                 `protobuf:"varint,1,opt,name=commentId,proto3" json:"commentId,omitempty"` // 评论ID
-	UserId        uint64                 `protobuf:"varint,2,opt,name=userId,proto3" json:"userId,omitempty"`       // 用户ID
-	IsLike        bool                   `protobuf:"varint,3,opt,name=isLike,proto3" json:"isLike,omitempty"`       // true=点赞，false=取消点赞
+	CommentId     uint64                 `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2014,16 +1997,9 @@ func (x *LikeCommentReq) GetUserId() uint64 {
 	return 0
 }
 
-func (x *LikeCommentReq) GetIsLike() bool {
-	if x != nil {
-		return x.IsLike
-	}
-	return false
-}
-
 type LikeCommentResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LikeCount     uint32                 `protobuf:"varint,1,opt,name=likeCount,proto3" json:"likeCount,omitempty"` // 最新的点赞数
+	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2065,6 +2041,438 @@ func (x *LikeCommentResp) GetLikeCount() uint32 {
 	return 0
 }
 
+// 取消点赞评论
+type UnlikeCommentReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CommentId     uint64                 `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlikeCommentReq) Reset() {
+	*x = UnlikeCommentReq{}
+	mi := &file_desc_core_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlikeCommentReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlikeCommentReq) ProtoMessage() {}
+
+func (x *UnlikeCommentReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlikeCommentReq.ProtoReflect.Descriptor instead.
+func (*UnlikeCommentReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *UnlikeCommentReq) GetCommentId() uint64 {
+	if x != nil {
+		return x.CommentId
+	}
+	return 0
+}
+
+func (x *UnlikeCommentReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type UnlikeCommentResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LikeCount     uint32                 `protobuf:"varint,1,opt,name=like_count,json=likeCount,proto3" json:"like_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlikeCommentResp) Reset() {
+	*x = UnlikeCommentResp{}
+	mi := &file_desc_core_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlikeCommentResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlikeCommentResp) ProtoMessage() {}
+
+func (x *UnlikeCommentResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlikeCommentResp.ProtoReflect.Descriptor instead.
+func (*UnlikeCommentResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *UnlikeCommentResp) GetLikeCount() uint32 {
+	if x != nil {
+		return x.LikeCount
+	}
+	return 0
+}
+
+// 浏览文章（增加阅读量）
+type ViewArticleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ViewArticleReq) Reset() {
+	*x = ViewArticleReq{}
+	mi := &file_desc_core_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ViewArticleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ViewArticleReq) ProtoMessage() {}
+
+func (x *ViewArticleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ViewArticleReq.ProtoReflect.Descriptor instead.
+func (*ViewArticleReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *ViewArticleReq) GetArticleId() uint64 {
+	if x != nil {
+		return x.ArticleId
+	}
+	return 0
+}
+
+type ViewArticleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ViewCount     uint32                 `protobuf:"varint,1,opt,name=view_count,json=viewCount,proto3" json:"view_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ViewArticleResp) Reset() {
+	*x = ViewArticleResp{}
+	mi := &file_desc_core_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ViewArticleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ViewArticleResp) ProtoMessage() {}
+
+func (x *ViewArticleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ViewArticleResp.ProtoReflect.Descriptor instead.
+func (*ViewArticleResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *ViewArticleResp) GetViewCount() uint32 {
+	if x != nil {
+		return x.ViewCount
+	}
+	return 0
+}
+
+// 查询用户对文章的点赞状态
+type GetArticleLikeStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ArticleId     uint64                 `protobuf:"varint,1,opt,name=article_id,json=articleId,proto3" json:"article_id,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetArticleLikeStatusReq) Reset() {
+	*x = GetArticleLikeStatusReq{}
+	mi := &file_desc_core_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetArticleLikeStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetArticleLikeStatusReq) ProtoMessage() {}
+
+func (x *GetArticleLikeStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetArticleLikeStatusReq.ProtoReflect.Descriptor instead.
+func (*GetArticleLikeStatusReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *GetArticleLikeStatusReq) GetArticleId() uint64 {
+	if x != nil {
+		return x.ArticleId
+	}
+	return 0
+}
+
+func (x *GetArticleLikeStatusReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type GetArticleLikeStatusResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Liked         bool                   `protobuf:"varint,1,opt,name=liked,proto3" json:"liked,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetArticleLikeStatusResp) Reset() {
+	*x = GetArticleLikeStatusResp{}
+	mi := &file_desc_core_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetArticleLikeStatusResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetArticleLikeStatusResp) ProtoMessage() {}
+
+func (x *GetArticleLikeStatusResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetArticleLikeStatusResp.ProtoReflect.Descriptor instead.
+func (*GetArticleLikeStatusResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *GetArticleLikeStatusResp) GetLiked() bool {
+	if x != nil {
+		return x.Liked
+	}
+	return false
+}
+
+// 批量查询用户对评论的点赞状态
+type BatchGetCommentLikeStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CommentIds    []uint64               `protobuf:"varint,1,rep,packed,name=comment_ids,json=commentIds,proto3" json:"comment_ids,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchGetCommentLikeStatusReq) Reset() {
+	*x = BatchGetCommentLikeStatusReq{}
+	mi := &file_desc_core_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchGetCommentLikeStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchGetCommentLikeStatusReq) ProtoMessage() {}
+
+func (x *BatchGetCommentLikeStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchGetCommentLikeStatusReq.ProtoReflect.Descriptor instead.
+func (*BatchGetCommentLikeStatusReq) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *BatchGetCommentLikeStatusReq) GetCommentIds() []uint64 {
+	if x != nil {
+		return x.CommentIds
+	}
+	return nil
+}
+
+func (x *BatchGetCommentLikeStatusReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type CommentLikeStatusItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CommentId     uint64                 `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
+	Liked         bool                   `protobuf:"varint,2,opt,name=liked,proto3" json:"liked,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommentLikeStatusItem) Reset() {
+	*x = CommentLikeStatusItem{}
+	mi := &file_desc_core_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommentLikeStatusItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommentLikeStatusItem) ProtoMessage() {}
+
+func (x *CommentLikeStatusItem) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommentLikeStatusItem.ProtoReflect.Descriptor instead.
+func (*CommentLikeStatusItem) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *CommentLikeStatusItem) GetCommentId() uint64 {
+	if x != nil {
+		return x.CommentId
+	}
+	return 0
+}
+
+func (x *CommentLikeStatusItem) GetLiked() bool {
+	if x != nil {
+		return x.Liked
+	}
+	return false
+}
+
+type BatchGetCommentLikeStatusResp struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Items         []*CommentLikeStatusItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchGetCommentLikeStatusResp) Reset() {
+	*x = BatchGetCommentLikeStatusResp{}
+	mi := &file_desc_core_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchGetCommentLikeStatusResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchGetCommentLikeStatusResp) ProtoMessage() {}
+
+func (x *BatchGetCommentLikeStatusResp) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_core_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchGetCommentLikeStatusResp.ProtoReflect.Descriptor instead.
+func (*BatchGetCommentLikeStatusResp) Descriptor() ([]byte, []int) {
+	return file_desc_core_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *BatchGetCommentLikeStatusResp) GetItems() []*CommentLikeStatusItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 // 评论信息
 type CommentInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2088,7 +2496,7 @@ type CommentInfo struct {
 
 func (x *CommentInfo) Reset() {
 	*x = CommentInfo{}
-	mi := &file_desc_core_proto_msgTypes[37]
+	mi := &file_desc_core_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2100,7 +2508,7 @@ func (x *CommentInfo) String() string {
 func (*CommentInfo) ProtoMessage() {}
 
 func (x *CommentInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[37]
+	mi := &file_desc_core_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2113,7 +2521,7 @@ func (x *CommentInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommentInfo.ProtoReflect.Descriptor instead.
 func (*CommentInfo) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{37}
+	return file_desc_core_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *CommentInfo) GetId() uint64 {
@@ -2226,7 +2634,7 @@ type CreateCommentReq struct {
 
 func (x *CreateCommentReq) Reset() {
 	*x = CreateCommentReq{}
-	mi := &file_desc_core_proto_msgTypes[38]
+	mi := &file_desc_core_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2238,7 +2646,7 @@ func (x *CreateCommentReq) String() string {
 func (*CreateCommentReq) ProtoMessage() {}
 
 func (x *CreateCommentReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[38]
+	mi := &file_desc_core_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2251,7 +2659,7 @@ func (x *CreateCommentReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCommentReq.ProtoReflect.Descriptor instead.
 func (*CreateCommentReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{38}
+	return file_desc_core_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *CreateCommentReq) GetArticleId() uint64 {
@@ -2284,7 +2692,7 @@ type CreateCommentResp struct {
 
 func (x *CreateCommentResp) Reset() {
 	*x = CreateCommentResp{}
-	mi := &file_desc_core_proto_msgTypes[39]
+	mi := &file_desc_core_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2296,7 +2704,7 @@ func (x *CreateCommentResp) String() string {
 func (*CreateCommentResp) ProtoMessage() {}
 
 func (x *CreateCommentResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[39]
+	mi := &file_desc_core_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2309,7 +2717,7 @@ func (x *CreateCommentResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCommentResp.ProtoReflect.Descriptor instead.
 func (*CreateCommentResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{39}
+	return file_desc_core_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *CreateCommentResp) GetCommentId() uint64 {
@@ -2334,7 +2742,7 @@ type CreateReplyReq struct {
 
 func (x *CreateReplyReq) Reset() {
 	*x = CreateReplyReq{}
-	mi := &file_desc_core_proto_msgTypes[40]
+	mi := &file_desc_core_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2346,7 +2754,7 @@ func (x *CreateReplyReq) String() string {
 func (*CreateReplyReq) ProtoMessage() {}
 
 func (x *CreateReplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[40]
+	mi := &file_desc_core_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2359,7 +2767,7 @@ func (x *CreateReplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReplyReq.ProtoReflect.Descriptor instead.
 func (*CreateReplyReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{40}
+	return file_desc_core_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *CreateReplyReq) GetRootId() uint64 {
@@ -2413,7 +2821,7 @@ type CreateReplyResp struct {
 
 func (x *CreateReplyResp) Reset() {
 	*x = CreateReplyResp{}
-	mi := &file_desc_core_proto_msgTypes[41]
+	mi := &file_desc_core_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2425,7 +2833,7 @@ func (x *CreateReplyResp) String() string {
 func (*CreateReplyResp) ProtoMessage() {}
 
 func (x *CreateReplyResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[41]
+	mi := &file_desc_core_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2438,7 +2846,7 @@ func (x *CreateReplyResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReplyResp.ProtoReflect.Descriptor instead.
 func (*CreateReplyResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{41}
+	return file_desc_core_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *CreateReplyResp) GetReplyId() uint64 {
@@ -2459,7 +2867,7 @@ type DeleteCommentReq struct {
 
 func (x *DeleteCommentReq) Reset() {
 	*x = DeleteCommentReq{}
-	mi := &file_desc_core_proto_msgTypes[42]
+	mi := &file_desc_core_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2471,7 +2879,7 @@ func (x *DeleteCommentReq) String() string {
 func (*DeleteCommentReq) ProtoMessage() {}
 
 func (x *DeleteCommentReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[42]
+	mi := &file_desc_core_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2484,7 +2892,7 @@ func (x *DeleteCommentReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCommentReq.ProtoReflect.Descriptor instead.
 func (*DeleteCommentReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{42}
+	return file_desc_core_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *DeleteCommentReq) GetId() uint64 {
@@ -2509,7 +2917,7 @@ type DeleteCommentResp struct {
 
 func (x *DeleteCommentResp) Reset() {
 	*x = DeleteCommentResp{}
-	mi := &file_desc_core_proto_msgTypes[43]
+	mi := &file_desc_core_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2521,7 +2929,7 @@ func (x *DeleteCommentResp) String() string {
 func (*DeleteCommentResp) ProtoMessage() {}
 
 func (x *DeleteCommentResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[43]
+	mi := &file_desc_core_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2534,7 +2942,7 @@ func (x *DeleteCommentResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCommentResp.ProtoReflect.Descriptor instead.
 func (*DeleteCommentResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{43}
+	return file_desc_core_proto_rawDescGZIP(), []int{52}
 }
 
 // 获取文章评论列表（只返回一级评论）
@@ -2550,7 +2958,7 @@ type GetArticleCommentsReq struct {
 
 func (x *GetArticleCommentsReq) Reset() {
 	*x = GetArticleCommentsReq{}
-	mi := &file_desc_core_proto_msgTypes[44]
+	mi := &file_desc_core_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2562,7 +2970,7 @@ func (x *GetArticleCommentsReq) String() string {
 func (*GetArticleCommentsReq) ProtoMessage() {}
 
 func (x *GetArticleCommentsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[44]
+	mi := &file_desc_core_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2575,7 +2983,7 @@ func (x *GetArticleCommentsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetArticleCommentsReq.ProtoReflect.Descriptor instead.
 func (*GetArticleCommentsReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{44}
+	return file_desc_core_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *GetArticleCommentsReq) GetArticleId() uint64 {
@@ -2618,7 +3026,7 @@ type GetArticleCommentsResp struct {
 
 func (x *GetArticleCommentsResp) Reset() {
 	*x = GetArticleCommentsResp{}
-	mi := &file_desc_core_proto_msgTypes[45]
+	mi := &file_desc_core_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2630,7 +3038,7 @@ func (x *GetArticleCommentsResp) String() string {
 func (*GetArticleCommentsResp) ProtoMessage() {}
 
 func (x *GetArticleCommentsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[45]
+	mi := &file_desc_core_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2643,7 +3051,7 @@ func (x *GetArticleCommentsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetArticleCommentsResp.ProtoReflect.Descriptor instead.
 func (*GetArticleCommentsResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{45}
+	return file_desc_core_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetArticleCommentsResp) GetComments() []*CommentInfo {
@@ -2686,7 +3094,7 @@ type GetCommentRepliesReq struct {
 
 func (x *GetCommentRepliesReq) Reset() {
 	*x = GetCommentRepliesReq{}
-	mi := &file_desc_core_proto_msgTypes[46]
+	mi := &file_desc_core_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2698,7 +3106,7 @@ func (x *GetCommentRepliesReq) String() string {
 func (*GetCommentRepliesReq) ProtoMessage() {}
 
 func (x *GetCommentRepliesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[46]
+	mi := &file_desc_core_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2711,7 +3119,7 @@ func (x *GetCommentRepliesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCommentRepliesReq.ProtoReflect.Descriptor instead.
 func (*GetCommentRepliesReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{46}
+	return file_desc_core_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *GetCommentRepliesReq) GetRootId() uint64 {
@@ -2747,7 +3155,7 @@ type GetCommentRepliesResp struct {
 
 func (x *GetCommentRepliesResp) Reset() {
 	*x = GetCommentRepliesResp{}
-	mi := &file_desc_core_proto_msgTypes[47]
+	mi := &file_desc_core_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2759,7 +3167,7 @@ func (x *GetCommentRepliesResp) String() string {
 func (*GetCommentRepliesResp) ProtoMessage() {}
 
 func (x *GetCommentRepliesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[47]
+	mi := &file_desc_core_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2772,7 +3180,7 @@ func (x *GetCommentRepliesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCommentRepliesResp.ProtoReflect.Descriptor instead.
 func (*GetCommentRepliesResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{47}
+	return file_desc_core_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *GetCommentRepliesResp) GetReplies() []*CommentInfo {
@@ -2815,7 +3223,7 @@ type GetUserCommentsReq struct {
 
 func (x *GetUserCommentsReq) Reset() {
 	*x = GetUserCommentsReq{}
-	mi := &file_desc_core_proto_msgTypes[48]
+	mi := &file_desc_core_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2827,7 +3235,7 @@ func (x *GetUserCommentsReq) String() string {
 func (*GetUserCommentsReq) ProtoMessage() {}
 
 func (x *GetUserCommentsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[48]
+	mi := &file_desc_core_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2840,7 +3248,7 @@ func (x *GetUserCommentsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserCommentsReq.ProtoReflect.Descriptor instead.
 func (*GetUserCommentsReq) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{48}
+	return file_desc_core_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetUserCommentsReq) GetUserId() uint64 {
@@ -2876,7 +3284,7 @@ type GetUserCommentsResp struct {
 
 func (x *GetUserCommentsResp) Reset() {
 	*x = GetUserCommentsResp{}
-	mi := &file_desc_core_proto_msgTypes[49]
+	mi := &file_desc_core_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2888,7 +3296,7 @@ func (x *GetUserCommentsResp) String() string {
 func (*GetUserCommentsResp) ProtoMessage() {}
 
 func (x *GetUserCommentsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_core_proto_msgTypes[49]
+	mi := &file_desc_core_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2901,7 +3309,7 @@ func (x *GetUserCommentsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserCommentsResp.ProtoReflect.Descriptor instead.
 func (*GetUserCommentsResp) Descriptor() ([]byte, []int) {
-	return file_desc_core_proto_rawDescGZIP(), []int{49}
+	return file_desc_core_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *GetUserCommentsResp) GetComments() []*CommentInfo {
@@ -3058,30 +3466,57 @@ const file_desc_core_proto_rawDesc = "" +
 	"\barticles\x18\x01 \x03(\v2\x11.core.ArticleInfoR\barticles\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\rR\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\rR\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"a\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"H\n" +
 	"\x0eLikeArticleReq\x12\x1d\n" +
 	"\n" +
 	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x17\n" +
-	"\ais_like\x18\x02 \x01(\bR\x06isLike\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x04R\x06userId\"0\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"0\n" +
 	"\x0fLikeArticleResp\x12\x1d\n" +
 	"\n" +
-	"like_count\x18\x01 \x01(\rR\tlikeCount\"m\n" +
-	"\x12FavoriteArticleReq\x12\x1d\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"J\n" +
+	"\x10UnlikeArticleReq\x12\x1d\n" +
 	"\n" +
-	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x1f\n" +
-	"\vis_favorite\x18\x02 \x01(\bR\n" +
-	"isFavorite\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x04R\x06userId\"6\n" +
-	"\x13FavoriteArticleResp\x12\x1f\n" +
-	"\vfavor_count\x18\x01 \x01(\rR\n" +
-	"favorCount\"^\n" +
-	"\x0eLikeCommentReq\x12\x1c\n" +
-	"\tcommentId\x18\x01 \x01(\x04R\tcommentId\x12\x16\n" +
-	"\x06userId\x18\x02 \x01(\x04R\x06userId\x12\x16\n" +
-	"\x06isLike\x18\x03 \x01(\bR\x06isLike\"/\n" +
-	"\x0fLikeCommentResp\x12\x1c\n" +
-	"\tlikeCount\x18\x01 \x01(\rR\tlikeCount\"\xa6\x03\n" +
+	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"2\n" +
+	"\x11UnlikeArticleResp\x12\x1d\n" +
+	"\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"H\n" +
+	"\x0eLikeCommentReq\x12\x1d\n" +
+	"\n" +
+	"comment_id\x18\x01 \x01(\x04R\tcommentId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"0\n" +
+	"\x0fLikeCommentResp\x12\x1d\n" +
+	"\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"J\n" +
+	"\x10UnlikeCommentReq\x12\x1d\n" +
+	"\n" +
+	"comment_id\x18\x01 \x01(\x04R\tcommentId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"2\n" +
+	"\x11UnlikeCommentResp\x12\x1d\n" +
+	"\n" +
+	"like_count\x18\x01 \x01(\rR\tlikeCount\"/\n" +
+	"\x0eViewArticleReq\x12\x1d\n" +
+	"\n" +
+	"article_id\x18\x01 \x01(\x04R\tarticleId\"0\n" +
+	"\x0fViewArticleResp\x12\x1d\n" +
+	"\n" +
+	"view_count\x18\x01 \x01(\rR\tviewCount\"Q\n" +
+	"\x17GetArticleLikeStatusReq\x12\x1d\n" +
+	"\n" +
+	"article_id\x18\x01 \x01(\x04R\tarticleId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"0\n" +
+	"\x18GetArticleLikeStatusResp\x12\x14\n" +
+	"\x05liked\x18\x01 \x01(\bR\x05liked\"X\n" +
+	"\x1cBatchGetCommentLikeStatusReq\x12\x1f\n" +
+	"\vcomment_ids\x18\x01 \x03(\x04R\n" +
+	"commentIds\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"L\n" +
+	"\x15CommentLikeStatusItem\x12\x1d\n" +
+	"\n" +
+	"comment_id\x18\x01 \x01(\x04R\tcommentId\x12\x14\n" +
+	"\x05liked\x18\x02 \x01(\bR\x05liked\"R\n" +
+	"\x1dBatchGetCommentLikeStatusResp\x121\n" +
+	"\x05items\x18\x01 \x03(\v2\x1b.core.CommentLikeStatusItemR\x05items\"\xa6\x03\n" +
 	"\vCommentInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1c\n" +
 	"\tarticleId\x18\x02 \x01(\x04R\tarticleId\x12\x16\n" +
@@ -3148,7 +3583,7 @@ const file_desc_core_proto_rawDesc = "" +
 	"\bcomments\x18\x01 \x03(\v2\x11.core.CommentInfoR\bcomments\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x05R\x04size\x12\x14\n" +
-	"\x05total\x18\x04 \x01(\x05R\x05total2\xe3\f\n" +
+	"\x05total\x18\x04 \x01(\x05R\x05total2\xa3\x0f\n" +
 	"\x04Core\x12-\n" +
 	"\x04Test\x12\x11.core.TestRequest\x1a\x12.core.TestResponse\x123\n" +
 	"\bRegister\x12\x11.core.RegisterReq\x1a\x12.core.RegisterResp\"\x00\x124\n" +
@@ -3166,9 +3601,13 @@ const file_desc_core_proto_rawDesc = "" +
 	"\fListArticles\x12\x15.core.ListArticlesReq\x1a\x16.core.ListArticlesResp\"\x00\x12Q\n" +
 	"\x15GetArticlesByCategory\x12\x1e.core.GetArticlesByCategoryReq\x1a\x16.core.ListArticlesResp\"\x00\x12E\n" +
 	"\x0eSearchArticles\x12\x17.core.SearchArticlesReq\x1a\x18.core.SearchArticlesResp\"\x00\x12<\n" +
-	"\vLikeArticle\x12\x14.core.LikeArticleReq\x1a\x15.core.LikeArticleResp\"\x00\x12E\n" +
-	"\fFavorArticle\x12\x18.core.FavoriteArticleReq\x1a\x19.core.FavoriteArticleResp\"\x00\x12<\n" +
+	"\vLikeArticle\x12\x14.core.LikeArticleReq\x1a\x15.core.LikeArticleResp\"\x00\x12B\n" +
+	"\rUnlikeArticle\x12\x16.core.UnlikeArticleReq\x1a\x17.core.UnlikeArticleResp\"\x00\x12<\n" +
 	"\vLikeComment\x12\x14.core.LikeCommentReq\x1a\x15.core.LikeCommentResp\"\x00\x12B\n" +
+	"\rUnlikeComment\x12\x16.core.UnlikeCommentReq\x1a\x17.core.UnlikeCommentResp\"\x00\x12<\n" +
+	"\vViewArticle\x12\x14.core.ViewArticleReq\x1a\x15.core.ViewArticleResp\"\x00\x12W\n" +
+	"\x14GetArticleLikeStatus\x12\x1d.core.GetArticleLikeStatusReq\x1a\x1e.core.GetArticleLikeStatusResp\"\x00\x12f\n" +
+	"\x19BatchGetCommentLikeStatus\x12\".core.BatchGetCommentLikeStatusReq\x1a#.core.BatchGetCommentLikeStatusResp\"\x00\x12B\n" +
 	"\rCreateComment\x12\x16.core.CreateCommentReq\x1a\x17.core.CreateCommentResp\"\x00\x12<\n" +
 	"\vCreateReply\x12\x14.core.CreateReplyReq\x1a\x15.core.CreateReplyResp\"\x00\x12B\n" +
 	"\rDeleteComment\x12\x16.core.DeleteCommentReq\x1a\x17.core.DeleteCommentResp\"\x00\x12Q\n" +
@@ -3188,121 +3627,139 @@ func file_desc_core_proto_rawDescGZIP() []byte {
 	return file_desc_core_proto_rawDescData
 }
 
-var file_desc_core_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
+var file_desc_core_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
 var file_desc_core_proto_goTypes = []any{
-	(*TestRequest)(nil),              // 0: core.TestRequest
-	(*TestResponse)(nil),             // 1: core.TestResponse
-	(*EmailLoginReq)(nil),            // 2: core.EmailLoginReq
-	(*LoginResp)(nil),                // 3: core.LoginResp
-	(*RegisterReq)(nil),              // 4: core.RegisterReq
-	(*RegisterResp)(nil),             // 5: core.RegisterResp
-	(*ResetPasswordEmailReq)(nil),    // 6: core.ResetPasswordEmailReq
-	(*ResetPasswordEmailResp)(nil),   // 7: core.ResetPasswordEmailResp
-	(*LogoutReq)(nil),                // 8: core.LogoutReq
-	(*LogoutResp)(nil),               // 9: core.LogoutResp
-	(*CreateCategoryReq)(nil),        // 10: core.CreateCategoryReq
-	(*CreateCategoryResp)(nil),       // 11: core.CreateCategoryResp
-	(*CategoryInfo)(nil),             // 12: core.CategoryInfo
-	(*ListCategoriesReq)(nil),        // 13: core.ListCategoriesReq
-	(*ListCategoriesResp)(nil),       // 14: core.ListCategoriesResp
-	(*DeleteCategoryReq)(nil),        // 15: core.DeleteCategoryReq
-	(*DeleteCategoryResp)(nil),       // 16: core.DeleteCategoryResp
-	(*ArticleInfo)(nil),              // 17: core.ArticleInfo
-	(*CreateArticleReq)(nil),         // 18: core.CreateArticleReq
-	(*CreateArticleResp)(nil),        // 19: core.CreateArticleResp
-	(*UpdateArticleReq)(nil),         // 20: core.UpdateArticleReq
-	(*UpdateArticleResp)(nil),        // 21: core.UpdateArticleResp
-	(*DeleteArticleReq)(nil),         // 22: core.DeleteArticleReq
-	(*DeleteArticleResp)(nil),        // 23: core.DeleteArticleResp
-	(*GetArticleDetailReq)(nil),      // 24: core.GetArticleDetailReq
-	(*GetArticleDetailResp)(nil),     // 25: core.GetArticleDetailResp
-	(*ListArticlesReq)(nil),          // 26: core.ListArticlesReq
-	(*ListArticlesResp)(nil),         // 27: core.ListArticlesResp
-	(*GetArticlesByCategoryReq)(nil), // 28: core.GetArticlesByCategoryReq
-	(*SearchArticlesReq)(nil),        // 29: core.SearchArticlesReq
-	(*SearchArticlesResp)(nil),       // 30: core.SearchArticlesResp
-	(*LikeArticleReq)(nil),           // 31: core.LikeArticleReq
-	(*LikeArticleResp)(nil),          // 32: core.LikeArticleResp
-	(*FavoriteArticleReq)(nil),       // 33: core.FavoriteArticleReq
-	(*FavoriteArticleResp)(nil),      // 34: core.FavoriteArticleResp
-	(*LikeCommentReq)(nil),           // 35: core.LikeCommentReq
-	(*LikeCommentResp)(nil),          // 36: core.LikeCommentResp
-	(*CommentInfo)(nil),              // 37: core.CommentInfo
-	(*CreateCommentReq)(nil),         // 38: core.CreateCommentReq
-	(*CreateCommentResp)(nil),        // 39: core.CreateCommentResp
-	(*CreateReplyReq)(nil),           // 40: core.CreateReplyReq
-	(*CreateReplyResp)(nil),          // 41: core.CreateReplyResp
-	(*DeleteCommentReq)(nil),         // 42: core.DeleteCommentReq
-	(*DeleteCommentResp)(nil),        // 43: core.DeleteCommentResp
-	(*GetArticleCommentsReq)(nil),    // 44: core.GetArticleCommentsReq
-	(*GetArticleCommentsResp)(nil),   // 45: core.GetArticleCommentsResp
-	(*GetCommentRepliesReq)(nil),     // 46: core.GetCommentRepliesReq
-	(*GetCommentRepliesResp)(nil),    // 47: core.GetCommentRepliesResp
-	(*GetUserCommentsReq)(nil),       // 48: core.GetUserCommentsReq
-	(*GetUserCommentsResp)(nil),      // 49: core.GetUserCommentsResp
+	(*TestRequest)(nil),                   // 0: core.TestRequest
+	(*TestResponse)(nil),                  // 1: core.TestResponse
+	(*EmailLoginReq)(nil),                 // 2: core.EmailLoginReq
+	(*LoginResp)(nil),                     // 3: core.LoginResp
+	(*RegisterReq)(nil),                   // 4: core.RegisterReq
+	(*RegisterResp)(nil),                  // 5: core.RegisterResp
+	(*ResetPasswordEmailReq)(nil),         // 6: core.ResetPasswordEmailReq
+	(*ResetPasswordEmailResp)(nil),        // 7: core.ResetPasswordEmailResp
+	(*LogoutReq)(nil),                     // 8: core.LogoutReq
+	(*LogoutResp)(nil),                    // 9: core.LogoutResp
+	(*CreateCategoryReq)(nil),             // 10: core.CreateCategoryReq
+	(*CreateCategoryResp)(nil),            // 11: core.CreateCategoryResp
+	(*CategoryInfo)(nil),                  // 12: core.CategoryInfo
+	(*ListCategoriesReq)(nil),             // 13: core.ListCategoriesReq
+	(*ListCategoriesResp)(nil),            // 14: core.ListCategoriesResp
+	(*DeleteCategoryReq)(nil),             // 15: core.DeleteCategoryReq
+	(*DeleteCategoryResp)(nil),            // 16: core.DeleteCategoryResp
+	(*ArticleInfo)(nil),                   // 17: core.ArticleInfo
+	(*CreateArticleReq)(nil),              // 18: core.CreateArticleReq
+	(*CreateArticleResp)(nil),             // 19: core.CreateArticleResp
+	(*UpdateArticleReq)(nil),              // 20: core.UpdateArticleReq
+	(*UpdateArticleResp)(nil),             // 21: core.UpdateArticleResp
+	(*DeleteArticleReq)(nil),              // 22: core.DeleteArticleReq
+	(*DeleteArticleResp)(nil),             // 23: core.DeleteArticleResp
+	(*GetArticleDetailReq)(nil),           // 24: core.GetArticleDetailReq
+	(*GetArticleDetailResp)(nil),          // 25: core.GetArticleDetailResp
+	(*ListArticlesReq)(nil),               // 26: core.ListArticlesReq
+	(*ListArticlesResp)(nil),              // 27: core.ListArticlesResp
+	(*GetArticlesByCategoryReq)(nil),      // 28: core.GetArticlesByCategoryReq
+	(*SearchArticlesReq)(nil),             // 29: core.SearchArticlesReq
+	(*SearchArticlesResp)(nil),            // 30: core.SearchArticlesResp
+	(*LikeArticleReq)(nil),                // 31: core.LikeArticleReq
+	(*LikeArticleResp)(nil),               // 32: core.LikeArticleResp
+	(*UnlikeArticleReq)(nil),              // 33: core.UnlikeArticleReq
+	(*UnlikeArticleResp)(nil),             // 34: core.UnlikeArticleResp
+	(*LikeCommentReq)(nil),                // 35: core.LikeCommentReq
+	(*LikeCommentResp)(nil),               // 36: core.LikeCommentResp
+	(*UnlikeCommentReq)(nil),              // 37: core.UnlikeCommentReq
+	(*UnlikeCommentResp)(nil),             // 38: core.UnlikeCommentResp
+	(*ViewArticleReq)(nil),                // 39: core.ViewArticleReq
+	(*ViewArticleResp)(nil),               // 40: core.ViewArticleResp
+	(*GetArticleLikeStatusReq)(nil),       // 41: core.GetArticleLikeStatusReq
+	(*GetArticleLikeStatusResp)(nil),      // 42: core.GetArticleLikeStatusResp
+	(*BatchGetCommentLikeStatusReq)(nil),  // 43: core.BatchGetCommentLikeStatusReq
+	(*CommentLikeStatusItem)(nil),         // 44: core.CommentLikeStatusItem
+	(*BatchGetCommentLikeStatusResp)(nil), // 45: core.BatchGetCommentLikeStatusResp
+	(*CommentInfo)(nil),                   // 46: core.CommentInfo
+	(*CreateCommentReq)(nil),              // 47: core.CreateCommentReq
+	(*CreateCommentResp)(nil),             // 48: core.CreateCommentResp
+	(*CreateReplyReq)(nil),                // 49: core.CreateReplyReq
+	(*CreateReplyResp)(nil),               // 50: core.CreateReplyResp
+	(*DeleteCommentReq)(nil),              // 51: core.DeleteCommentReq
+	(*DeleteCommentResp)(nil),             // 52: core.DeleteCommentResp
+	(*GetArticleCommentsReq)(nil),         // 53: core.GetArticleCommentsReq
+	(*GetArticleCommentsResp)(nil),        // 54: core.GetArticleCommentsResp
+	(*GetCommentRepliesReq)(nil),          // 55: core.GetCommentRepliesReq
+	(*GetCommentRepliesResp)(nil),         // 56: core.GetCommentRepliesResp
+	(*GetUserCommentsReq)(nil),            // 57: core.GetUserCommentsReq
+	(*GetUserCommentsResp)(nil),           // 58: core.GetUserCommentsResp
 }
 var file_desc_core_proto_depIdxs = []int32{
 	12, // 0: core.ListCategoriesResp.categories:type_name -> core.CategoryInfo
 	17, // 1: core.GetArticleDetailResp.article:type_name -> core.ArticleInfo
 	17, // 2: core.ListArticlesResp.articles:type_name -> core.ArticleInfo
 	17, // 3: core.SearchArticlesResp.articles:type_name -> core.ArticleInfo
-	37, // 4: core.CommentInfo.replies:type_name -> core.CommentInfo
-	37, // 5: core.GetArticleCommentsResp.comments:type_name -> core.CommentInfo
-	37, // 6: core.GetCommentRepliesResp.replies:type_name -> core.CommentInfo
-	37, // 7: core.GetUserCommentsResp.comments:type_name -> core.CommentInfo
-	0,  // 8: core.Core.Test:input_type -> core.TestRequest
-	4,  // 9: core.Core.Register:input_type -> core.RegisterReq
-	2,  // 10: core.Core.EmailLogin:input_type -> core.EmailLoginReq
-	6,  // 11: core.Core.ResetPasswordByEmail:input_type -> core.ResetPasswordEmailReq
-	8,  // 12: core.Core.Logout:input_type -> core.LogoutReq
-	10, // 13: core.Core.CreateCategory:input_type -> core.CreateCategoryReq
-	13, // 14: core.Core.ListCategories:input_type -> core.ListCategoriesReq
-	15, // 15: core.Core.DeleteCategory:input_type -> core.DeleteCategoryReq
-	18, // 16: core.Core.CreateArticle:input_type -> core.CreateArticleReq
-	20, // 17: core.Core.UpdateArticle:input_type -> core.UpdateArticleReq
-	22, // 18: core.Core.DeleteArticle:input_type -> core.DeleteArticleReq
-	24, // 19: core.Core.GetArticleDetail:input_type -> core.GetArticleDetailReq
-	26, // 20: core.Core.ListArticles:input_type -> core.ListArticlesReq
-	28, // 21: core.Core.GetArticlesByCategory:input_type -> core.GetArticlesByCategoryReq
-	29, // 22: core.Core.SearchArticles:input_type -> core.SearchArticlesReq
-	31, // 23: core.Core.LikeArticle:input_type -> core.LikeArticleReq
-	33, // 24: core.Core.FavorArticle:input_type -> core.FavoriteArticleReq
-	35, // 25: core.Core.LikeComment:input_type -> core.LikeCommentReq
-	38, // 26: core.Core.CreateComment:input_type -> core.CreateCommentReq
-	40, // 27: core.Core.CreateReply:input_type -> core.CreateReplyReq
-	42, // 28: core.Core.DeleteComment:input_type -> core.DeleteCommentReq
-	44, // 29: core.Core.GetArticleComments:input_type -> core.GetArticleCommentsReq
-	46, // 30: core.Core.GetCommentReplies:input_type -> core.GetCommentRepliesReq
-	48, // 31: core.Core.GetUserComments:input_type -> core.GetUserCommentsReq
-	1,  // 32: core.Core.Test:output_type -> core.TestResponse
-	5,  // 33: core.Core.Register:output_type -> core.RegisterResp
-	3,  // 34: core.Core.EmailLogin:output_type -> core.LoginResp
-	7,  // 35: core.Core.ResetPasswordByEmail:output_type -> core.ResetPasswordEmailResp
-	9,  // 36: core.Core.Logout:output_type -> core.LogoutResp
-	11, // 37: core.Core.CreateCategory:output_type -> core.CreateCategoryResp
-	14, // 38: core.Core.ListCategories:output_type -> core.ListCategoriesResp
-	16, // 39: core.Core.DeleteCategory:output_type -> core.DeleteCategoryResp
-	19, // 40: core.Core.CreateArticle:output_type -> core.CreateArticleResp
-	21, // 41: core.Core.UpdateArticle:output_type -> core.UpdateArticleResp
-	23, // 42: core.Core.DeleteArticle:output_type -> core.DeleteArticleResp
-	25, // 43: core.Core.GetArticleDetail:output_type -> core.GetArticleDetailResp
-	27, // 44: core.Core.ListArticles:output_type -> core.ListArticlesResp
-	27, // 45: core.Core.GetArticlesByCategory:output_type -> core.ListArticlesResp
-	30, // 46: core.Core.SearchArticles:output_type -> core.SearchArticlesResp
-	32, // 47: core.Core.LikeArticle:output_type -> core.LikeArticleResp
-	34, // 48: core.Core.FavorArticle:output_type -> core.FavoriteArticleResp
-	36, // 49: core.Core.LikeComment:output_type -> core.LikeCommentResp
-	39, // 50: core.Core.CreateComment:output_type -> core.CreateCommentResp
-	41, // 51: core.Core.CreateReply:output_type -> core.CreateReplyResp
-	43, // 52: core.Core.DeleteComment:output_type -> core.DeleteCommentResp
-	45, // 53: core.Core.GetArticleComments:output_type -> core.GetArticleCommentsResp
-	47, // 54: core.Core.GetCommentReplies:output_type -> core.GetCommentRepliesResp
-	49, // 55: core.Core.GetUserComments:output_type -> core.GetUserCommentsResp
-	32, // [32:56] is the sub-list for method output_type
-	8,  // [8:32] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	44, // 4: core.BatchGetCommentLikeStatusResp.items:type_name -> core.CommentLikeStatusItem
+	46, // 5: core.CommentInfo.replies:type_name -> core.CommentInfo
+	46, // 6: core.GetArticleCommentsResp.comments:type_name -> core.CommentInfo
+	46, // 7: core.GetCommentRepliesResp.replies:type_name -> core.CommentInfo
+	46, // 8: core.GetUserCommentsResp.comments:type_name -> core.CommentInfo
+	0,  // 9: core.Core.Test:input_type -> core.TestRequest
+	4,  // 10: core.Core.Register:input_type -> core.RegisterReq
+	2,  // 11: core.Core.EmailLogin:input_type -> core.EmailLoginReq
+	6,  // 12: core.Core.ResetPasswordByEmail:input_type -> core.ResetPasswordEmailReq
+	8,  // 13: core.Core.Logout:input_type -> core.LogoutReq
+	10, // 14: core.Core.CreateCategory:input_type -> core.CreateCategoryReq
+	13, // 15: core.Core.ListCategories:input_type -> core.ListCategoriesReq
+	15, // 16: core.Core.DeleteCategory:input_type -> core.DeleteCategoryReq
+	18, // 17: core.Core.CreateArticle:input_type -> core.CreateArticleReq
+	20, // 18: core.Core.UpdateArticle:input_type -> core.UpdateArticleReq
+	22, // 19: core.Core.DeleteArticle:input_type -> core.DeleteArticleReq
+	24, // 20: core.Core.GetArticleDetail:input_type -> core.GetArticleDetailReq
+	26, // 21: core.Core.ListArticles:input_type -> core.ListArticlesReq
+	28, // 22: core.Core.GetArticlesByCategory:input_type -> core.GetArticlesByCategoryReq
+	29, // 23: core.Core.SearchArticles:input_type -> core.SearchArticlesReq
+	31, // 24: core.Core.LikeArticle:input_type -> core.LikeArticleReq
+	33, // 25: core.Core.UnlikeArticle:input_type -> core.UnlikeArticleReq
+	35, // 26: core.Core.LikeComment:input_type -> core.LikeCommentReq
+	37, // 27: core.Core.UnlikeComment:input_type -> core.UnlikeCommentReq
+	39, // 28: core.Core.ViewArticle:input_type -> core.ViewArticleReq
+	41, // 29: core.Core.GetArticleLikeStatus:input_type -> core.GetArticleLikeStatusReq
+	43, // 30: core.Core.BatchGetCommentLikeStatus:input_type -> core.BatchGetCommentLikeStatusReq
+	47, // 31: core.Core.CreateComment:input_type -> core.CreateCommentReq
+	49, // 32: core.Core.CreateReply:input_type -> core.CreateReplyReq
+	51, // 33: core.Core.DeleteComment:input_type -> core.DeleteCommentReq
+	53, // 34: core.Core.GetArticleComments:input_type -> core.GetArticleCommentsReq
+	55, // 35: core.Core.GetCommentReplies:input_type -> core.GetCommentRepliesReq
+	57, // 36: core.Core.GetUserComments:input_type -> core.GetUserCommentsReq
+	1,  // 37: core.Core.Test:output_type -> core.TestResponse
+	5,  // 38: core.Core.Register:output_type -> core.RegisterResp
+	3,  // 39: core.Core.EmailLogin:output_type -> core.LoginResp
+	7,  // 40: core.Core.ResetPasswordByEmail:output_type -> core.ResetPasswordEmailResp
+	9,  // 41: core.Core.Logout:output_type -> core.LogoutResp
+	11, // 42: core.Core.CreateCategory:output_type -> core.CreateCategoryResp
+	14, // 43: core.Core.ListCategories:output_type -> core.ListCategoriesResp
+	16, // 44: core.Core.DeleteCategory:output_type -> core.DeleteCategoryResp
+	19, // 45: core.Core.CreateArticle:output_type -> core.CreateArticleResp
+	21, // 46: core.Core.UpdateArticle:output_type -> core.UpdateArticleResp
+	23, // 47: core.Core.DeleteArticle:output_type -> core.DeleteArticleResp
+	25, // 48: core.Core.GetArticleDetail:output_type -> core.GetArticleDetailResp
+	27, // 49: core.Core.ListArticles:output_type -> core.ListArticlesResp
+	27, // 50: core.Core.GetArticlesByCategory:output_type -> core.ListArticlesResp
+	30, // 51: core.Core.SearchArticles:output_type -> core.SearchArticlesResp
+	32, // 52: core.Core.LikeArticle:output_type -> core.LikeArticleResp
+	34, // 53: core.Core.UnlikeArticle:output_type -> core.UnlikeArticleResp
+	36, // 54: core.Core.LikeComment:output_type -> core.LikeCommentResp
+	38, // 55: core.Core.UnlikeComment:output_type -> core.UnlikeCommentResp
+	40, // 56: core.Core.ViewArticle:output_type -> core.ViewArticleResp
+	42, // 57: core.Core.GetArticleLikeStatus:output_type -> core.GetArticleLikeStatusResp
+	45, // 58: core.Core.BatchGetCommentLikeStatus:output_type -> core.BatchGetCommentLikeStatusResp
+	48, // 59: core.Core.CreateComment:output_type -> core.CreateCommentResp
+	50, // 60: core.Core.CreateReply:output_type -> core.CreateReplyResp
+	52, // 61: core.Core.DeleteComment:output_type -> core.DeleteCommentResp
+	54, // 62: core.Core.GetArticleComments:output_type -> core.GetArticleCommentsResp
+	56, // 63: core.Core.GetCommentReplies:output_type -> core.GetCommentRepliesResp
+	58, // 64: core.Core.GetUserComments:output_type -> core.GetUserCommentsResp
+	37, // [37:65] is the sub-list for method output_type
+	9,  // [9:37] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_desc_core_proto_init() }
@@ -3316,7 +3773,7 @@ func file_desc_core_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_desc_core_proto_rawDesc), len(file_desc_core_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   50,
+			NumMessages:   59,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

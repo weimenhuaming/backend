@@ -12,21 +12,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type LikeCommentLogic struct {
+type UnlikeCommentLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeCommentLogic {
-	return &LikeCommentLogic{
+func NewUnlikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnlikeCommentLogic {
+	return &UnlikeCommentLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *LikeCommentLogic) LikeComment(in *core.LikeCommentReq) (*core.LikeCommentResp, error) {
+func (l *UnlikeCommentLogic) UnlikeComment(in *core.UnlikeCommentReq) (*core.UnlikeCommentResp, error) {
 	if in.UserId == 0 || in.CommentId == 0 {
 		return nil, errors.New("参数无效")
 	}
@@ -41,7 +41,7 @@ func (l *LikeCommentLogic) LikeComment(in *core.LikeCommentReq) (*core.LikeComme
 
 	var likeCount uint32
 	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		delta, err := addCommentLike(tx, in.UserId, in.CommentId)
+		delta, err := removeCommentLike(tx, in.UserId, in.CommentId)
 		if err != nil {
 			return err
 		}
@@ -51,5 +51,5 @@ func (l *LikeCommentLogic) LikeComment(in *core.LikeCommentReq) (*core.LikeComme
 	if err != nil {
 		return nil, err
 	}
-	return &core.LikeCommentResp{LikeCount: likeCount}, nil
+	return &core.UnlikeCommentResp{LikeCount: likeCount}, nil
 }

@@ -21,6 +21,20 @@ type ArticleInfo struct {
 	AuthorAvatar string `json:"author_avatar"`
 }
 
+type BatchGetCommentLikeStatusData struct {
+	Items []CommentLikeStatusItem `json:"items"`
+}
+
+type BatchGetCommentLikeStatusReq struct {
+	CommentIds []uint64 `json:"comment_ids"`
+}
+
+type BatchGetCommentLikeStatusResp struct {
+	Code int                           `json:"code"`
+	Msg  string                        `json:"msg"`
+	Data BatchGetCommentLikeStatusData `json:"data"`
+}
+
 type CaptchaData struct {
 	CaptchaId string `json:"captcha_id"`
 	PicBase64 string `json:"pic_base64"`
@@ -52,6 +66,11 @@ type CommentInfo struct {
 	UserName    string        `json:"user_name"`
 	UserAvatar  string        `json:"user_avatar"`
 	Replies     []CommentInfo `json:"replies,optional"` // 回复列表（最多显示3条）
+}
+
+type CommentLikeStatusItem struct {
+	CommentId uint64 `json:"comment_id"`
+	Liked     bool   `json:"liked"`
 }
 
 type CreateArticleReq struct {
@@ -178,6 +197,20 @@ type GetArticleDetailResp struct {
 	Data ArticleInfo `json:"data"`
 }
 
+type GetArticleLikeStatusData struct {
+	Liked bool `json:"liked"`
+}
+
+type GetArticleLikeStatusReq struct {
+	ArticleId uint64 `json:"article_id"`
+}
+
+type GetArticleLikeStatusResp struct {
+	Code int                      `json:"code"`
+	Msg  string                   `json:"msg"`
+	Data GetArticleLikeStatusData `json:"data"`
+}
+
 type GetArticlesByCategoryReq struct {
 	CategoryId uint64 `json:"category_id"`
 	Page       uint32 `json:"page"`
@@ -226,6 +259,34 @@ type GetUserCommentsResp struct {
 	Code int                 `json:"code"`
 	Msg  string              `json:"msg"`
 	Data GetUserCommentsData `json:"data"`
+}
+
+type LikeArticleData struct {
+	LikeCount uint32 `json:"like_count"`
+}
+
+type LikeArticleReq struct {
+	ArticleId uint64 `json:"article_id"`
+}
+
+type LikeArticleResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data LikeArticleData `json:"data"`
+}
+
+type LikeCommentData struct {
+	LikeCount uint32 `json:"like_count"`
+}
+
+type LikeCommentReq struct {
+	CommentId uint64 `json:"comment_id"`
+}
+
+type LikeCommentResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data LikeCommentData `json:"data"`
 }
 
 type ListArticlesData struct {
@@ -336,6 +397,26 @@ type SearchArticlesResp struct {
 	Data SearchArticlesData `json:"data"`
 }
 
+type UnlikeArticleReq struct {
+	ArticleId uint64 `json:"article_id"`
+}
+
+type UnlikeArticleResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data LikeArticleData `json:"data"`
+}
+
+type UnlikeCommentReq struct {
+	CommentId uint64 `json:"comment_id"`
+}
+
+type UnlikeCommentResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data LikeCommentData `json:"data"`
+}
+
 type UpdateArticleReq struct {
 	Id         uint64 `json:"id"`
 	CategoryId uint64 `json:"category_id,optional"`
@@ -348,4 +429,18 @@ type UpdateArticleReq struct {
 type UpdateArticleResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
+}
+
+type ViewArticleData struct {
+	ViewCount uint32 `json:"view_count"`
+}
+
+type ViewArticleReq struct {
+	ArticleId uint64 `json:"article_id"`
+}
+
+type ViewArticleResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data ViewArticleData `json:"data"`
 }

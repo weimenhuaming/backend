@@ -108,14 +108,34 @@ func (s *CoreServer) LikeArticle(ctx context.Context, in *core.LikeArticleReq) (
 	return l.LikeArticle(in)
 }
 
-func (s *CoreServer) FavorArticle(ctx context.Context, in *core.FavoriteArticleReq) (*core.FavoriteArticleResp, error) {
-	l := logic.NewFavorArticleLogic(ctx, s.svcCtx)
-	return l.FavorArticle(in)
+func (s *CoreServer) UnlikeArticle(ctx context.Context, in *core.UnlikeArticleReq) (*core.UnlikeArticleResp, error) {
+	l := logic.NewUnlikeArticleLogic(ctx, s.svcCtx)
+	return l.UnlikeArticle(in)
 }
 
 func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (*core.LikeCommentResp, error) {
 	l := logic.NewLikeCommentLogic(ctx, s.svcCtx)
 	return l.LikeComment(in)
+}
+
+func (s *CoreServer) UnlikeComment(ctx context.Context, in *core.UnlikeCommentReq) (*core.UnlikeCommentResp, error) {
+	l := logic.NewUnlikeCommentLogic(ctx, s.svcCtx)
+	return l.UnlikeComment(in)
+}
+
+func (s *CoreServer) ViewArticle(ctx context.Context, in *core.ViewArticleReq) (*core.ViewArticleResp, error) {
+	l := logic.NewViewArticleLogic(ctx, s.svcCtx)
+	return l.ViewArticle(in)
+}
+
+func (s *CoreServer) GetArticleLikeStatus(ctx context.Context, in *core.GetArticleLikeStatusReq) (*core.GetArticleLikeStatusResp, error) {
+	l := logic.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
+	return l.GetArticleLikeStatus(in)
+}
+
+func (s *CoreServer) BatchGetCommentLikeStatus(ctx context.Context, in *core.BatchGetCommentLikeStatusReq) (*core.BatchGetCommentLikeStatusResp, error) {
+	l := logic.NewBatchGetCommentLikeStatusLogic(ctx, s.svcCtx)
+	return l.BatchGetCommentLikeStatus(in)
 }
 
 // comment 部分

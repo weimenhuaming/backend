@@ -1,0 +1,20 @@
+Name: Gateway
+Host: 0.0.0.0
+Port: 9000
+
+CoreRpc:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: core.rpc
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""
+
+Auth:
+  AccessSecret: "your-256-bit-secret"
+  AccessExpire: 686400
+RefreshSecret: "another-random-secret"
+RefreshExpire: 604800

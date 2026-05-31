@@ -1,0 +1,23 @@
+Name: core.rpc
+ListenOn: 0.0.0.0:8080
+
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: core.rpc
+
+Mysql:
+  Host: mysql
+  Port: "3306"
+  Username: root
+  Password: "123456"
+  Config: charset=utf8mb4&parseTime=True&loc=Local
+  Dbname: test
+  Max_Idle_Conn: 10
+  Max_Open_Conn: 100
+  Log_Mode: info
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""

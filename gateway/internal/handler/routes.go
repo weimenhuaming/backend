@@ -19,17 +19,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/article/detail",
 				Handler: article.GetArticleDetailHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/article/list",
 				Handler: article.ListArticlesHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
+				Path:    "/article/list_by_category",
+				Handler: article.GetArticlesByCategoryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/article/search",
 				Handler: article.SearchArticlesHandler(serverCtx),
 			},
@@ -90,12 +95,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/comment/art_replies_list",
 				Handler: comment.GetCommentRepliesHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/comment/article_list",
 				Handler: comment.GetArticleCommentsHandler(serverCtx),
 			},

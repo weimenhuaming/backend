@@ -25,6 +25,7 @@ service Core {
   rpc DeleteArticle(DeleteArticleReq) returns (DeleteArticleResp){};           // 删除文章
   rpc GetArticleDetail(GetArticleDetailReq) returns (GetArticleDetailResp){};  // 获取文章详情
   rpc ListArticles(ListArticlesReq) returns (ListArticlesResp){};              // 文章列表
+  rpc GetArticlesByCategory(GetArticlesByCategoryReq) returns (ListArticlesResp){};  // 按分类获取文章
   rpc SearchArticles(SearchArticlesReq) returns (SearchArticlesResp){};        // 搜索文章
 
   // interaction 部分
@@ -172,20 +173,23 @@ message GetArticleDetailResp {
   ArticleInfo article = 1;
 }
 
-// 文章列表（支持分页和筛选）
+// 文章列表（分页）
 message ListArticlesReq {
   uint32 page = 1;              // 页码，从1开始
   uint32 page_size = 2;         // 每页数量
-  uint64 category_id = 3;       // 按分类筛选（0表示不筛选）
-  uint64 user_id = 4;           // 按作者筛选（0表示不筛选）
-  string sort_by = 5;           // 排序字段：created_at, view_count, like_count
-  string sort_order = 6;        // 排序方式：asc, desc
 }
 message ListArticlesResp {
   repeated ArticleInfo articles = 1;
   uint32 total = 2;             // 总数量
   uint32 page = 3;              // 当前页码
   uint32 page_size = 4;         // 每页数量
+}
+
+// 按分类获取文章列表
+message GetArticlesByCategoryReq {
+  uint64 category_id = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
 }
 
 // 搜索文章

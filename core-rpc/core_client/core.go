@@ -14,55 +14,56 @@ import (
 )
 
 type (
-	ArticleInfo            = core.ArticleInfo
-	CategoryInfo           = core.CategoryInfo
-	CommentInfo            = core.CommentInfo
-	CreateArticleReq       = core.CreateArticleReq
-	CreateArticleResp      = core.CreateArticleResp
-	CreateCategoryReq      = core.CreateCategoryReq
-	CreateCategoryResp     = core.CreateCategoryResp
-	CreateCommentReq       = core.CreateCommentReq
-	CreateCommentResp      = core.CreateCommentResp
-	CreateReplyReq         = core.CreateReplyReq
-	CreateReplyResp        = core.CreateReplyResp
-	DeleteArticleReq       = core.DeleteArticleReq
-	DeleteArticleResp      = core.DeleteArticleResp
-	DeleteCategoryReq      = core.DeleteCategoryReq
-	DeleteCategoryResp     = core.DeleteCategoryResp
-	DeleteCommentReq       = core.DeleteCommentReq
-	DeleteCommentResp      = core.DeleteCommentResp
-	EmailLoginReq          = core.EmailLoginReq
-	FavoriteArticleReq     = core.FavoriteArticleReq
-	FavoriteArticleResp    = core.FavoriteArticleResp
-	GetArticleCommentsReq  = core.GetArticleCommentsReq
-	GetArticleCommentsResp = core.GetArticleCommentsResp
-	GetArticleDetailReq    = core.GetArticleDetailReq
-	GetArticleDetailResp   = core.GetArticleDetailResp
-	GetCommentRepliesReq   = core.GetCommentRepliesReq
-	GetCommentRepliesResp  = core.GetCommentRepliesResp
-	GetUserCommentsReq     = core.GetUserCommentsReq
-	GetUserCommentsResp    = core.GetUserCommentsResp
-	LikeArticleReq         = core.LikeArticleReq
-	LikeArticleResp        = core.LikeArticleResp
-	LikeCommentReq         = core.LikeCommentReq
-	LikeCommentResp        = core.LikeCommentResp
-	ListArticlesReq        = core.ListArticlesReq
-	ListArticlesResp       = core.ListArticlesResp
-	ListCategoriesReq      = core.ListCategoriesReq
-	ListCategoriesResp     = core.ListCategoriesResp
-	LoginResp              = core.LoginResp
-	LogoutReq              = core.LogoutReq
-	LogoutResp             = core.LogoutResp
-	RegisterReq            = core.RegisterReq
-	RegisterResp           = core.RegisterResp
-	ResetPasswordEmailReq  = core.ResetPasswordEmailReq
-	ResetPasswordEmailResp = core.ResetPasswordEmailResp
-	SearchArticlesReq      = core.SearchArticlesReq
-	SearchArticlesResp     = core.SearchArticlesResp
-	TestRequest            = core.TestRequest
-	TestResponse           = core.TestResponse
-	UpdateArticleReq       = core.UpdateArticleReq
-	UpdateArticleResp      = core.UpdateArticleResp
+	ArticleInfo              = core.ArticleInfo
+	CategoryInfo             = core.CategoryInfo
+	CommentInfo              = core.CommentInfo
+	CreateArticleReq         = core.CreateArticleReq
+	CreateArticleResp        = core.CreateArticleResp
+	CreateCategoryReq        = core.CreateCategoryReq
+	CreateCategoryResp       = core.CreateCategoryResp
+	CreateCommentReq         = core.CreateCommentReq
+	CreateCommentResp        = core.CreateCommentResp
+	CreateReplyReq           = core.CreateReplyReq
+	CreateReplyResp          = core.CreateReplyResp
+	DeleteArticleReq         = core.DeleteArticleReq
+	DeleteArticleResp        = core.DeleteArticleResp
+	DeleteCategoryReq        = core.DeleteCategoryReq
+	DeleteCategoryResp       = core.DeleteCategoryResp
+	DeleteCommentReq         = core.DeleteCommentReq
+	DeleteCommentResp        = core.DeleteCommentResp
+	EmailLoginReq            = core.EmailLoginReq
+	FavoriteArticleReq       = core.FavoriteArticleReq
+	FavoriteArticleResp      = core.FavoriteArticleResp
+	GetArticleCommentsReq    = core.GetArticleCommentsReq
+	GetArticleCommentsResp   = core.GetArticleCommentsResp
+	GetArticleDetailReq      = core.GetArticleDetailReq
+	GetArticleDetailResp     = core.GetArticleDetailResp
+	GetArticlesByCategoryReq = core.GetArticlesByCategoryReq
+	GetCommentRepliesReq     = core.GetCommentRepliesReq
+	GetCommentRepliesResp    = core.GetCommentRepliesResp
+	GetUserCommentsReq       = core.GetUserCommentsReq
+	GetUserCommentsResp      = core.GetUserCommentsResp
+	LikeArticleReq           = core.LikeArticleReq
+	LikeArticleResp          = core.LikeArticleResp
+	LikeCommentReq           = core.LikeCommentReq
+	LikeCommentResp          = core.LikeCommentResp
+	ListArticlesReq          = core.ListArticlesReq
+	ListArticlesResp         = core.ListArticlesResp
+	ListCategoriesReq        = core.ListCategoriesReq
+	ListCategoriesResp       = core.ListCategoriesResp
+	LoginResp                = core.LoginResp
+	LogoutReq                = core.LogoutReq
+	LogoutResp               = core.LogoutResp
+	RegisterReq              = core.RegisterReq
+	RegisterResp             = core.RegisterResp
+	ResetPasswordEmailReq    = core.ResetPasswordEmailReq
+	ResetPasswordEmailResp   = core.ResetPasswordEmailResp
+	SearchArticlesReq        = core.SearchArticlesReq
+	SearchArticlesResp       = core.SearchArticlesResp
+	TestRequest              = core.TestRequest
+	TestResponse             = core.TestResponse
+	UpdateArticleReq         = core.UpdateArticleReq
+	UpdateArticleResp        = core.UpdateArticleResp
 
 	Core interface {
 		// 测试接口
@@ -82,11 +83,13 @@ type (
 		DeleteArticle(ctx context.Context, in *DeleteArticleReq, opts ...grpc.CallOption) (*DeleteArticleResp, error)
 		GetArticleDetail(ctx context.Context, in *GetArticleDetailReq, opts ...grpc.CallOption) (*GetArticleDetailResp, error)
 		ListArticles(ctx context.Context, in *ListArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+		GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
 		SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error)
 		// interaction 部分
 		LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error)
 		FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error)
 		LikeComment(ctx context.Context, in *LikeCommentReq, opts ...grpc.CallOption) (*LikeCommentResp, error)
+		// comment 部分
 		CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error)
 		CreateReply(ctx context.Context, in *CreateReplyReq, opts ...grpc.CallOption) (*CreateReplyResp, error)
 		DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentResp, error)
@@ -175,6 +178,11 @@ func (m *defaultCore) ListArticles(ctx context.Context, in *ListArticlesReq, opt
 	return client.ListArticles(ctx, in, opts...)
 }
 
+func (m *defaultCore) GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.GetArticlesByCategory(ctx, in, opts...)
+}
+
 func (m *defaultCore) SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error) {
 	client := core.NewCoreClient(m.cli.Conn())
 	return client.SearchArticles(ctx, in, opts...)
@@ -196,6 +204,7 @@ func (m *defaultCore) LikeComment(ctx context.Context, in *LikeCommentReq, opts 
 	return client.LikeComment(ctx, in, opts...)
 }
 
+// comment 部分
 func (m *defaultCore) CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error) {
 	client := core.NewCoreClient(m.cli.Conn())
 	return client.CreateComment(ctx, in, opts...)

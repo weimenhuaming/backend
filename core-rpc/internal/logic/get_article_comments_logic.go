@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"core-rpc/internal/utils"
 	"strings"
 
 	"core-rpc/internal/model/entity"
@@ -26,9 +27,9 @@ func NewGetArticleCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetArticleCommentsLogic) GetArticleComments(in *core.GetArticleCommentsReq) (*core.GetArticleCommentsResp, error) {
-	page := normalizePage(in.Page)
-	size := normalizeSize(in.Size, 10)
-	off, limit := offsetLimit(page, size)
+	page := utils.NormalizePage(in.Page)
+	size := utils.NormalizeSize(in.Size, 10)
+	off, limit := utils.OffsetLimit(page, size)
 
 	q := l.svcCtx.Db.Model(&entity.Comment{}).
 		Where("article_id = ? AND parent_id = 0", in.ArticleId)
@@ -107,8 +108,8 @@ func (l *GetArticleCommentsLogic) loadPreviewReplies(topComments []entity.Commen
 	for rootID, list := range grouped {
 		items := make([]*core.CommentInfo, 0, len(list))
 		for i := range list {
-			name, avatar := userDisplay(userMap, list[i].UserID)
-			items = append(items, commentToProto(&list[i], name, avatar, nil))
+			name, avatar := utils.UserDisplay(userMap, list[i].UserID)
+			items = append(items, utils.CommentToProto(&list[i], name, avatar, nil))
 		}
 		out[rootID] = items
 	}

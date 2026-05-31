@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"core-rpc/internal/utils"
 	"errors"
 
 	"core-rpc/internal/model/entity"
@@ -152,11 +153,11 @@ func loadArticlesWithAuthors(db *gorm.DB, articles []entity.Article) ([]*core.Ar
 			return nil, err
 		}
 	}
-	userMap := loadUsersMap(users)
+	userMap := utils.LoadUsersMap(users)
 	out := make([]*core.ArticleInfo, 0, len(articles))
 	for i := range articles {
-		name, avatar := userDisplay(userMap, articles[i].UserID)
-		out = append(out, articleToProto(&articles[i], name, avatar))
+		name, avatar := utils.UserDisplay(userMap, articles[i].UserID)
+		out = append(out, utils.ArticleToProto(&articles[i], name, avatar))
 	}
 	return out, nil
 }
@@ -169,7 +170,7 @@ func fetchUserMap(db *gorm.DB, userIDs []uint64) (map[uint64]entity.User, error)
 	if err := db.Where("id IN ?", userIDs).Find(&users).Error; err != nil {
 		return nil, err
 	}
-	return loadUsersMap(users), nil
+	return utils.LoadUsersMap(users), nil
 }
 
 func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
@@ -187,12 +188,12 @@ func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
 func commentsToProtoList(comments []entity.Comment, userMap map[uint64]entity.User, previewReplies map[uint64][]*core.CommentInfo) []*core.CommentInfo {
 	out := make([]*core.CommentInfo, 0, len(comments))
 	for i := range comments {
-		name, avatar := userDisplay(userMap, comments[i].UserID)
+		name, avatar := utils.UserDisplay(userMap, comments[i].UserID)
 		var replies []*core.CommentInfo
 		if previewReplies != nil {
 			replies = previewReplies[comments[i].ID]
 		}
-		out = append(out, commentToProto(&comments[i], name, avatar, replies))
+		out = append(out, utils.CommentToProto(&comments[i], name, avatar, replies))
 	}
 	return out
 }

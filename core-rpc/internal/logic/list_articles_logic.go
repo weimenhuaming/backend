@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"core-rpc/internal/utils"
 
 	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
@@ -25,11 +26,11 @@ func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 }
 
 func (l *ListArticlesLogic) ListArticles(in *core.ListArticlesReq) (*core.ListArticlesResp, error) {
-	page := normalizePageUint32(in.Page)
-	size := normalizePageSizeUint32(in.PageSize, 10)
-	off, limit := offsetLimit(page, size)
+	page := utils.NormalizePageUint32(in.Page)
+	size := utils.NormalizePageSizeUint32(in.PageSize, 10)
+	off, limit := utils.OffsetLimit(page, size)
 
-	q := listArticlesQuery(l.svcCtx.Db, in.CategoryId, in.UserId, in.SortBy, in.SortOrder)
+	q := l.svcCtx.Db.Model(&entity.Article{}).Order("created_at DESC")
 
 	var total int64
 	if err := q.Count(&total).Error; err != nil {

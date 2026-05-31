@@ -128,10 +128,10 @@ type (
 )
 service Gateway {
     @handler getArticleComments
-    get /comment/article_list (GetArticleCommentsReq) returns (GetArticleCommentsResp)
+    post /comment/article_list (GetArticleCommentsReq) returns (GetArticleCommentsResp)
 
     @handler getCommentReplies
-    get /comment/art_replies_list (GetCommentRepliesReq) returns (GetCommentRepliesResp)
+    post /comment/art_replies_list (GetCommentRepliesReq) returns (GetCommentRepliesResp)
 }
 
 // 需要认证的接口

@@ -1,4 +1,4 @@
-package logic
+package utils
 
 import (
 	"fmt"
@@ -17,14 +17,14 @@ func formatTime(t time.Time) string {
 	return t.Format(timeLayout)
 }
 
-func normalizePage(page int32) int {
+func NormalizePage(page int32) int {
 	if page <= 0 {
 		return 1
 	}
 	return int(page)
 }
 
-func normalizeSize(size int32, defaultSize int) int {
+func NormalizeSize(size int32, defaultSize int) int {
 	if size <= 0 {
 		return defaultSize
 	}
@@ -34,14 +34,14 @@ func normalizeSize(size int32, defaultSize int) int {
 	return int(size)
 }
 
-func normalizePageUint32(page uint32) int {
+func NormalizePageUint32(page uint32) int {
 	if page == 0 {
 		return 1
 	}
 	return int(page)
 }
 
-func normalizePageSizeUint32(pageSize uint32, defaultSize int) int {
+func NormalizePageSizeUint32(pageSize uint32, defaultSize int) int {
 	if pageSize == 0 {
 		return defaultSize
 	}
@@ -51,11 +51,11 @@ func normalizePageSizeUint32(pageSize uint32, defaultSize int) int {
 	return int(pageSize)
 }
 
-func offsetLimit(page, size int) (offset, limit int) {
+func OffsetLimit(page, size int) (offset, limit int) {
 	return (page - 1) * size, size
 }
 
-func articleToProto(a *entity.Article, authorName, authorAvatar string) *core.ArticleInfo {
+func ArticleToProto(a *entity.Article, authorName, authorAvatar string) *core.ArticleInfo {
 	if a == nil {
 		return nil
 	}
@@ -78,7 +78,7 @@ func articleToProto(a *entity.Article, authorName, authorAvatar string) *core.Ar
 	}
 }
 
-func commentToProto(c *entity.Comment, userName, userAvatar string, replies []*core.CommentInfo) *core.CommentInfo {
+func CommentToProto(c *entity.Comment, userName, userAvatar string, replies []*core.CommentInfo) *core.CommentInfo {
 	if c == nil {
 		return nil
 	}
@@ -100,8 +100,8 @@ func commentToProto(c *entity.Comment, userName, userAvatar string, replies []*c
 	}
 }
 
-// loadUsersMap 批量加载用户展示信息
-func loadUsersMap(users []entity.User) map[uint64]entity.User {
+// LoadUsersMap 批量加载用户展示信息
+func LoadUsersMap(users []entity.User) map[uint64]entity.User {
 	m := make(map[uint64]entity.User, len(users))
 	for _, u := range users {
 		m[u.ID] = u
@@ -109,7 +109,7 @@ func loadUsersMap(users []entity.User) map[uint64]entity.User {
 	return m
 }
 
-func userDisplay(m map[uint64]entity.User, userID uint64) (name, avatar string) {
+func UserDisplay(m map[uint64]entity.User, userID uint64) (name, avatar string) {
 	if u, ok := m[userID]; ok {
 		return u.Name, u.Avatar
 	}

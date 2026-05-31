@@ -92,6 +92,11 @@ func (s *CoreServer) ListArticles(ctx context.Context, in *core.ListArticlesReq)
 	return l.ListArticles(in)
 }
 
+func (s *CoreServer) GetArticlesByCategory(ctx context.Context, in *core.GetArticlesByCategoryReq) (*core.ListArticlesResp, error) {
+	l := logic.NewGetArticlesByCategoryLogic(ctx, s.svcCtx)
+	return l.GetArticlesByCategory(in)
+}
+
 func (s *CoreServer) SearchArticles(ctx context.Context, in *core.SearchArticlesReq) (*core.SearchArticlesResp, error) {
 	l := logic.NewSearchArticlesLogic(ctx, s.svcCtx)
 	return l.SearchArticles(in)
@@ -113,6 +118,7 @@ func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (
 	return l.LikeComment(in)
 }
 
+// comment 部分
 func (s *CoreServer) CreateComment(ctx context.Context, in *core.CreateCommentReq) (*core.CreateCommentResp, error) {
 	l := logic.NewCreateCommentLogic(ctx, s.svcCtx)
 	return l.CreateComment(in)

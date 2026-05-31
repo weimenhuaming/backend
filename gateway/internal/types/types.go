@@ -178,6 +178,18 @@ type GetArticleDetailResp struct {
 	Data ArticleInfo `json:"data"`
 }
 
+type GetArticlesByCategoryReq struct {
+	CategoryId uint64 `json:"category_id"`
+	Page       uint32 `json:"page"`
+	PageSize   uint32 `json:"page_size"`
+}
+
+type GetArticlesByCategoryResp struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data ListArticlesData `json:"data"`
+}
+
 type GetCommentRepliesData struct {
 	Replies  []CommentInfo `json:"replies"`
 	Total    uint32        `json:"total"`
@@ -224,12 +236,8 @@ type ListArticlesData struct {
 }
 
 type ListArticlesReq struct {
-	Page       uint32 `json:"page"`
-	PageSize   uint32 `json:"page_size"`
-	CategoryId uint64 `json:"category_id,optional"`
-	UserId     uint64 `json:"user_id,optional"`
-	SortBy     string `json:"sort_by,optional"`
-	SortOrder  string `json:"sort_order,optional"`
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
 }
 
 type ListArticlesResp struct {

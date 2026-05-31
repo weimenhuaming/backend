@@ -19,29 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Core_Test_FullMethodName                 = "/core.Core/Test"
-	Core_Register_FullMethodName             = "/core.Core/Register"
-	Core_EmailLogin_FullMethodName           = "/core.Core/EmailLogin"
-	Core_ResetPasswordByEmail_FullMethodName = "/core.Core/ResetPasswordByEmail"
-	Core_Logout_FullMethodName               = "/core.Core/Logout"
-	Core_CreateCategory_FullMethodName       = "/core.Core/CreateCategory"
-	Core_ListCategories_FullMethodName       = "/core.Core/ListCategories"
-	Core_DeleteCategory_FullMethodName       = "/core.Core/DeleteCategory"
-	Core_CreateArticle_FullMethodName        = "/core.Core/CreateArticle"
-	Core_UpdateArticle_FullMethodName        = "/core.Core/UpdateArticle"
-	Core_DeleteArticle_FullMethodName        = "/core.Core/DeleteArticle"
-	Core_GetArticleDetail_FullMethodName     = "/core.Core/GetArticleDetail"
-	Core_ListArticles_FullMethodName         = "/core.Core/ListArticles"
-	Core_SearchArticles_FullMethodName       = "/core.Core/SearchArticles"
-	Core_LikeArticle_FullMethodName          = "/core.Core/LikeArticle"
-	Core_FavorArticle_FullMethodName         = "/core.Core/FavorArticle"
-	Core_LikeComment_FullMethodName          = "/core.Core/LikeComment"
-	Core_CreateComment_FullMethodName        = "/core.Core/CreateComment"
-	Core_CreateReply_FullMethodName          = "/core.Core/CreateReply"
-	Core_DeleteComment_FullMethodName        = "/core.Core/DeleteComment"
-	Core_GetArticleComments_FullMethodName   = "/core.Core/GetArticleComments"
-	Core_GetCommentReplies_FullMethodName    = "/core.Core/GetCommentReplies"
-	Core_GetUserComments_FullMethodName      = "/core.Core/GetUserComments"
+	Core_Test_FullMethodName                  = "/core.Core/Test"
+	Core_Register_FullMethodName              = "/core.Core/Register"
+	Core_EmailLogin_FullMethodName            = "/core.Core/EmailLogin"
+	Core_ResetPasswordByEmail_FullMethodName  = "/core.Core/ResetPasswordByEmail"
+	Core_Logout_FullMethodName                = "/core.Core/Logout"
+	Core_CreateCategory_FullMethodName        = "/core.Core/CreateCategory"
+	Core_ListCategories_FullMethodName        = "/core.Core/ListCategories"
+	Core_DeleteCategory_FullMethodName        = "/core.Core/DeleteCategory"
+	Core_CreateArticle_FullMethodName         = "/core.Core/CreateArticle"
+	Core_UpdateArticle_FullMethodName         = "/core.Core/UpdateArticle"
+	Core_DeleteArticle_FullMethodName         = "/core.Core/DeleteArticle"
+	Core_GetArticleDetail_FullMethodName      = "/core.Core/GetArticleDetail"
+	Core_ListArticles_FullMethodName          = "/core.Core/ListArticles"
+	Core_GetArticlesByCategory_FullMethodName = "/core.Core/GetArticlesByCategory"
+	Core_SearchArticles_FullMethodName        = "/core.Core/SearchArticles"
+	Core_LikeArticle_FullMethodName           = "/core.Core/LikeArticle"
+	Core_FavorArticle_FullMethodName          = "/core.Core/FavorArticle"
+	Core_LikeComment_FullMethodName           = "/core.Core/LikeComment"
+	Core_CreateComment_FullMethodName         = "/core.Core/CreateComment"
+	Core_CreateReply_FullMethodName           = "/core.Core/CreateReply"
+	Core_DeleteComment_FullMethodName         = "/core.Core/DeleteComment"
+	Core_GetArticleComments_FullMethodName    = "/core.Core/GetArticleComments"
+	Core_GetCommentReplies_FullMethodName     = "/core.Core/GetCommentReplies"
+	Core_GetUserComments_FullMethodName       = "/core.Core/GetUserComments"
 )
 
 // CoreClient is the client API for Core service.
@@ -67,11 +68,13 @@ type CoreClient interface {
 	DeleteArticle(ctx context.Context, in *DeleteArticleReq, opts ...grpc.CallOption) (*DeleteArticleResp, error)
 	GetArticleDetail(ctx context.Context, in *GetArticleDetailReq, opts ...grpc.CallOption) (*GetArticleDetailResp, error)
 	ListArticles(ctx context.Context, in *ListArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+	GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
 	SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error)
 	// interaction 部分
 	LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error)
 	FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error)
 	LikeComment(ctx context.Context, in *LikeCommentReq, opts ...grpc.CallOption) (*LikeCommentResp, error)
+	// comment 部分
 	CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error)
 	CreateReply(ctx context.Context, in *CreateReplyReq, opts ...grpc.CallOption) (*CreateReplyResp, error)
 	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentResp, error)
@@ -218,6 +221,16 @@ func (c *coreClient) ListArticles(ctx context.Context, in *ListArticlesReq, opts
 	return out, nil
 }
 
+func (c *coreClient) GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListArticlesResp)
+	err := c.cc.Invoke(ctx, Core_GetArticlesByCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coreClient) SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SearchArticlesResp)
@@ -341,11 +354,13 @@ type CoreServer interface {
 	DeleteArticle(context.Context, *DeleteArticleReq) (*DeleteArticleResp, error)
 	GetArticleDetail(context.Context, *GetArticleDetailReq) (*GetArticleDetailResp, error)
 	ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error)
+	GetArticlesByCategory(context.Context, *GetArticlesByCategoryReq) (*ListArticlesResp, error)
 	SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error)
 	// interaction 部分
 	LikeArticle(context.Context, *LikeArticleReq) (*LikeArticleResp, error)
 	FavorArticle(context.Context, *FavoriteArticleReq) (*FavoriteArticleResp, error)
 	LikeComment(context.Context, *LikeCommentReq) (*LikeCommentResp, error)
+	// comment 部分
 	CreateComment(context.Context, *CreateCommentReq) (*CreateCommentResp, error)
 	CreateReply(context.Context, *CreateReplyReq) (*CreateReplyResp, error)
 	DeleteComment(context.Context, *DeleteCommentReq) (*DeleteCommentResp, error)
@@ -400,6 +415,9 @@ func (UnimplementedCoreServer) GetArticleDetail(context.Context, *GetArticleDeta
 }
 func (UnimplementedCoreServer) ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
+}
+func (UnimplementedCoreServer) GetArticlesByCategory(context.Context, *GetArticlesByCategoryReq) (*ListArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticlesByCategory not implemented")
 }
 func (UnimplementedCoreServer) SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchArticles not implemented")
@@ -686,6 +704,24 @@ func _Core_ListArticles_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_GetArticlesByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticlesByCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetArticlesByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetArticlesByCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetArticlesByCategory(ctx, req.(*GetArticlesByCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Core_SearchArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchArticlesReq)
 	if err := dec(in); err != nil {
@@ -924,6 +960,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListArticles",
 			Handler:    _Core_ListArticles_Handler,
+		},
+		{
+			MethodName: "GetArticlesByCategory",
+			Handler:    _Core_GetArticlesByCategory_Handler,
 		},
 		{
 			MethodName: "SearchArticles",

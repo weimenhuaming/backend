@@ -27,12 +27,8 @@ func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesResp, err error) {
 	// call core rpc
 	rpcReq := &core_client.ListArticlesReq{
-		Page:       req.Page,
-		PageSize:   req.PageSize,
-		CategoryId: req.CategoryId,
-		UserId:     req.UserId,
-		SortBy:     req.SortBy,
-		SortOrder:  req.SortOrder,
+		Page:     req.Page,
+		PageSize: req.PageSize,
 	}
 
 	r, err := l.svcCtx.Core.ListArticles(l.ctx, rpcReq)
@@ -46,7 +42,7 @@ func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *type
 	var arts []types.ArticleInfo
 	for _, a := range r.GetArticles() {
 		arts = append(arts, types.ArticleInfo{
-			Id:           uint64(a.GetId()),
+			Id:           a.GetId(),
 			UserId:       a.GetUserId(),
 			CategoryId:   a.GetCategoryId(),
 			Title:        a.GetTitle(),

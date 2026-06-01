@@ -28,9 +28,6 @@ func (l *EmailLoginLogic) EmailLogin(in *core.EmailLoginReq) (*core.LoginResp, e
 		logx.WithContext(l.ctx).Errorf("email login failed: %v", err)
 		return nil, err
 	}
-	if u == nil {
-		logx.WithContext(l.ctx).Errorf("email login failed: email not exist")
-	}
 
 	return &core.LoginResp{
 		Id:     u.ID,

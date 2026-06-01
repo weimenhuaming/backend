@@ -3,7 +3,7 @@ package svc
 import (
 	"core-rpc/internal/config"
 	"core-rpc/internal/model"
-	"core-rpc/internal/model/entity"
+	"core-rpc/internal/model/repo"
 	"log"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -12,7 +12,7 @@ import (
 
 type ServiceContext struct {
 	Config   config.Config
-	UserRepo *entity.UserModel
+	UserRepo *repo.UserModel
 	Db       *gorm.DB
 	Cache    *redis.Redis
 }
@@ -27,7 +27,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:   c,
 		Db:       db,
-		UserRepo: entity.NewUserModel(db),
+		UserRepo: repo.NewUserModel(db),
 		Cache:    cache,
 	}
 }

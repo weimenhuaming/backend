@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"core-rpc/internal/utils"
 
 	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
@@ -25,9 +26,9 @@ func NewGetCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetCommentRepliesLogic) GetCommentReplies(in *core.GetCommentRepliesReq) (*core.GetCommentRepliesResp, error) {
-	page := normalizePage(in.Page)
-	size := normalizeSize(in.Size, 10)
-	off, limit := offsetLimit(page, size)
+	page := utils.NormalizePage(in.Page)
+	size := utils.NormalizeSize(in.Size, 10)
+	off, limit := utils.OffsetLimit(page, size)
 
 	q := l.svcCtx.Db.Model(&entity.Comment{}).
 		Where("root_id = ? AND parent_id > 0", in.RootId).

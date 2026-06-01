@@ -41,7 +41,7 @@ func (l *LikeArticleLogic) LikeArticle(in *core.LikeArticleReq) (*core.LikeArtic
 
 	var likeCount uint32
 	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		delta, err := toggleArticleLike(tx, in.UserId, in.ArticleId, in.IsLike)
+		delta, err := addArticleLike(tx, in.UserId, in.ArticleId)
 		if err != nil {
 			return err
 		}

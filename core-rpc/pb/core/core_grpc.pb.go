@@ -19,29 +19,34 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Core_Test_FullMethodName                 = "/core.Core/Test"
-	Core_Register_FullMethodName             = "/core.Core/Register"
-	Core_EmailLogin_FullMethodName           = "/core.Core/EmailLogin"
-	Core_ResetPasswordByEmail_FullMethodName = "/core.Core/ResetPasswordByEmail"
-	Core_Logout_FullMethodName               = "/core.Core/Logout"
-	Core_CreateCategory_FullMethodName       = "/core.Core/CreateCategory"
-	Core_ListCategories_FullMethodName       = "/core.Core/ListCategories"
-	Core_DeleteCategory_FullMethodName       = "/core.Core/DeleteCategory"
-	Core_CreateArticle_FullMethodName        = "/core.Core/CreateArticle"
-	Core_UpdateArticle_FullMethodName        = "/core.Core/UpdateArticle"
-	Core_DeleteArticle_FullMethodName        = "/core.Core/DeleteArticle"
-	Core_GetArticleDetail_FullMethodName     = "/core.Core/GetArticleDetail"
-	Core_ListArticles_FullMethodName         = "/core.Core/ListArticles"
-	Core_SearchArticles_FullMethodName       = "/core.Core/SearchArticles"
-	Core_LikeArticle_FullMethodName          = "/core.Core/LikeArticle"
-	Core_FavorArticle_FullMethodName         = "/core.Core/FavorArticle"
-	Core_LikeComment_FullMethodName          = "/core.Core/LikeComment"
-	Core_CreateComment_FullMethodName        = "/core.Core/CreateComment"
-	Core_CreateReply_FullMethodName          = "/core.Core/CreateReply"
-	Core_DeleteComment_FullMethodName        = "/core.Core/DeleteComment"
-	Core_GetArticleComments_FullMethodName   = "/core.Core/GetArticleComments"
-	Core_GetCommentReplies_FullMethodName    = "/core.Core/GetCommentReplies"
-	Core_GetUserComments_FullMethodName      = "/core.Core/GetUserComments"
+	Core_Test_FullMethodName                      = "/core.Core/Test"
+	Core_Register_FullMethodName                  = "/core.Core/Register"
+	Core_EmailLogin_FullMethodName                = "/core.Core/EmailLogin"
+	Core_ResetPasswordByEmail_FullMethodName      = "/core.Core/ResetPasswordByEmail"
+	Core_Logout_FullMethodName                    = "/core.Core/Logout"
+	Core_CreateCategory_FullMethodName            = "/core.Core/CreateCategory"
+	Core_ListCategories_FullMethodName            = "/core.Core/ListCategories"
+	Core_DeleteCategory_FullMethodName            = "/core.Core/DeleteCategory"
+	Core_CreateArticle_FullMethodName             = "/core.Core/CreateArticle"
+	Core_UpdateArticle_FullMethodName             = "/core.Core/UpdateArticle"
+	Core_DeleteArticle_FullMethodName             = "/core.Core/DeleteArticle"
+	Core_GetArticleDetail_FullMethodName          = "/core.Core/GetArticleDetail"
+	Core_ListArticles_FullMethodName              = "/core.Core/ListArticles"
+	Core_GetArticlesByCategory_FullMethodName     = "/core.Core/GetArticlesByCategory"
+	Core_SearchArticles_FullMethodName            = "/core.Core/SearchArticles"
+	Core_LikeArticle_FullMethodName               = "/core.Core/LikeArticle"
+	Core_UnlikeArticle_FullMethodName             = "/core.Core/UnlikeArticle"
+	Core_LikeComment_FullMethodName               = "/core.Core/LikeComment"
+	Core_UnlikeComment_FullMethodName             = "/core.Core/UnlikeComment"
+	Core_ViewArticle_FullMethodName               = "/core.Core/ViewArticle"
+	Core_GetArticleLikeStatus_FullMethodName      = "/core.Core/GetArticleLikeStatus"
+	Core_BatchGetCommentLikeStatus_FullMethodName = "/core.Core/BatchGetCommentLikeStatus"
+	Core_CreateComment_FullMethodName             = "/core.Core/CreateComment"
+	Core_CreateReply_FullMethodName               = "/core.Core/CreateReply"
+	Core_DeleteComment_FullMethodName             = "/core.Core/DeleteComment"
+	Core_GetArticleComments_FullMethodName        = "/core.Core/GetArticleComments"
+	Core_GetCommentReplies_FullMethodName         = "/core.Core/GetCommentReplies"
+	Core_GetUserComments_FullMethodName           = "/core.Core/GetUserComments"
 )
 
 // CoreClient is the client API for Core service.
@@ -67,11 +72,17 @@ type CoreClient interface {
 	DeleteArticle(ctx context.Context, in *DeleteArticleReq, opts ...grpc.CallOption) (*DeleteArticleResp, error)
 	GetArticleDetail(ctx context.Context, in *GetArticleDetailReq, opts ...grpc.CallOption) (*GetArticleDetailResp, error)
 	ListArticles(ctx context.Context, in *ListArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+	GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
 	SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error)
 	// interaction 部分
 	LikeArticle(ctx context.Context, in *LikeArticleReq, opts ...grpc.CallOption) (*LikeArticleResp, error)
-	FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error)
+	UnlikeArticle(ctx context.Context, in *UnlikeArticleReq, opts ...grpc.CallOption) (*UnlikeArticleResp, error)
 	LikeComment(ctx context.Context, in *LikeCommentReq, opts ...grpc.CallOption) (*LikeCommentResp, error)
+	UnlikeComment(ctx context.Context, in *UnlikeCommentReq, opts ...grpc.CallOption) (*UnlikeCommentResp, error)
+	ViewArticle(ctx context.Context, in *ViewArticleReq, opts ...grpc.CallOption) (*ViewArticleResp, error)
+	GetArticleLikeStatus(ctx context.Context, in *GetArticleLikeStatusReq, opts ...grpc.CallOption) (*GetArticleLikeStatusResp, error)
+	BatchGetCommentLikeStatus(ctx context.Context, in *BatchGetCommentLikeStatusReq, opts ...grpc.CallOption) (*BatchGetCommentLikeStatusResp, error)
+	// comment 部分
 	CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CreateCommentResp, error)
 	CreateReply(ctx context.Context, in *CreateReplyReq, opts ...grpc.CallOption) (*CreateReplyResp, error)
 	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentResp, error)
@@ -218,6 +229,16 @@ func (c *coreClient) ListArticles(ctx context.Context, in *ListArticlesReq, opts
 	return out, nil
 }
 
+func (c *coreClient) GetArticlesByCategory(ctx context.Context, in *GetArticlesByCategoryReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListArticlesResp)
+	err := c.cc.Invoke(ctx, Core_GetArticlesByCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coreClient) SearchArticles(ctx context.Context, in *SearchArticlesReq, opts ...grpc.CallOption) (*SearchArticlesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SearchArticlesResp)
@@ -238,10 +259,10 @@ func (c *coreClient) LikeArticle(ctx context.Context, in *LikeArticleReq, opts .
 	return out, nil
 }
 
-func (c *coreClient) FavorArticle(ctx context.Context, in *FavoriteArticleReq, opts ...grpc.CallOption) (*FavoriteArticleResp, error) {
+func (c *coreClient) UnlikeArticle(ctx context.Context, in *UnlikeArticleReq, opts ...grpc.CallOption) (*UnlikeArticleResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(FavoriteArticleResp)
-	err := c.cc.Invoke(ctx, Core_FavorArticle_FullMethodName, in, out, cOpts...)
+	out := new(UnlikeArticleResp)
+	err := c.cc.Invoke(ctx, Core_UnlikeArticle_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -252,6 +273,46 @@ func (c *coreClient) LikeComment(ctx context.Context, in *LikeCommentReq, opts .
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LikeCommentResp)
 	err := c.cc.Invoke(ctx, Core_LikeComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UnlikeComment(ctx context.Context, in *UnlikeCommentReq, opts ...grpc.CallOption) (*UnlikeCommentResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UnlikeCommentResp)
+	err := c.cc.Invoke(ctx, Core_UnlikeComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ViewArticle(ctx context.Context, in *ViewArticleReq, opts ...grpc.CallOption) (*ViewArticleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ViewArticleResp)
+	err := c.cc.Invoke(ctx, Core_ViewArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) GetArticleLikeStatus(ctx context.Context, in *GetArticleLikeStatusReq, opts ...grpc.CallOption) (*GetArticleLikeStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetArticleLikeStatusResp)
+	err := c.cc.Invoke(ctx, Core_GetArticleLikeStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) BatchGetCommentLikeStatus(ctx context.Context, in *BatchGetCommentLikeStatusReq, opts ...grpc.CallOption) (*BatchGetCommentLikeStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BatchGetCommentLikeStatusResp)
+	err := c.cc.Invoke(ctx, Core_BatchGetCommentLikeStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -341,11 +402,17 @@ type CoreServer interface {
 	DeleteArticle(context.Context, *DeleteArticleReq) (*DeleteArticleResp, error)
 	GetArticleDetail(context.Context, *GetArticleDetailReq) (*GetArticleDetailResp, error)
 	ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error)
+	GetArticlesByCategory(context.Context, *GetArticlesByCategoryReq) (*ListArticlesResp, error)
 	SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error)
 	// interaction 部分
 	LikeArticle(context.Context, *LikeArticleReq) (*LikeArticleResp, error)
-	FavorArticle(context.Context, *FavoriteArticleReq) (*FavoriteArticleResp, error)
+	UnlikeArticle(context.Context, *UnlikeArticleReq) (*UnlikeArticleResp, error)
 	LikeComment(context.Context, *LikeCommentReq) (*LikeCommentResp, error)
+	UnlikeComment(context.Context, *UnlikeCommentReq) (*UnlikeCommentResp, error)
+	ViewArticle(context.Context, *ViewArticleReq) (*ViewArticleResp, error)
+	GetArticleLikeStatus(context.Context, *GetArticleLikeStatusReq) (*GetArticleLikeStatusResp, error)
+	BatchGetCommentLikeStatus(context.Context, *BatchGetCommentLikeStatusReq) (*BatchGetCommentLikeStatusResp, error)
+	// comment 部分
 	CreateComment(context.Context, *CreateCommentReq) (*CreateCommentResp, error)
 	CreateReply(context.Context, *CreateReplyReq) (*CreateReplyResp, error)
 	DeleteComment(context.Context, *DeleteCommentReq) (*DeleteCommentResp, error)
@@ -401,17 +468,32 @@ func (UnimplementedCoreServer) GetArticleDetail(context.Context, *GetArticleDeta
 func (UnimplementedCoreServer) ListArticles(context.Context, *ListArticlesReq) (*ListArticlesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
 }
+func (UnimplementedCoreServer) GetArticlesByCategory(context.Context, *GetArticlesByCategoryReq) (*ListArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticlesByCategory not implemented")
+}
 func (UnimplementedCoreServer) SearchArticles(context.Context, *SearchArticlesReq) (*SearchArticlesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchArticles not implemented")
 }
 func (UnimplementedCoreServer) LikeArticle(context.Context, *LikeArticleReq) (*LikeArticleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeArticle not implemented")
 }
-func (UnimplementedCoreServer) FavorArticle(context.Context, *FavoriteArticleReq) (*FavoriteArticleResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FavorArticle not implemented")
+func (UnimplementedCoreServer) UnlikeArticle(context.Context, *UnlikeArticleReq) (*UnlikeArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeArticle not implemented")
 }
 func (UnimplementedCoreServer) LikeComment(context.Context, *LikeCommentReq) (*LikeCommentResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeComment not implemented")
+}
+func (UnimplementedCoreServer) UnlikeComment(context.Context, *UnlikeCommentReq) (*UnlikeCommentResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeComment not implemented")
+}
+func (UnimplementedCoreServer) ViewArticle(context.Context, *ViewArticleReq) (*ViewArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewArticle not implemented")
+}
+func (UnimplementedCoreServer) GetArticleLikeStatus(context.Context, *GetArticleLikeStatusReq) (*GetArticleLikeStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticleLikeStatus not implemented")
+}
+func (UnimplementedCoreServer) BatchGetCommentLikeStatus(context.Context, *BatchGetCommentLikeStatusReq) (*BatchGetCommentLikeStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetCommentLikeStatus not implemented")
 }
 func (UnimplementedCoreServer) CreateComment(context.Context, *CreateCommentReq) (*CreateCommentResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateComment not implemented")
@@ -686,6 +768,24 @@ func _Core_ListArticles_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_GetArticlesByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticlesByCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetArticlesByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetArticlesByCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetArticlesByCategory(ctx, req.(*GetArticlesByCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Core_SearchArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchArticlesReq)
 	if err := dec(in); err != nil {
@@ -722,20 +822,20 @@ func _Core_LikeArticle_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_FavorArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FavoriteArticleReq)
+func _Core_UnlikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlikeArticleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).FavorArticle(ctx, in)
+		return srv.(CoreServer).UnlikeArticle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_FavorArticle_FullMethodName,
+		FullMethod: Core_UnlikeArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).FavorArticle(ctx, req.(*FavoriteArticleReq))
+		return srv.(CoreServer).UnlikeArticle(ctx, req.(*UnlikeArticleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -754,6 +854,78 @@ func _Core_LikeComment_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).LikeComment(ctx, req.(*LikeCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UnlikeComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlikeCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UnlikeComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UnlikeComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UnlikeComment(ctx, req.(*UnlikeCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ViewArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ViewArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_ViewArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ViewArticle(ctx, req.(*ViewArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_GetArticleLikeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleLikeStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetArticleLikeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetArticleLikeStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetArticleLikeStatus(ctx, req.(*GetArticleLikeStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_BatchGetCommentLikeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetCommentLikeStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).BatchGetCommentLikeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_BatchGetCommentLikeStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).BatchGetCommentLikeStatus(ctx, req.(*BatchGetCommentLikeStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -926,6 +1098,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_ListArticles_Handler,
 		},
 		{
+			MethodName: "GetArticlesByCategory",
+			Handler:    _Core_GetArticlesByCategory_Handler,
+		},
+		{
 			MethodName: "SearchArticles",
 			Handler:    _Core_SearchArticles_Handler,
 		},
@@ -934,12 +1110,28 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_LikeArticle_Handler,
 		},
 		{
-			MethodName: "FavorArticle",
-			Handler:    _Core_FavorArticle_Handler,
+			MethodName: "UnlikeArticle",
+			Handler:    _Core_UnlikeArticle_Handler,
 		},
 		{
 			MethodName: "LikeComment",
 			Handler:    _Core_LikeComment_Handler,
+		},
+		{
+			MethodName: "UnlikeComment",
+			Handler:    _Core_UnlikeComment_Handler,
+		},
+		{
+			MethodName: "ViewArticle",
+			Handler:    _Core_ViewArticle_Handler,
+		},
+		{
+			MethodName: "GetArticleLikeStatus",
+			Handler:    _Core_GetArticleLikeStatus_Handler,
+		},
+		{
+			MethodName: "BatchGetCommentLikeStatus",
+			Handler:    _Core_BatchGetCommentLikeStatus_Handler,
 		},
 		{
 			MethodName: "CreateComment",

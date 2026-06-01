@@ -9,6 +9,7 @@ import (
 	article "gateway/internal/handler/article"
 	category "gateway/internal/handler/category"
 	comment "gateway/internal/handler/comment"
+	interaction "gateway/internal/handler/interaction"
 	login "gateway/internal/handler/login"
 	"gateway/internal/svc"
 
@@ -19,17 +20,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/article/detail",
 				Handler: article.GetArticleDetailHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/article/list",
 				Handler: article.ListArticlesHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
+				Path:    "/article/list_by_category",
+				Handler: article.GetArticlesByCategoryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/article/search",
 				Handler: article.SearchArticlesHandler(serverCtx),
 			},
@@ -90,12 +96,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/comment/art_replies_list",
 				Handler: comment.GetCommentRepliesHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/comment/article_list",
 				Handler: comment.GetArticleCommentsHandler(serverCtx),
 			},
@@ -125,6 +131,54 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/comment/user/list",
 					Handler: comment.GetUserCommentsHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/article/view",
+				Handler: interaction.ViewArticleHandler(serverCtx),
+			},
+		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/article/like",
+					Handler: interaction.LikeArticleHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/article/like_status",
+					Handler: interaction.GetArticleLikeStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/article/unlike",
+					Handler: interaction.UnlikeArticleHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/comment/like",
+					Handler: interaction.LikeCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/comment/like_status/batch",
+					Handler: interaction.BatchGetCommentLikeStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/comment/unlike",
+					Handler: interaction.UnlikeCommentHandler(serverCtx),
 				},
 			}...,
 		),

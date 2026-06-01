@@ -11,26 +11,26 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ListArticlesLogic struct {
+type GetArticlesByCategoryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListArticlesLogic {
-	return &ListArticlesLogic{
+func NewGetArticlesByCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArticlesByCategoryLogic {
+	return &GetArticlesByCategoryLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *ListArticlesLogic) ListArticles(in *core.ListArticlesReq) (*core.ListArticlesResp, error) {
+func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(in *core.GetArticlesByCategoryReq) (*core.ListArticlesResp, error) {
 	page := utils.NormalizePageUint32(in.Page)
 	size := utils.NormalizePageSizeUint32(in.PageSize, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Article{}).Order("created_at DESC")
+	q := l.svcCtx.Db.Model(&entity.Article{}).Where("category_id = ?", in.CategoryId).Order("created_at DESC")
 
 	var total int64
 	if err := q.Count(&total).Error; err != nil {

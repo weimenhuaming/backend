@@ -92,6 +92,11 @@ func (s *CoreServer) ListArticles(ctx context.Context, in *core.ListArticlesReq)
 	return l.ListArticles(in)
 }
 
+func (s *CoreServer) GetArticlesByCategory(ctx context.Context, in *core.GetArticlesByCategoryReq) (*core.ListArticlesResp, error) {
+	l := logic.NewGetArticlesByCategoryLogic(ctx, s.svcCtx)
+	return l.GetArticlesByCategory(in)
+}
+
 func (s *CoreServer) SearchArticles(ctx context.Context, in *core.SearchArticlesReq) (*core.SearchArticlesResp, error) {
 	l := logic.NewSearchArticlesLogic(ctx, s.svcCtx)
 	return l.SearchArticles(in)
@@ -103,9 +108,9 @@ func (s *CoreServer) LikeArticle(ctx context.Context, in *core.LikeArticleReq) (
 	return l.LikeArticle(in)
 }
 
-func (s *CoreServer) FavorArticle(ctx context.Context, in *core.FavoriteArticleReq) (*core.FavoriteArticleResp, error) {
-	l := logic.NewFavorArticleLogic(ctx, s.svcCtx)
-	return l.FavorArticle(in)
+func (s *CoreServer) UnlikeArticle(ctx context.Context, in *core.UnlikeArticleReq) (*core.UnlikeArticleResp, error) {
+	l := logic.NewUnlikeArticleLogic(ctx, s.svcCtx)
+	return l.UnlikeArticle(in)
 }
 
 func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (*core.LikeCommentResp, error) {
@@ -113,6 +118,27 @@ func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (
 	return l.LikeComment(in)
 }
 
+func (s *CoreServer) UnlikeComment(ctx context.Context, in *core.UnlikeCommentReq) (*core.UnlikeCommentResp, error) {
+	l := logic.NewUnlikeCommentLogic(ctx, s.svcCtx)
+	return l.UnlikeComment(in)
+}
+
+func (s *CoreServer) ViewArticle(ctx context.Context, in *core.ViewArticleReq) (*core.ViewArticleResp, error) {
+	l := logic.NewViewArticleLogic(ctx, s.svcCtx)
+	return l.ViewArticle(in)
+}
+
+func (s *CoreServer) GetArticleLikeStatus(ctx context.Context, in *core.GetArticleLikeStatusReq) (*core.GetArticleLikeStatusResp, error) {
+	l := logic.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
+	return l.GetArticleLikeStatus(in)
+}
+
+func (s *CoreServer) BatchGetCommentLikeStatus(ctx context.Context, in *core.BatchGetCommentLikeStatusReq) (*core.BatchGetCommentLikeStatusResp, error) {
+	l := logic.NewBatchGetCommentLikeStatusLogic(ctx, s.svcCtx)
+	return l.BatchGetCommentLikeStatus(in)
+}
+
+// comment 部分
 func (s *CoreServer) CreateComment(ctx context.Context, in *core.CreateCommentReq) (*core.CreateCommentResp, error) {
 	l := logic.NewCreateCommentLogic(ctx, s.svcCtx)
 	return l.CreateComment(in)

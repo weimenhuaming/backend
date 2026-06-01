@@ -76,10 +76,6 @@ type (
     ListArticlesReq {
         Page       uint32 `json:"page"`
         PageSize   uint32 `json:"page_size"`
-        CategoryId uint64 `json:"category_id,optional"`
-        UserId     uint64 `json:"user_id,optional"`
-        SortBy     string `json:"sort_by,optional"`
-        SortOrder  string `json:"sort_order,optional"`
     }
     ListArticlesResp {
         Code int            `json:"code"`
@@ -91,6 +87,18 @@ type (
         Total    uint32        `json:"total"`
         Page     uint32        `json:"page"`
         PageSize uint32        `json:"page_size"`
+    }
+
+    // 获取分类下文章列表
+    GetArticlesByCategoryReq {
+        CategoryId uint64 `json:"category_id"`
+        Page       uint32 `json:"page"`
+        PageSize   uint32 `json:"page_size"`
+    }
+    GetArticlesByCategoryResp {
+        Code int            `json:"code"`
+        Msg  string         `json:"msg"`
+        Data ListArticlesData `json:"data"`
     }
 
     // 搜索文章
@@ -119,13 +127,16 @@ type (
 )
 service Gateway {
     @handler getArticleDetail
-    get /article/detail (GetArticleDetailReq) returns (GetArticleDetailResp)
+    post /article/detail (GetArticleDetailReq) returns (GetArticleDetailResp)
 
     @handler listArticles
-    get /article/list (ListArticlesReq) returns (ListArticlesResp)
+    post /article/list (ListArticlesReq) returns (ListArticlesResp)
 
     @handler searchArticles
-    get /article/search (SearchArticlesReq) returns (SearchArticlesResp)
+    post /article/search (SearchArticlesReq) returns (SearchArticlesResp)
+
+    @handler getArticlesByCategory
+    post /article/list_by_category (GetArticlesByCategoryReq) returns (GetArticlesByCategoryResp)
 }
 
 

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"core-rpc/internal/utils"
 	"strings"
 
 	"core-rpc/internal/model/entity"
@@ -27,9 +28,9 @@ func NewSearchArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 
 func (l *SearchArticlesLogic) SearchArticles(in *core.SearchArticlesReq) (*core.SearchArticlesResp, error) {
 	keyword := strings.TrimSpace(in.Keyword)
-	page := normalizePageUint32(in.Page)
-	size := normalizePageSizeUint32(in.PageSize, 10)
-	off, limit := offsetLimit(page, size)
+	page := utils.NormalizePageUint32(in.Page)
+	size := utils.NormalizePageSizeUint32(in.PageSize, 10)
+	off, limit := utils.OffsetLimit(page, size)
 
 	q := l.svcCtx.Db.Model(&entity.Article{})
 	if in.CategoryId > 0 {

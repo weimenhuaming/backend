@@ -10,30 +10,30 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ListArticlesLogic struct {
+type GetArticlesByCategoryLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListArticlesLogic {
-	return &ListArticlesLogic{
+func NewGetArticlesByCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArticlesByCategoryLogic {
+	return &GetArticlesByCategoryLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesResp, err error) {
-	// call core rpc
-	rpcReq := &core_client.ListArticlesReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(req *types.GetArticlesByCategoryReq) (resp *types.GetArticlesByCategoryResp, err error) {
+	rpcReq := &core_client.GetArticlesByCategoryReq{
+		CategoryId: req.CategoryId,
+		Page:       req.Page,
+		PageSize:   req.PageSize,
 	}
 
-	r, err := l.svcCtx.Core.ListArticles(l.ctx, rpcReq)
+	r, err := l.svcCtx.Core.GetArticlesByCategory(l.ctx, rpcReq)
 	if err != nil {
-		return &types.ListArticlesResp{
+		return &types.GetArticlesByCategoryResp{
 			Code: 500,
 			Msg:  err.Error(),
 		}, nil
@@ -60,7 +60,7 @@ func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *type
 		})
 	}
 
-	return &types.ListArticlesResp{
+	return &types.GetArticlesByCategoryResp{
 		Code: 200,
 		Msg:  "ok",
 		Data: types.ListArticlesData{

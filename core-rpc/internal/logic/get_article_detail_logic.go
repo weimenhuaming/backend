@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"core-rpc/internal/utils"
 	"errors"
 
 	"core-rpc/internal/model/entity"
@@ -46,6 +47,6 @@ func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (
 	}
 
 	return &core.GetArticleDetailResp{
-		Article: articleToProto(&article, authorName, authorAvatar),
+		Article: utils.ArticleToProto(&article, authorName, authorAvatar),
 	}, nil
 }

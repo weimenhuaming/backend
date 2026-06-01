@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"core-rpc/internal/utils"
 	"errors"
 
 	"core-rpc/internal/model/entity"
@@ -9,64 +10,63 @@ import (
 	"gorm.io/gorm"
 )
 
-func toggleArticleLike(db *gorm.DB, userID, articleID uint64, active bool) (int32, error) {
-	var row entity.InteractionLike
-	err := db.Unscoped().Where("user_id = ? AND article_id = ? AND action_type = ?",
-		userID, articleID, entity.ActionLike).First(&row).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		if !active {
-			return 0, nil
-		}
-		row = entity.InteractionLike{
-			UserID:     userID,
-			ArticleID:  articleID,
-			ActionType: entity.ActionLike,
-		}
-		return 1, db.Create(&row).Error
-	}
-	if err != nil {
-		return 0, err
-	}
-	if active {
-		if row.DeletedAt.Valid {
-			return 1, db.Unscoped().Model(&row).Update("deleted_at", nil).Error
-		}
-		return 0, nil
-	}
-	if !row.DeletedAt.Valid {
-		return -1, db.Delete(&row).Error
-	}
-	return 0, nil
+var (
+	errAlreadyLiked = errors.New("已经点过赞了")
+	errNotLiked     = errors.New("尚未点赞")
+)
+
+func interactionQuery(db *gorm.DB, userID uint64, objectType string, objectID uint64) *gorm.DB {
+	return db.Where("user_id = ? AND object_type = ? AND object_id = ?",
+		userID, objectType, objectID)
 }
 
-func toggleArticleFavor(db *gorm.DB, userID, articleID uint64, active bool) (int32, error) {
-	var row entity.InteractionFavor
-	err := db.Unscoped().Where("user_id = ? AND article_id = ? AND action_type = ?",
-		userID, articleID, entity.ActionFavor).First(&row).Error
+func likeQuery(db *gorm.DB, userID uint64, objectType string, objectID uint64) *gorm.DB {
+	return interactionQuery(db, userID, objectType, objectID).
+		Where("action_type = ?", entity.ActionLike)
+}
+
+func addLike(db *gorm.DB, userID uint64, objectType string, objectID uint64) (int32, error) {
+	var row entity.InteractionLike
+	err := interactionQuery(db, userID, objectType, objectID).First(&row).Error
+	if err == nil {
+		if row.ActionType == entity.ActionLike {
+			return 0, errAlreadyLiked
+		}
+		return 1, db.Model(&row).Update("action_type", entity.ActionLike).Error
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, err
+	}
+	row = entity.InteractionLike{
+		UserID:     userID,
+		ObjectType: objectType,
+		ObjectID:   objectID,
+		ActionType: entity.ActionLike,
+	}
+	return 1, db.Create(&row).Error
+}
+
+func removeLike(db *gorm.DB, userID uint64, objectType string, objectID uint64) (int32, error) {
+	var row entity.InteractionLike
+	err := interactionQuery(db, userID, objectType, objectID).First(&row).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		if !active {
-			return 0, nil
-		}
-		row = entity.InteractionFavor{
-			UserID:     userID,
-			ArticleID:  articleID,
-			ActionType: entity.ActionFavor,
-		}
-		return 1, db.Create(&row).Error
+		return 0, errNotLiked
 	}
 	if err != nil {
 		return 0, err
 	}
-	if active {
-		if row.DeletedAt.Valid {
-			return 1, db.Unscoped().Model(&row).Update("deleted_at", nil).Error
-		}
-		return 0, nil
+	if row.ActionType != entity.ActionLike {
+		return 0, errNotLiked
 	}
-	if !row.DeletedAt.Valid {
-		return -1, db.Delete(&row).Error
-	}
-	return 0, nil
+	return -1, db.Model(&row).Update("action_type", entity.ActionUnknown).Error
+}
+
+func addArticleLike(db *gorm.DB, userID, articleID uint64) (int32, error) {
+	return addLike(db, userID, entity.ObjectTypeArticle, articleID)
+}
+
+func removeArticleLike(db *gorm.DB, userID, articleID uint64) (int32, error) {
+	return removeLike(db, userID, entity.ObjectTypeArticle, articleID)
 }
 
 func adjustArticleCounter(db *gorm.DB, articleID uint64, field string, delta int32) (uint32, error) {
@@ -90,34 +90,44 @@ func adjustArticleCounter(db *gorm.DB, articleID uint64, field string, delta int
 	}
 }
 
-func toggleCommentLike(db *gorm.DB, userID, commentID uint64, active bool) (int32, error) {
-	var row entity.InteractionCommentLike
-	err := db.Unscoped().Where("user_id = ? AND comment_id = ? AND action_type = ?",
-		userID, commentID, entity.ActionLike).First(&row).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		if !active {
-			return 0, nil
+func isObjectLiked(db *gorm.DB, userID uint64, objectType string, objectID uint64) (bool, error) {
+	if userID == 0 || objectID == 0 {
+		return false, nil
+	}
+	var count int64
+	err := likeQuery(db, userID, objectType, objectID).Count(&count).Error
+	return count > 0, err
+}
+
+func batchCommentLiked(db *gorm.DB, userID uint64, commentIDs []uint64) (map[uint64]bool, error) {
+	out := make(map[uint64]bool, len(commentIDs))
+	for _, id := range commentIDs {
+		if id > 0 {
+			out[id] = false
 		}
-		row = entity.InteractionCommentLike{
-			UserID:     userID,
-			CommentID:  commentID,
-			ActionType: entity.ActionLike,
-		}
-		return 1, db.Create(&row).Error
 	}
-	if err != nil {
-		return 0, err
+	if userID == 0 || len(commentIDs) == 0 {
+		return out, nil
 	}
-	if active {
-		if row.DeletedAt.Valid {
-			return 1, db.Unscoped().Model(&row).Update("deleted_at", nil).Error
-		}
-		return 0, nil
+
+	var rows []entity.InteractionLike
+	if err := db.Where("user_id = ? AND object_type = ? AND action_type = ? AND object_id IN ?",
+		userID, entity.ObjectTypeComment, entity.ActionLike, commentIDs).
+		Find(&rows).Error; err != nil {
+		return nil, err
 	}
-	if !row.DeletedAt.Valid {
-		return -1, db.Delete(&row).Error
+	for _, row := range rows {
+		out[row.ObjectID] = true
 	}
-	return 0, nil
+	return out, nil
+}
+
+func addCommentLike(db *gorm.DB, userID, commentID uint64) (int32, error) {
+	return addLike(db, userID, entity.ObjectTypeComment, commentID)
+}
+
+func removeCommentLike(db *gorm.DB, userID, commentID uint64) (int32, error) {
+	return removeLike(db, userID, entity.ObjectTypeComment, commentID)
 }
 
 func adjustCommentLikeCount(db *gorm.DB, commentID uint64, delta int32) (uint32, error) {
@@ -152,11 +162,11 @@ func loadArticlesWithAuthors(db *gorm.DB, articles []entity.Article) ([]*core.Ar
 			return nil, err
 		}
 	}
-	userMap := loadUsersMap(users)
+	userMap := utils.LoadUsersMap(users)
 	out := make([]*core.ArticleInfo, 0, len(articles))
 	for i := range articles {
-		name, avatar := userDisplay(userMap, articles[i].UserID)
-		out = append(out, articleToProto(&articles[i], name, avatar))
+		name, avatar := utils.UserDisplay(userMap, articles[i].UserID)
+		out = append(out, utils.ArticleToProto(&articles[i], name, avatar))
 	}
 	return out, nil
 }
@@ -169,7 +179,7 @@ func fetchUserMap(db *gorm.DB, userIDs []uint64) (map[uint64]entity.User, error)
 	if err := db.Where("id IN ?", userIDs).Find(&users).Error; err != nil {
 		return nil, err
 	}
-	return loadUsersMap(users), nil
+	return utils.LoadUsersMap(users), nil
 }
 
 func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
@@ -187,12 +197,12 @@ func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
 func commentsToProtoList(comments []entity.Comment, userMap map[uint64]entity.User, previewReplies map[uint64][]*core.CommentInfo) []*core.CommentInfo {
 	out := make([]*core.CommentInfo, 0, len(comments))
 	for i := range comments {
-		name, avatar := userDisplay(userMap, comments[i].UserID)
+		name, avatar := utils.UserDisplay(userMap, comments[i].UserID)
 		var replies []*core.CommentInfo
 		if previewReplies != nil {
 			replies = previewReplies[comments[i].ID]
 		}
-		out = append(out, commentToProto(&comments[i], name, avatar, replies))
+		out = append(out, utils.CommentToProto(&comments[i], name, avatar, replies))
 	}
 	return out
 }

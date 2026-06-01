@@ -1,6 +1,7 @@
 package model
 
 import (
+	"core-rpc/internal/model/entity"
 	"log"
 	"os"
 	"time"
@@ -33,19 +34,17 @@ func InitGorm(dsn string, logLevel logger.LogLevel, maxIdleConn, maxOpenConn int
 	sqlDB.SetMaxOpenConns(maxOpenConn)
 	sqlDB.SetConnMaxIdleTime(time.Minute * 30)
 
-	//if err := db.AutoMigrate(
-	//	&entity.User{},
-	//	&entity.Article{},
-	//	&entity.Category{},
-	//	&entity.Comment{},
-	//	&entity.InteractionLike{},
-	//	&entity.InteractionFavor{},
-	//	&entity.InteractionCommentLike{},
-	//	&entity.TokenBlacklist{},
-	//); err != nil {
-	//	log.Printf("auto migrate failed: %v", err)
-	//	os.Exit(1)
-	//}
+	if err := db.AutoMigrate(
+		&entity.User{},
+		&entity.Article{},
+		&entity.Category{},
+		&entity.Comment{},
+		&entity.InteractionLike{},
+		&entity.TokenBlacklist{},
+	); err != nil {
+		log.Printf("auto migrate failed: %v", err)
+		os.Exit(1)
+	}
 
 	return db
 }

@@ -11,10 +11,14 @@ import (
 )
 
 type ServiceContext struct {
-	Config   config.Config
-	UserRepo *repo.UserModel
-	Db       *gorm.DB
-	Cache    *redis.Redis
+	Config          config.Config
+	UserRepo        *repo.UserModel
+	CateRepo        *repo.CateModel
+	ArtRepo         *repo.ArtModel
+	CommentRepo     *repo.CommentModel
+	InteractionRepo *repo.InteractionModel
+	Db              *gorm.DB
+	Cache           *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -25,9 +29,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	log.Println("Redis 连接成功")
 
 	return &ServiceContext{
-		Config:   c,
-		Db:       db,
-		UserRepo: repo.NewUserModel(db),
-		Cache:    cache,
+		Config:          c,
+		Db:              db,
+		UserRepo:        repo.NewUserModel(db),
+		CateRepo:        repo.NewCateModel(db),
+		ArtRepo:         repo.NewArtModel(db),
+		CommentRepo:     repo.NewCommentModel(db),
+		InteractionRepo: repo.NewInteractionModel(db),
+		Cache:           cache,
 	}
 }

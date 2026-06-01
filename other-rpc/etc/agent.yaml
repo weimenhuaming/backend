@@ -4,3 +4,21 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: agent.rpc
+
+# 个人知识库 Agent（langchaingo RAG）
+KnowledgeBase:
+  DataPath: ./data/knowledge
+  TopK: 4
+  ChunkSize: 800
+  ChunkOverlap: 100
+  LLM:
+    # 对话模型：智谱（OpenAI 兼容）
+    Provider: openai
+    BaseURL: https://open.bigmodel.cn/api/paas/v4
+    APIKey: ${ZHIPU_API_KEY}
+    Model: glm-4v-flash
+  Embedding:
+    # 向量模型：本地 Ollama
+    Provider: ollama
+    BaseURL: http://127.0.0.1:11434
+    Model: nomic-embed-text

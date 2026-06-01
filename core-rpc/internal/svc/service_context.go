@@ -3,6 +3,7 @@ package svc
 import (
 	"core-rpc/internal/config"
 	"core-rpc/internal/model"
+	"core-rpc/internal/model/entity"
 	"log"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -10,9 +11,10 @@ import (
 )
 
 type ServiceContext struct {
-	Config config.Config
-	Db     *gorm.DB
-	Cache  *redis.Redis
+	Config   config.Config
+	UserRepo *entity.UserModel
+	Db       *gorm.DB
+	Cache    *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -23,8 +25,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	log.Println("Redis 连接成功")
 
 	return &ServiceContext{
-		Config: c,
-		Db:     db,
-		Cache:  cache,
+		Config:   c,
+		Db:       db,
+		UserRepo: entity.NewUserModel(db),
+		Cache:    cache,
 	}
 }

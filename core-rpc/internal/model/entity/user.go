@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,4 +24,26 @@ type User struct {
 
 func (User) TableName() string {
 	return "user"
+}
+
+type UserModel struct {
+	DB *gorm.DB
+}
+
+func NewUserModel(db *gorm.DB) *UserModel {
+	return &UserModel{
+		DB: db,
+	}
+}
+
+func (u *UserModel) EmailLogin(email string) (*User, error) {
+	user := &User{}
+	err := u.DB.Where("email = ?", email).First(user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("该邮箱尚未注册")
+		}
+		return nil, err
+	}
+	return user, nil
 }

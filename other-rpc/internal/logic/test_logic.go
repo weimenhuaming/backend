@@ -24,7 +24,5 @@ func NewTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TestLogic {
 }
 
 func (l *TestLogic) Test(in *agent.TestRequest) (*agent.TestResponse, error) {
-	// todo: add your logic here and delete this line
-
 	return &agent.TestResponse{}, nil
 }

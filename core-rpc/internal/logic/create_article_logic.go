@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
-	"core-rpc/internal/model/article"
+	"errors"
+
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
-	"database/sql"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type CreateArticleLogic struct {
@@ -25,20 +27,33 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateArticleLogic) CreateArticle(in *core.CreateArticleReq) (*core.CreateArticleResp, error) {
-
-	newArticle := &article.Article{
-		UserId:     in.UserId,
-		CategoryId: in.GetCategoryId(),
-		Title:      in.GetTitle(),
-		Summary:    in.GetSummary(),
-		Content:    sql.NullString{String: in.GetContent(), Valid: in.GetContent() != ""},
-		Cover:      in.GetCover(),
+	if in.UserId == 0 {
+		return nil, errors.New("用户未登录")
+	}
+	if in.Title == "" {
+		return nil, errors.New("标题不能为空")
 	}
 
-	_, err := l.svcCtx.ArticleModel.Insert(l.ctx, newArticle)
-	if err != nil {
+	if in.CategoryId > 0 {
+		var cat entity.Category
+		if err := l.svcCtx.Db.First(&cat, in.CategoryId).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, errors.New("分类不存在")
+			}
+			return nil, err
+		}
+	}
+
+	article := &entity.Article{
+		UserID:     in.UserId,
+		CategoryID: in.CategoryId,
+		Title:      in.Title,
+		Summary:    in.Summary,
+		Content:    in.Content,
+		Cover:      in.Cover,
+	}
+	if err := l.svcCtx.Db.Create(article).Error; err != nil {
 		return nil, err
 	}
-
 	return &core.CreateArticleResp{}, nil
 }

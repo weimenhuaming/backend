@@ -41,7 +41,7 @@ func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *t
 	}
 
 	// call core rpc
-	UserId := l.ctx.Value("user_id").(uint64)
+	UserId := l.ctx.Value("X-user-Id").(uint64)
 	_, err = l.svcCtx.Core.CreateArticle(l.ctx, &core_client.CreateArticleReq{
 		CategoryId: req.CategoryId,
 		Title:      req.Title,

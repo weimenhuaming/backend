@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
-	"core-rpc/internal/model/user"
-	"core-rpc/internal/svc"
-	"core-rpc/pb/core"
 	"errors"
 
+	"core-rpc/internal/model/entity"
+	"core-rpc/internal/svc"
+	"core-rpc/pb/core"
+
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type ResetPasswordByEmailLogic struct {
@@ -24,22 +26,20 @@ func NewResetPasswordByEmailLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-// ResetPasswordByEmail 由 gateway 完成参数判空、验证码与 Redis 校验；此处仅做领域内的用户查找与密码更新。
 func (l *ResetPasswordByEmailLogic) ResetPasswordByEmail(in *core.ResetPasswordEmailReq) (*core.ResetPasswordEmailResp, error) {
-	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
+	var u entity.User
+	err := l.svcCtx.Db.Where("email = ?", in.Email).First(&u).Error
 	if err != nil {
-		if errors.Is(err, user.ErrNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("该邮箱尚未注册")
 		}
-		logx.WithContext(l.ctx).Errorf("FindOneByEmail failed: %v", err)
+		logx.WithContext(l.ctx).Errorf("find user by email failed: %v", err)
 		return nil, errors.New("查询用户失败")
 	}
 
-	u.Password = in.Password
-	if err := l.svcCtx.UserModel.Update(l.ctx, u); err != nil {
-		logx.WithContext(l.ctx).Errorf("update password failed, id=%d: %v", u.Id, err)
+	if err := l.svcCtx.Db.Model(&u).Update("password", in.Password).Error; err != nil {
+		logx.WithContext(l.ctx).Errorf("update password failed, id=%d: %v", u.ID, err)
 		return nil, errors.New("更新密码失败")
 	}
-
 	return &core.ResetPasswordEmailResp{}, nil
 }

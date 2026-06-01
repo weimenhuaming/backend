@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type DeleteArticleLogic struct {
@@ -25,23 +27,18 @@ func NewDeleteArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteArticleLogic) DeleteArticle(in *core.DeleteArticleReq) (*core.DeleteArticleResp, error) {
-	uid := in.GetUserId()
-	if uid == 0 {
-		return nil, errors.New("missing user id")
-	}
-
-	a, err := l.svcCtx.ArticleModel.FindOneActive(l.ctx, in.GetId())
-	if err != nil {
+	var article entity.Article
+	if err := l.svcCtx.Db.First(&article, in.Id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("文章不存在")
+		}
 		return nil, err
 	}
-	if a.UserId != uid {
-		return nil, errors.New("not article owner")
+	if in.UserId > 0 && article.UserID != in.UserId {
+		return nil, errors.New("无权删除该文章")
 	}
-
-	err = l.svcCtx.ArticleModel.SoftDelete(l.ctx, in.GetId(), uid)
-	if err != nil {
+	if err := l.svcCtx.Db.Delete(&article).Error; err != nil {
 		return nil, err
 	}
-
 	return &core.DeleteArticleResp{}, nil
 }

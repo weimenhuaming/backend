@@ -26,6 +26,15 @@ func NewDeleteCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 
 func (l *DeleteCategoryLogic) DeleteCategory(req *types.DeleteCategoryReq) (resp *types.DeleteCategoryResp, err error) {
 	_ = req
+
+	role := l.ctx.Value("X-user-Role")
+	if role != "admin" {
+		return &types.DeleteCategoryResp{
+			Code: 403,
+			Msg:  "非管理员，没有权限执行",
+		}, nil
+	}
+
 	if req == nil || req.Id == 0 {
 		return &types.DeleteCategoryResp{
 			Code: 400,
@@ -47,6 +56,4 @@ func (l *DeleteCategoryLogic) DeleteCategory(req *types.DeleteCategoryReq) (resp
 		Code: 200,
 		Msg:  "ok",
 	}, nil
-
-	return
 }

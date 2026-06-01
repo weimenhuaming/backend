@@ -2,15 +2,14 @@ package logic
 
 import (
 	"context"
-	"database/sql"
 	"errors"
-	"strconv"
 
+	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/metadata"
+	"gorm.io/gorm"
 )
 
 type UpdateArticleLogic struct {
@@ -28,53 +27,42 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateArticleLogic) UpdateArticle(in *core.UpdateArticleReq) (*core.UpdateArticleResp, error) {
-	md, ok := metadata.FromIncomingContext(l.ctx)
-	if !ok {
-		return nil, errors.New("missing metadata")
-	}
-	var uidStr string
-	if v := md.Get("user-id"); len(v) > 0 {
-		uidStr = v[0]
-	} else if v := md.Get("user_id"); len(v) > 0 {
-		uidStr = v[0]
-	} else {
-		return nil, errors.New("missing user id in metadata")
-	}
-	uid, err := strconv.ParseUint(uidStr, 10, 64)
-	if err != nil {
+	var article entity.Article
+	if err := l.svcCtx.Db.First(&article, in.Id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("文章不存在")
+		}
 		return nil, err
 	}
 
-	// 检查文章存在与作者
-	a, err := l.svcCtx.ArticleModel.FindOne(l.ctx, in.GetId())
-	if err != nil {
+	updates := map[string]interface{}{}
+	if in.CategoryId > 0 {
+		var cat entity.Category
+		if err := l.svcCtx.Db.First(&cat, in.CategoryId).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, errors.New("分类不存在")
+			}
+			return nil, err
+		}
+		updates["category_id"] = in.CategoryId
+	}
+	if in.Title != "" {
+		updates["title"] = in.Title
+	}
+	if in.Summary != "" {
+		updates["summary"] = in.Summary
+	}
+	if in.Content != "" {
+		updates["content"] = in.Content
+	}
+	if in.Cover != "" {
+		updates["cover"] = in.Cover
+	}
+	if len(updates) == 0 {
+		return &core.UpdateArticleResp{}, nil
+	}
+	if err := l.svcCtx.Db.Model(&article).Updates(updates).Error; err != nil {
 		return nil, err
 	}
-	if a.UserId != uid {
-		return nil, errors.New("not article owner")
-	}
-
-	// 更新可选字段
-	if in.GetCategoryId() != 0 {
-		a.CategoryId = in.GetCategoryId()
-	}
-	if in.GetTitle() != "" {
-		a.Title = in.GetTitle()
-	}
-	if in.GetSummary() != "" {
-		a.Summary = in.GetSummary()
-	}
-	if in.GetContent() != "" {
-		a.Content = sql.NullString{String: in.GetContent(), Valid: true}
-	}
-	if in.GetCover() != "" {
-		a.Cover = in.GetCover()
-	}
-
-	err = l.svcCtx.ArticleModel.Update(l.ctx, a)
-	if err != nil {
-		return nil, err
-	}
-
 	return &core.UpdateArticleResp{}, nil
 }

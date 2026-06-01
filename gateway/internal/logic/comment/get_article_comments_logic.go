@@ -6,6 +6,7 @@ package comment
 import (
 	"context"
 
+	core_client "core-rpc/core_client"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -27,7 +28,37 @@ func NewGetArticleCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommentsReq) (resp *types.GetArticleCommentsResp, err error) {
-	// todo: add your logic here and delete this line
+	if req.ArticleId == 0 {
+		return &types.GetArticleCommentsResp{Code: 400, Msg: "文章ID不存在"}, nil
+	}
 
-	return
+	page := int32(req.Page)
+	size := int32(req.PageSize)
+	if page <= 0 {
+		page = 1
+	}
+	if size <= 0 {
+		size = 10
+	}
+
+	r, err := l.svcCtx.Core.GetArticleComments(l.ctx, &core_client.GetArticleCommentsReq{
+		ArticleId: req.ArticleId,
+		Page:      page,
+		Size:      size,
+		OrderBy:   req.OrderBy,
+	})
+	if err != nil {
+		return &types.GetArticleCommentsResp{Code: 500, Msg: err.Error()}, nil
+	}
+
+	return &types.GetArticleCommentsResp{
+		Code: 200,
+		Msg:  "ok",
+		Data: types.GetArticleCommentsData{
+			Comments: toTypesCommentList(r.GetComments()),
+			Total:    uint32(r.GetTotal()),
+			Page:     uint32(r.GetPage()),
+			PageSize: uint32(r.GetSize()),
+		},
+	}, nil
 }

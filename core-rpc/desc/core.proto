@@ -14,6 +14,12 @@ service Core {
   rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
+  // person 部分
+  // 1. 更新头像
+  // 2. 更新个人信息（昵称、性别、年龄等）
+  // 3. 查看自己的点赞列表（仅文章）
+  // 4. 查看自己发布的文章列表
+
   // Category 部分
   rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp){};  //  分类列表
@@ -25,20 +31,25 @@ service Core {
   rpc DeleteArticle(DeleteArticleReq) returns (DeleteArticleResp){};           // 删除文章
   rpc GetArticleDetail(GetArticleDetailReq) returns (GetArticleDetailResp){};  // 获取文章详情
   rpc ListArticles(ListArticlesReq) returns (ListArticlesResp){};              // 文章列表
+  rpc GetArticlesByCategory(GetArticlesByCategoryReq) returns (ListArticlesResp){};  // 按分类获取文章
   rpc SearchArticles(SearchArticlesReq) returns (SearchArticlesResp){};        // 搜索文章
 
   // interaction 部分
   rpc LikeArticle(LikeArticleReq) returns (LikeArticleResp){};                 // 点赞文章
-  rpc FavorArticle(FavoriteArticleReq) returns (FavoriteArticleResp){};        // 收藏文章
-  rpc LikeComment(LikeCommentReq) returns(LikeCommentResp){};
-
+  rpc UnlikeArticle(UnlikeArticleReq) returns (UnlikeArticleResp){};           // 取消点赞文章
+  rpc LikeComment(LikeCommentReq) returns (LikeCommentResp){};                 // 点赞评论
+  rpc UnlikeComment(UnlikeCommentReq) returns (UnlikeCommentResp){};           // 取消点赞评论
+  rpc ViewArticle(ViewArticleReq) returns (ViewArticleResp){};                 // 浏览文章
+  rpc GetArticleLikeStatus(GetArticleLikeStatusReq) returns (GetArticleLikeStatusResp){};  // 文章点赞状态
+  rpc BatchGetCommentLikeStatus(BatchGetCommentLikeStatusReq) returns (BatchGetCommentLikeStatusResp){};  // 批量评论点赞状态
+  
   // comment 部分
-  rpc CreateComment(CreateCommentReq) returns(CreateCommentResp){};
-  rpc CreateReply(CreateReplyReq) returns(CreateReplyResp){};
-  rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentResp){};
-  rpc GetArticleComments(GetArticleCommentsReq) returns(GetArticleCommentsResp){};
-  rpc GetCommentReplies(GetCommentRepliesReq) returns(GetCommentRepliesResp){};
-  rpc GetUserComments(GetUserCommentsReq) returns(GetUserCommentsResp){};
+  rpc CreateComment(CreateCommentReq) returns (CreateCommentResp){};           // 发表一级评论
+  rpc CreateReply(CreateReplyReq) returns (CreateReplyResp){};                 // 发表回复
+  rpc DeleteComment(DeleteCommentReq) returns (DeleteCommentResp){};            // 删除评论（软删除）
+  rpc GetArticleComments(GetArticleCommentsReq) returns (GetArticleCommentsResp){};
+  rpc GetCommentReplies(GetCommentRepliesReq) returns (GetCommentRepliesResp){};
+  rpc GetUserComments(GetUserCommentsReq) returns (GetUserCommentsResp){};
 }
 
 // Test 接口的请求和响应消息
@@ -172,20 +183,23 @@ message GetArticleDetailResp {
   ArticleInfo article = 1;
 }
 
-// 文章列表（支持分页和筛选）
+// 文章列表（分页）
 message ListArticlesReq {
   uint32 page = 1;              // 页码，从1开始
   uint32 page_size = 2;         // 每页数量
-  uint64 category_id = 3;       // 按分类筛选（0表示不筛选）
-  uint64 user_id = 4;           // 按作者筛选（0表示不筛选）
-  string sort_by = 5;           // 排序字段：created_at, view_count, like_count
-  string sort_order = 6;        // 排序方式：asc, desc
 }
 message ListArticlesResp {
   repeated ArticleInfo articles = 1;
   uint32 total = 2;             // 总数量
   uint32 page = 3;              // 当前页码
   uint32 page_size = 4;         // 每页数量
+}
+
+// 按分类获取文章列表
+message GetArticlesByCategoryReq {
+  uint64 category_id = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
 }
 
 // 搜索文章
@@ -208,29 +222,67 @@ message SearchArticlesResp {
 // 点赞文章
 message LikeArticleReq {
   uint64 article_id = 1;
-  bool is_like = 2;             // true: 点赞, false: 取消点赞
+  uint64 user_id = 2;
 }
 message LikeArticleResp {
-  uint32 like_count = 1;        // 返回最新点赞数
+  uint32 like_count = 1;
 }
 
-// 收藏文章
-message FavoriteArticleReq {
+// 取消点赞文章
+message UnlikeArticleReq {
   uint64 article_id = 1;
-  bool is_favorite = 2;         // true: 收藏, false: 取消收藏
+  uint64 user_id = 2;
 }
-message FavoriteArticleResp {
-  uint32 favor_count = 1;       // 返回最新收藏数
+message UnlikeArticleResp {
+  uint32 like_count = 1;
 }
 
 // 点赞评论
 message LikeCommentReq {
-  uint64 commentId = 1;    // 评论ID
-  uint64 userId = 2;       // 用户ID
-  bool isLike = 3;         // true=点赞，false=取消点赞
+  uint64 comment_id = 1;
+  uint64 user_id = 2;
 }
 message LikeCommentResp {
-  uint32 likeCount = 1;    // 最新的点赞数
+  uint32 like_count = 1;
+}
+
+// 取消点赞评论
+message UnlikeCommentReq {
+  uint64 comment_id = 1;
+  uint64 user_id = 2;
+}
+message UnlikeCommentResp {
+  uint32 like_count = 1;
+}
+
+// 浏览文章（增加阅读量）
+message ViewArticleReq {
+  uint64 article_id = 1;
+}
+message ViewArticleResp {
+  uint32 view_count = 1;
+}
+
+// 查询用户对文章的点赞状态
+message GetArticleLikeStatusReq {
+  uint64 article_id = 1;
+  uint64 user_id = 2;
+}
+message GetArticleLikeStatusResp {
+  bool liked = 1;
+}
+
+// 批量查询用户对评论的点赞状态
+message BatchGetCommentLikeStatusReq {
+  repeated uint64 comment_ids = 1;
+  uint64 user_id = 2;
+}
+message CommentLikeStatusItem {
+  uint64 comment_id = 1;
+  bool liked = 2;
+}
+message BatchGetCommentLikeStatusResp {
+  repeated CommentLikeStatusItem items = 1;
 }
 
 //======================================================================================================================
@@ -280,6 +332,7 @@ message CreateReplyResp {
 // 删除评论
 message DeleteCommentReq {
   uint64 id = 1;           // 评论ID
+  uint64 userId = 2;       // 用户ID（鉴权）
 }
 message DeleteCommentResp {}
 

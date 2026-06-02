@@ -4,10 +4,12 @@ package agent;
 
 option go_package = "./agent";
 
-// Agent 个人知识库问答服务
+// Agent 个人知识库服务：先 Build 构建索引，再 Chat 问答
 service Agent {
   rpc Test(TestRequest) returns (TestResponse);
-  // Chat 基于知识库检索的问答，入参仅为用户问题
+  // Build 从知识库目录构建向量索引（需先构建才能 Chat）
+  rpc Build(BuildRequest) returns (BuildResponse);
+  // Chat 基于已构建索引的 RAG 问答
   rpc Chat(ChatRequest) returns (ChatResponse);
 }
 
@@ -16,6 +18,17 @@ message TestRequest {
 }
 message TestResponse {
   string reply = 1;
+}
+
+message BuildRequest {
+  // 可选，为空则使用配置中的 DataPath
+  string data_path = 1;
+}
+
+message BuildResponse {
+  string message = 1;
+  int32 doc_count = 2;
+  int32 chunk_count = 3;
 }
 
 message ChatRequest {

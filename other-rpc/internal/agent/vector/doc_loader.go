@@ -1,4 +1,4 @@
-package kb
+package vector
 
 import (
 	"io/fs"

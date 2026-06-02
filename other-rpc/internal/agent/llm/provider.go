@@ -13,6 +13,8 @@ import (
 // NewChatModel 按配置初始化对话模型。
 func NewChatModel(cfg config.LLMConf) (llms.Model, error) {
 	provider := strings.ToLower(strings.TrimSpace(cfg.Provider))
+
+	// 根据对应的名字选择对应llm模型的构造器
 	switch provider {
 	case "openai":
 		return newOpenAIChatModel(cfg)

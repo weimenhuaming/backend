@@ -11,11 +11,14 @@ KnowledgeBase:
   TopK: 4
   ChunkSize: 800
   ChunkOverlap: 100
+  Chroma:
+    URL: http://127.0.0.1:8000
+    Collection: chenaqi_knowledge
   LLM:
     # 对话模型：智谱（OpenAI 兼容）
     Provider: openai
     BaseURL: https://open.bigmodel.cn/api/paas/v4
-    APIKey: ${ZHIPU_API_KEY}
+    APIKey: aec6ba32d6464b329efd63cff837feb3.W0eFMQFiJD0S25ge
     Model: glm-4v-flash
   Embedding:
     # 向量模型：本地 Ollama

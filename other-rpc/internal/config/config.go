@@ -12,8 +12,14 @@ type KnowledgeBaseConf struct {
 	TopK         int           `json:",default=4"`
 	ChunkSize    int           `json:",default=800"`
 	ChunkOverlap int           `json:",default=100"`
+	Chroma       ChromaConf    `json:",optional"`
 	LLM          LLMConf       `json:",optional"`
 	Embedding    EmbeddingConf `json:",optional"`
+}
+
+type ChromaConf struct {
+	URL        string `json:",default=http://127.0.0.1:8000"`
+	Collection string `json:",default=chenaqi_knowledge"`
 }
 
 type LLMConf struct {

@@ -1,11 +1,14 @@
 package svc
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"os"
 	"other-rpc/internal/agent"
+	"other-rpc/internal/agent/embedding"
+	"other-rpc/internal/agent/vector"
 	"other-rpc/internal/config"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ServiceContext struct {
@@ -14,13 +17,23 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	kbAgent, err := agent.NewAgent(c.KnowledgeBase)
+	// 1. 拿到embedding构造器
+	embedder, err := embedding.NewEmbedder(c.KnowledgeBase.Embedding)
+	if err != nil {
+		fmt.Printf("初始化 Embedding 模块失败: %v", err)
+		os.Exit(1)
+	}
+
+	// 2.拿到检索器
+	retriever, _, _, err := vector.Load(context.Background(), c.KnowledgeBase, embedder)
+	if err != nil {
+		log.Fatalf("初始化检索器失败: %v", err)
+	}
+
+	kbAgent, err := agent.NewAgent(c.KnowledgeBase, embedder, retriever)
 	if err != nil {
 		log.Fatalf("初始化知识库 Agent 失败: %v", err)
 	}
-	docCount, chunkCount, topK := kbAgent.Stats()
-	logx.Infof("知识库 Agent 已就绪，Chroma: %s, collection: %s, 文档数: %d, 切片数: %d, TopK: %d",
-		c.KnowledgeBase.Chroma.URL, c.KnowledgeBase.Chroma.Collection, docCount, chunkCount, topK)
 
 	return &ServiceContext{
 		Config: c,

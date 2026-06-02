@@ -7,7 +7,7 @@ import (
 
 	"other-rpc/internal/config"
 
-	chromav2 "github.com/amikos-tech/chroma-go/pkg/api/v2"
+	chroma "github.com/amikos-tech/chroma-go/pkg/api/v2"
 
 	"github.com/tmc/langchaingo/embeddings"
 )
@@ -26,8 +26,8 @@ func chromaCollection(cfg config.KnowledgeBaseConf) string {
 	return "chenaqi_knowledge"
 }
 
-func newChromaClient(cfg config.KnowledgeBaseConf) (chromav2.Client, error) {
-	return chromav2.NewHTTPClient(chromav2.WithBaseURL(chromaBaseURL(cfg)))
+func newChromaClient(cfg config.KnowledgeBaseConf) (chroma.Client, error) {
+	return chroma.NewHTTPClient(chroma.WithBaseURL(chromaBaseURL(cfg)))
 }
 
 func ensureChromaReady(ctx context.Context, cfg config.KnowledgeBaseConf) error {
@@ -120,7 +120,7 @@ func writeCollectionStats(ctx context.Context, cfg config.KnowledgeBaseConf, doc
 		return err
 	}
 
-	return collection.ModifyMetadata(ctx, chromav2.NewMetadataFromMap(map[string]any{
+	return collection.ModifyMetadata(ctx, chroma.NewMetadataFromMap(map[string]any{
 		"doc_count":   int64(docCount),
 		"chunk_count": int64(chunkCount),
 	}))

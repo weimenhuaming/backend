@@ -94,3 +94,39 @@ func indexDocuments(ctx context.Context, store vectorstores.VectorStore, cfg con
 	}
 	return len(chunks), nil
 }
+
+// BuildIndex 使用已有 Embedder 构建 Chroma 向量索引。
+// 返回值: 文档数量, 切片数量, 错误
+func BuildIndex(ctx context.Context, cfg config.KnowledgeBaseConf, embedder embeddings.Embedder) (int, int, error) {
+	// 1. 重置 collection（清空旧数据）
+	if err := resetChromaCollection(ctx, cfg); err != nil {
+		return 0, 0, err
+	}
+
+	// 2. 打开/创建 Chroma collection
+	store, err := openChromaStore(ctx, cfg, embedder)
+	if err != nil {
+		return 0, 0, fmt.Errorf("创建 Chroma collection 失败: %w", err)
+	}
+
+	// 3. 加载文档
+	docs, err := LoadDocumentsFromDir(cfg.DataPath)
+	if err != nil {
+		return 0, 0, fmt.Errorf("加载知识库目录失败: %w", err)
+	}
+
+	// 4. 索引文档（分块、向量化、存储）
+	chunkCount, err := indexDocuments(ctx, store, cfg, docs)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	docCount := len(docs)
+
+	// 5. 保存统计信息
+	if err := writeCollectionStats(ctx, cfg, docCount, chunkCount); err != nil {
+		return 0, 0, fmt.Errorf("更新 Chroma collection 元数据失败: %w", err)
+	}
+
+	return docCount, chunkCount, nil
+}

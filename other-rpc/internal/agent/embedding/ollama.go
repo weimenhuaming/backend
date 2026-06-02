@@ -1,6 +1,7 @@
 package embedding
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -20,7 +21,7 @@ func NewEmbedder(cfg config.EmbeddingConf) (embeddings.Embedder, error) {
 
 	model := cfg.Model
 	if model == "" {
-		model = "nomic-embed-text"
+		return nil, errors.New("embedding model is not find")
 	}
 
 	opts := []ollama.Option{ollama.WithModel(model)}

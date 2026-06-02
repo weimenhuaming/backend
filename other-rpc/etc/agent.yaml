@@ -5,6 +5,10 @@ Etcd:
   - 127.0.0.1:2379
   Key: agent.rpc
 
+
+Timeout: 10000  # 改成 10 秒（毫秒）
+
+
 # 个人知识库 Agent（langchaingo RAG）
 KnowledgeBase:
   DataPath: ./data/knowledge

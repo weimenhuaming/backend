@@ -48,20 +48,19 @@ func NewAgent(cfg config.KnowledgeBaseConf, em embeddings.Embedder, retriever ve
 }
 
 // Build 从知识库目录构建向量索引并持久化
-func (a *Agent) Build(ctx context.Context, dataPath string) (docCount, chunkCount int, err error) {
+func (a *Agent) Build(ctx context.Context) (int, int, error) {
 	cfg := a.cfg
-	if dataPath != "" {
-		cfg.DataPath = dataPath
-	}
 
 	// 使用已有Embedder构建向量索引
-	docCount, chunkCount, err = vector.BuildIndex(ctx, cfg, a.embedder)
+	retriever, docCount, chunkCount, err := vector.BuildIndex(ctx, cfg, a.embedder)
 	if err != nil {
 		return 0, 0, err
 	}
 
 	a.docCount = docCount
 	a.chunkCount = chunkCount
+	a.retriever = retriever
+	a.qa = rag.NewQA(a.brain, retriever)
 
 	return docCount, chunkCount, nil
 }

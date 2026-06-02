@@ -26,12 +26,9 @@ func NewBuildLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BuildLogic 
 
 // Build 从知识库目录构建向量索引并持久化（启动前或更新文档后调用）。
 func (l *BuildLogic) Build(in *agent.BuildRequest) (*agent.BuildResponse, error) {
-	dataPath := ""
-	if in != nil {
-		dataPath = in.GetDataPath()
-	}
+	_ = in
 
-	docCount, chunkCount, err := l.svcCtx.Agent.Build(l.ctx, dataPath)
+	docCount, chunkCount, err := l.svcCtx.Agent.Build(l.ctx)
 	if err != nil {
 		l.Errorf("构建向量索引失败: %v", err)
 		return nil, err

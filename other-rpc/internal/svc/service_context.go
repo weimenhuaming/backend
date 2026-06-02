@@ -3,8 +3,6 @@ package svc
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 	"other-rpc/internal/agent"
 	"other-rpc/internal/agent/embedding"
 	"other-rpc/internal/agent/vector"
@@ -20,19 +18,19 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	// 1. 拿到embedding构造器
 	embedder, err := embedding.NewEmbedder(c.KnowledgeBase.Embedding)
 	if err != nil {
-		fmt.Printf("初始化 Embedding 模块失败: %v", err)
-		os.Exit(1)
+		fmt.Println("初始化 Embedding 模块失败:", err)
 	}
 
 	// 2.拿到检索器
-	retriever, _, _, err := vector.Load(context.Background(), c.KnowledgeBase, embedder)
+	retriever, err := vector.Load(context.Background(), c.KnowledgeBase, embedder)
 	if err != nil {
-		log.Fatalf("初始化检索器失败: %v", err)
+		fmt.Println("vector 初始化失败:", err)
 	}
 
+	// 3.构建agent
 	kbAgent, err := agent.NewAgent(c.KnowledgeBase, embedder, retriever)
 	if err != nil {
-		log.Fatalf("初始化知识库 Agent 失败: %v", err)
+		fmt.Println("Agent 构建失败:", err)
 	}
 
 	return &ServiceContext{

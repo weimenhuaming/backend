@@ -1,6 +1,6 @@
 module other-rpc
 
-go 1.26.3
+go 1.25.8
 
 require (
 	github.com/amikos-tech/chroma-go v0.4.0

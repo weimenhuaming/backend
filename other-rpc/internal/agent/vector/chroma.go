@@ -61,7 +61,13 @@ func readCollectionStats(ctx context.Context, cfg config.KnowledgeBaseConf) (doc
 	}
 	defer client.Close()
 
-	collection, err := client.GetCollection(ctx, cfg.Chroma.Collection)
+	//collection, err := client.GetCollection(ctx, cfg.Chroma.Collection)
+	collection, err := client.GetOrCreateCollection(ctx, cfg.Chroma.Collection,
+		chroma.WithEmbeddingFunctionCreate(nil), // 或等价的无 EF 配置
+	)
+	if err != nil {
+		return 0, 0, err
+	}
 	if err != nil {
 		return 0, 0, fmt.Errorf("Chroma collection 不存在，请先 Build: %w", err)
 	}

@@ -1,12 +1,12 @@
 Name: agent.rpc
-ListenOn: 127.0.0.1:8081
+ListenOn: 0.0.0.0:8081
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
+    - etcd:2379
   Key: agent.rpc
 
 
-Timeout: 100000  # 改成 10 秒（毫秒）
+Timeout: 10000  # 改成 10 秒（毫秒）
 
 
 # 个人知识库 Agent（langchaingo RAG）
@@ -16,7 +16,7 @@ KnowledgeBase:
   ChunkSize: 800
   ChunkOverlap: 100
   Chroma:
-    URL: http://127.0.0.1:8000
+    URL: http://chroma:8000
     Collection: chenaqi_knowledge
   LLM:
     # 对话模型：智谱（OpenAI 兼容）
@@ -25,7 +25,7 @@ KnowledgeBase:
     APIKey: aec6ba32d6464b329efd63cff837feb3.W0eFMQFiJD0S25ge
     Model: glm-4v-flash
   Embedding:
-    # 向量模型：本地 Ollama
+    # 向量模型：本地 Ollama（docker-compose 服务名 ollama）
     Provider: ollama
-    BaseURL: http://127.0.0.1:11434
+    BaseURL: http://ollama:11434
     Model: nomic-embed-text

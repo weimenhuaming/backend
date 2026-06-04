@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	chromav2 "github.com/amikos-tech/chroma-go/pkg/api/v2"
+	chroma "github.com/amikos-tech/chroma-go/pkg/api/v2"
 	chromaembed "github.com/amikos-tech/chroma-go/pkg/embeddings"
 	"github.com/tmc/langchaingo/embeddings"
 	"github.com/tmc/langchaingo/schema"
@@ -13,7 +13,7 @@ import (
 
 // ChromaStore 基于 Chroma v2 API 的向量存储，实现 langchaingo VectorStore。
 type ChromaStore struct {
-	collection chromav2.Collection
+	collection chroma.Collection
 	embedder   embeddings.Embedder
 }
 
@@ -23,7 +23,7 @@ func (s *ChromaStore) AddDocuments(ctx context.Context, docs []schema.Document, 
 	}
 
 	texts := make([]string, len(docs))
-	metas := make([]chromav2.DocumentMetadata, len(docs))
+	metas := make([]chroma.DocumentMetadata, len(docs))
 	for i, doc := range docs {
 		texts[i] = doc.PageContent
 		metas[i] = toDocumentMetadata(doc.Metadata)
@@ -39,10 +39,10 @@ func (s *ChromaStore) AddDocuments(ctx context.Context, docs []schema.Document, 
 	}
 
 	if err := s.collection.Add(ctx,
-		chromav2.WithIDGenerator(chromav2.NewUUIDGenerator()),
-		chromav2.WithTexts(texts...),
-		chromav2.WithEmbeddings(chromaVectors...),
-		chromav2.WithMetadatas(metas...),
+		chroma.WithIDGenerator(chroma.NewUUIDGenerator()),
+		chroma.WithTexts(texts...),
+		chroma.WithEmbeddings(chromaVectors...),
+		chroma.WithMetadatas(metas...),
 	); err != nil {
 		return nil, err
 	}
@@ -60,9 +60,9 @@ func (s *ChromaStore) SimilaritySearch(ctx context.Context, query string, numDoc
 	}
 
 	result, err := s.collection.Query(ctx,
-		chromav2.WithQueryEmbeddings(chromaembed.NewEmbeddingFromFloat32(queryVector)),
-		chromav2.WithNResults(numDocuments),
-		chromav2.WithIncludeQuery(chromav2.IncludeDocuments, chromav2.IncludeMetadatas, chromav2.IncludeDistances),
+		chroma.WithQueryEmbeddings(chromaembed.NewEmbeddingFromFloat32(queryVector)),
+		chroma.WithNResults(numDocuments),
+		chroma.WithIncludeQuery(chroma.IncludeDocuments, chroma.IncludeMetadatas, chroma.IncludeDistances),
 	)
 	if err != nil {
 		return nil, err
@@ -89,33 +89,33 @@ func (s *ChromaStore) SimilaritySearch(ctx context.Context, query string, numDoc
 	return out, nil
 }
 
-func toDocumentMetadata(meta map[string]any) chromav2.DocumentMetadata {
+func toDocumentMetadata(meta map[string]any) chroma.DocumentMetadata {
 	if len(meta) == 0 {
-		return chromav2.NewDocumentMetadata()
+		return chroma.NewDocumentMetadata()
 	}
-	attrs := make([]*chromav2.MetaAttribute, 0, len(meta))
+	attrs := make([]*chroma.MetaAttribute, 0, len(meta))
 	for key, value := range meta {
 		switch v := value.(type) {
 		case string:
-			attrs = append(attrs, chromav2.NewStringAttribute(key, v))
+			attrs = append(attrs, chroma.NewStringAttribute(key, v))
 		case int:
-			attrs = append(attrs, chromav2.NewIntAttribute(key, int64(v)))
+			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
 		case int32:
-			attrs = append(attrs, chromav2.NewIntAttribute(key, int64(v)))
+			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
 		case int64:
-			attrs = append(attrs, chromav2.NewIntAttribute(key, v))
+			attrs = append(attrs, chroma.NewIntAttribute(key, v))
 		case float64:
-			attrs = append(attrs, chromav2.NewFloatAttribute(key, v))
+			attrs = append(attrs, chroma.NewFloatAttribute(key, v))
 		case bool:
-			attrs = append(attrs, chromav2.NewBoolAttribute(key, v))
+			attrs = append(attrs, chroma.NewBoolAttribute(key, v))
 		default:
-			attrs = append(attrs, chromav2.NewStringAttribute(key, fmt.Sprint(v)))
+			attrs = append(attrs, chroma.NewStringAttribute(key, fmt.Sprint(v)))
 		}
 	}
-	return chromav2.NewDocumentMetadata(attrs...)
+	return chroma.NewDocumentMetadata(attrs...)
 }
 
-func fromDocumentMetadata(meta chromav2.DocumentMetadata) map[string]any {
+func fromDocumentMetadata(meta chroma.DocumentMetadata) map[string]any {
 	if meta == nil {
 		return nil
 	}

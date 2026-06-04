@@ -4,7 +4,6 @@ import (
 	"context"
 	"core-rpc/internal/utils"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -30,19 +29,12 @@ func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(in *core.GetArticlesB
 	size := utils.NormalizePageSizeUint32(in.PageSize, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Article{}).Where("category_id = ?", in.CategoryId).Order("created_at DESC")
-
-	var total int64
-	if err := q.Count(&total).Error; err != nil {
+	articles, total, err := l.svcCtx.ArtRepo.ListByCategory(in.CategoryId, off, limit)
+	if err != nil {
 		return nil, err
 	}
 
-	var articles []entity.Article
-	if err := q.Offset(off).Limit(limit).Find(&articles).Error; err != nil {
-		return nil, err
-	}
-
-	protoList, err := loadArticlesWithAuthors(l.svcCtx.Db, articles)
+	protoList, err := l.svcCtx.ArtRepo.LoadArticlesWithAuthors(articles)
 	if err != nil {
 		return nil, err
 	}

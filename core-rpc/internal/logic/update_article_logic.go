@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -27,8 +26,8 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateArticleLogic) UpdateArticle(in *core.UpdateArticleReq) (*core.UpdateArticleResp, error) {
-	var article entity.Article
-	if err := l.svcCtx.Db.First(&article, in.Id).Error; err != nil {
+	// ensure article exists
+	if _, err := l.svcCtx.ArtRepo.FindByID(in.Id); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("文章不存在")
 		}
@@ -37,8 +36,7 @@ func (l *UpdateArticleLogic) UpdateArticle(in *core.UpdateArticleReq) (*core.Upd
 
 	updates := map[string]interface{}{}
 	if in.CategoryId > 0 {
-		var cat entity.Category
-		if err := l.svcCtx.Db.First(&cat, in.CategoryId).Error; err != nil {
+		if _, err := l.svcCtx.CateRepo.FindByID(in.CategoryId); err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errors.New("分类不存在")
 			}
@@ -61,7 +59,7 @@ func (l *UpdateArticleLogic) UpdateArticle(in *core.UpdateArticleReq) (*core.Upd
 	if len(updates) == 0 {
 		return &core.UpdateArticleResp{}, nil
 	}
-	if err := l.svcCtx.Db.Model(&article).Updates(updates).Error; err != nil {
+	if err := l.svcCtx.ArtRepo.UpdateByID(in.Id, updates); err != nil {
 		return nil, err
 	}
 	return &core.UpdateArticleResp{}, nil

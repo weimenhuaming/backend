@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -31,23 +30,15 @@ func (l *LikeArticleLogic) LikeArticle(in *core.LikeArticleReq) (*core.LikeArtic
 		return nil, errors.New("参数无效")
 	}
 
-	var count int64
-	if err := l.svcCtx.Db.Model(&entity.Article{}).Where("id = ?", in.ArticleId).Count(&count).Error; err != nil {
+	// verify article exists
+	if _, err := l.svcCtx.ArtRepo.FindByID(in.ArticleId); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("文章不存在")
+		}
 		return nil, err
 	}
-	if count == 0 {
-		return nil, errors.New("文章不存在")
-	}
 
-	var likeCount uint32
-	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		delta, err := addArticleLike(tx, in.UserId, in.ArticleId)
-		if err != nil {
-			return err
-		}
-		likeCount, err = adjustArticleCounter(tx, in.ArticleId, "like_count", delta)
-		return err
-	})
+	likeCount, err := l.svcCtx.InteractionRepo.LikeArticle(in.UserId, in.ArticleId)
 	if err != nil {
 		return nil, err
 	}

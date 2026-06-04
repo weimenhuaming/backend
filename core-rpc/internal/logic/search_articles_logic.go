@@ -5,7 +5,6 @@ import (
 	"core-rpc/internal/utils"
 	"strings"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -32,27 +31,12 @@ func (l *SearchArticlesLogic) SearchArticles(in *core.SearchArticlesReq) (*core.
 	size := utils.NormalizePageSizeUint32(in.PageSize, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Article{})
-	if in.CategoryId > 0 {
-		q = q.Where("category_id = ?", in.CategoryId)
-	}
-	if keyword != "" {
-		like := "%" + keyword + "%"
-		q = q.Where("title LIKE ? OR content LIKE ?", like, like)
-	}
-	q = q.Order("created_at DESC")
-
-	var total int64
-	if err := q.Count(&total).Error; err != nil {
+	articles, total, err := l.svcCtx.ArtRepo.Search(keyword, in.CategoryId, off, limit)
+	if err != nil {
 		return nil, err
 	}
 
-	var articles []entity.Article
-	if err := q.Offset(off).Limit(limit).Find(&articles).Error; err != nil {
-		return nil, err
-	}
-
-	protoList, err := loadArticlesWithAuthors(l.svcCtx.Db, articles)
+	protoList, err := l.svcCtx.ArtRepo.LoadArticlesWithAuthors(articles)
 	if err != nil {
 		return nil, err
 	}

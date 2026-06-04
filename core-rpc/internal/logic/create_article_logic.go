@@ -35,8 +35,7 @@ func (l *CreateArticleLogic) CreateArticle(in *core.CreateArticleReq) (*core.Cre
 	}
 
 	if in.CategoryId > 0 {
-		var cat entity.Category
-		if err := l.svcCtx.Db.First(&cat, in.CategoryId).Error; err != nil {
+		if _, err := l.svcCtx.CateRepo.FindByID(in.CategoryId); err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errors.New("分类不存在")
 			}
@@ -52,7 +51,7 @@ func (l *CreateArticleLogic) CreateArticle(in *core.CreateArticleReq) (*core.Cre
 		Content:    in.Content,
 		Cover:      in.Cover,
 	}
-	if err := l.svcCtx.Db.Create(article).Error; err != nil {
+	if err := l.svcCtx.ArtRepo.Create(article); err != nil {
 		return nil, err
 	}
 	return &core.CreateArticleResp{}, nil

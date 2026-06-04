@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -35,8 +34,13 @@ func (l *CreateCategoryLogic) CreateCategory(in *core.CreateCategoryReq) (*core.
 
 	// 这里会有个问题gorm就算失败也会导致id自增
 	// 要么就是先查后增，或者就是允许空洞
-	c := &entity.Category{Name: name}
-	if err := l.svcCtx.Db.Create(c).Error; err != nil {
+	// check existing by name
+	if _, err := l.svcCtx.CateRepo.FindByName(name); err == nil {
+		return nil, errors.New("分类名称已存在")
+	}
+	// if not found, create
+	if _, err := l.svcCtx.CateRepo.Create(name); err != nil {
+		// try to detect duplicate error via string fallback
 		if strings.Contains(err.Error(), "Duplicate") || strings.Contains(err.Error(), "duplicate") {
 			return nil, errors.New("分类名称已存在")
 		}

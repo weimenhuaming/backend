@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"core-rpc/internal/utils"
-	"strings"
-
 	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
+	"core-rpc/internal/utils"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -31,25 +29,21 @@ func (l *GetArticleCommentsLogic) GetArticleComments(in *core.GetArticleComments
 	size := utils.NormalizeSize(in.Size, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Comment{}).
-		Where("article_id = ? AND parent_id = 0", in.ArticleId)
-	if strings.EqualFold(in.OrderBy, "hot") {
-		q = q.Order("like_count DESC, created_at DESC")
-	} else {
-		q = q.Order("created_at DESC")
-	}
-
-	var total int64
-	if err := q.Count(&total).Error; err != nil {
+	total, comments, err := l.svcCtx.CommentRepo.ListTopComments(in.ArticleId, in.OrderBy, off, limit)
+	if err != nil {
 		return nil, err
 	}
 
-	var comments []entity.Comment
-	if err := q.Offset(off).Limit(limit).Find(&comments).Error; err != nil {
-		return nil, err
+	// collect user ids from comments
+	userIDs := make([]uint64, 0, len(comments))
+	seen := make(map[uint64]struct{})
+	for _, c := range comments {
+		if _, ok := seen[c.UserID]; !ok {
+			seen[c.UserID] = struct{}{}
+			userIDs = append(userIDs, c.UserID)
+		}
 	}
-
-	userMap, err := fetchUserMap(l.svcCtx.Db, collectUserIDsFromComments(comments))
+	userMap, err := l.svcCtx.UserRepo.FindByIDs(userIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -76,31 +70,29 @@ func (l *GetArticleCommentsLogic) loadPreviewReplies(topComments []entity.Commen
 		rootIDs[i] = c.ID
 	}
 
-	var replies []entity.Comment
-	if err := l.svcCtx.Db.Where("root_id IN ? AND parent_id > 0", rootIDs).
-		Order("created_at ASC").Find(&replies).Error; err != nil {
+	// load preview replies via repo
+	const previewLimit = 3
+	grouped, err := l.svcCtx.CommentRepo.LoadPreviewReplies(rootIDs, previewLimit)
+	if err != nil {
 		return nil, err
 	}
 
-	extraIDs := collectUserIDsFromComments(replies)
-	for _, id := range extraIDs {
-		if _, ok := userMap[id]; !ok {
-			u, err := fetchUserMap(l.svcCtx.Db, []uint64{id})
-			if err != nil {
-				return nil, err
-			}
-			for k, v := range u {
-				userMap[k] = v
+	// ensure userMap contains all users referenced by replies
+	extraIDs := make([]uint64, 0)
+	for _, list := range grouped {
+		for _, r := range list {
+			if _, ok := userMap[r.UserID]; !ok {
+				extraIDs = append(extraIDs, r.UserID)
 			}
 		}
 	}
-
-	const previewLimit = 3
-	grouped := make(map[uint64][]entity.Comment)
-	for _, r := range replies {
-		list := grouped[r.RootID]
-		if len(list) < previewLimit {
-			grouped[r.RootID] = append(list, r)
+	if len(extraIDs) > 0 {
+		extraMap, err := l.svcCtx.UserRepo.FindByIDs(extraIDs)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range extraMap {
+			userMap[k] = v
 		}
 	}
 

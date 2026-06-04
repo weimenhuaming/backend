@@ -5,7 +5,6 @@ import (
 	"core-rpc/internal/utils"
 	"errors"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -28,25 +27,26 @@ func NewGetArticleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (*core.GetArticleDetailResp, error) {
-	var article entity.Article
-	if err := l.svcCtx.Db.First(&article, in.Id).Error; err != nil {
+	a, err := l.svcCtx.ArtRepo.FindByID(in.Id)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("文章不存在")
 		}
 		return nil, err
 	}
 
-	_ = l.svcCtx.Db.Model(&article).Update("view_count", gorm.Expr("view_count + ?", 1))
-	article.ViewCount++
+	// increment view count
+	_ = l.svcCtx.ArtRepo.IncView(in.Id)
+	a.ViewCount++
 
-	var author entity.User
+	// fetch author info
 	authorName, authorAvatar := "", ""
-	if err := l.svcCtx.Db.Select("name", "avatar").First(&author, article.UserID).Error; err == nil {
-		authorName = author.Name
-		authorAvatar = author.Avatar
+	if u, err := l.svcCtx.UserRepo.FindByID(a.UserID); err == nil {
+		authorName = u.Name
+		authorAvatar = u.Avatar
 	}
 
 	return &core.GetArticleDetailResp{
-		Article: utils.ArticleToProto(&article, authorName, authorAvatar),
+		Article: utils.ArticleToProto(a, authorName, authorAvatar),
 	}, nil
 }

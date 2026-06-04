@@ -4,7 +4,6 @@ import (
 	"context"
 	"core-rpc/internal/utils"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -30,21 +29,13 @@ func (l *GetUserCommentsLogic) GetUserComments(in *core.GetUserCommentsReq) (*co
 	size := utils.NormalizeSize(in.Size, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Comment{}).
-		Where("user_id = ?", in.UserId).
-		Order("created_at DESC")
-
-	var total int64
-	if err := q.Count(&total).Error; err != nil {
+	total, comments, err := l.svcCtx.CommentRepo.ListByUser(in.UserId, off, limit)
+	if err != nil {
 		return nil, err
 	}
 
-	var comments []entity.Comment
-	if err := q.Offset(off).Limit(limit).Find(&comments).Error; err != nil {
-		return nil, err
-	}
-
-	userMap, err := fetchUserMap(l.svcCtx.Db, collectUserIDsFromComments(comments))
+	userIDs := collectUserIDsFromComments(comments)
+	userMap, err := l.svcCtx.UserRepo.FindByIDs(userIDs)
 	if err != nil {
 		return nil, err
 	}

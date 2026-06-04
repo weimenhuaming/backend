@@ -25,7 +25,7 @@ func NewBatchGetCommentLikeStatusLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(in *core.BatchGetCommentLikeStatusReq) (*core.BatchGetCommentLikeStatusResp, error) {
 	ids := uniquePositiveIDs(in.CommentIds)
-	likedMap, err := batchCommentLiked(l.svcCtx.Db, in.UserId, ids)
+	likedMap, err := l.svcCtx.InteractionRepo.BatchCommentLiked(l.svcCtx.Db, in.UserId, ids)
 	if err != nil {
 		return nil, err
 	}

@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"gorm.io/gorm"
 )
 
 type UnlikeCommentLogic struct {
@@ -31,23 +29,15 @@ func (l *UnlikeCommentLogic) UnlikeComment(in *core.UnlikeCommentReq) (*core.Unl
 		return nil, errors.New("参数无效")
 	}
 
-	var count int64
-	if err := l.svcCtx.Db.Model(&entity.Comment{}).Where("id = ?", in.CommentId).Count(&count).Error; err != nil {
+	exists, err := l.svcCtx.CommentRepo.Exists(in.CommentId)
+	if err != nil {
 		return nil, err
 	}
-	if count == 0 {
+	if !exists {
 		return nil, errors.New("评论不存在")
 	}
 
-	var likeCount uint32
-	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		delta, err := removeCommentLike(tx, in.UserId, in.CommentId)
-		if err != nil {
-			return err
-		}
-		likeCount, err = adjustCommentLikeCount(tx, in.CommentId, delta)
-		return err
-	})
+	likeCount, err := l.svcCtx.InteractionRepo.UnlikeComment(in.UserId, in.CommentId)
 	if err != nil {
 		return nil, err
 	}

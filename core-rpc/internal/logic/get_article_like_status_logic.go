@@ -30,7 +30,7 @@ func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(in *core.GetArticleLike
 		return nil, errors.New("参数无效")
 	}
 
-	liked, err := isObjectLiked(l.svcCtx.Db, in.UserId, entity.ObjectTypeArticle, in.ArticleId)
+	liked, err := l.svcCtx.InteractionRepo.IsObjectLiked(l.svcCtx.Db, in.UserId, entity.ObjectTypeArticle, in.ArticleId)
 	if err != nil {
 		return nil, err
 	}

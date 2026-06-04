@@ -5,12 +5,10 @@ import (
 	"errors"
 	"strings"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"gorm.io/gorm"
 )
 
 type CreateReplyLogic struct {
@@ -35,49 +33,7 @@ func (l *CreateReplyLogic) CreateReply(in *core.CreateReplyReq) (*core.CreateRep
 		return nil, errors.New("回复内容不能为空")
 	}
 
-	var replyID uint64
-	err := l.svcCtx.Db.Transaction(func(tx *gorm.DB) error {
-		var root entity.Comment
-		if err := tx.Where("id = ? AND parent_id = 0", in.RootId).First(&root).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return errors.New("根评论不存在")
-			}
-			return err
-		}
-
-		var parent entity.Comment
-		if err := tx.First(&parent, in.ParentId).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return errors.New("父评论不存在")
-			}
-			return err
-		}
-		if parent.ArticleID != root.ArticleID {
-			return errors.New("评论不属于同一篇文章")
-		}
-
-		reply := &entity.Comment{
-			ArticleID:   root.ArticleID,
-			UserID:      in.UserId,
-			ParentID:    in.ParentId,
-			RootID:      in.RootId,
-			ReplyToID:   in.ReplyToId,
-			ReplyToName: in.ReplyToName,
-			Content:     strings.TrimSpace(in.Content),
-		}
-		if err := tx.Create(reply).Error; err != nil {
-			return err
-		}
-		if err := tx.Model(&root).Update("child_count", gorm.Expr("child_count + ?", 1)).Error; err != nil {
-			return err
-		}
-		if err := tx.Model(&entity.Article{}).Where("id = ?", root.ArticleID).
-			Update("comment_count", gorm.Expr("comment_count + ?", 1)).Error; err != nil {
-			return err
-		}
-		replyID = reply.ID
-		return nil
-	})
+	replyID, err := l.svcCtx.CommentRepo.CreateReply(in.UserId, in.RootId, in.ParentId, in.ReplyToId, in.ReplyToName, strings.TrimSpace(in.Content))
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"core-rpc/internal/utils"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -30,21 +29,21 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(in *core.GetCommentRepliesReq
 	size := utils.NormalizeSize(in.Size, 10)
 	off, limit := utils.OffsetLimit(page, size)
 
-	q := l.svcCtx.Db.Model(&entity.Comment{}).
-		Where("root_id = ? AND parent_id > 0", in.RootId).
-		Order("created_at ASC")
-
-	var total int64
-	if err := q.Count(&total).Error; err != nil {
+	total, replies, err := l.svcCtx.CommentRepo.ListReplies(in.RootId, off, limit)
+	if err != nil {
 		return nil, err
 	}
 
-	var replies []entity.Comment
-	if err := q.Offset(off).Limit(limit).Find(&replies).Error; err != nil {
-		return nil, err
+	// collect user ids
+	ids := make([]uint64, 0, len(replies))
+	seen := make(map[uint64]struct{})
+	for _, r := range replies {
+		if _, ok := seen[r.UserID]; !ok {
+			seen[r.UserID] = struct{}{}
+			ids = append(ids, r.UserID)
+		}
 	}
-
-	userMap, err := fetchUserMap(l.svcCtx.Db, collectUserIDsFromComments(replies))
+	userMap, err := l.svcCtx.UserRepo.FindByIDs(ids)
 	if err != nil {
 		return nil, err
 	}

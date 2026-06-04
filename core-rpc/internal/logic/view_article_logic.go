@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/pb/core"
 
@@ -31,22 +30,23 @@ func (l *ViewArticleLogic) ViewArticle(in *core.ViewArticleReq) (*core.ViewArtic
 		return nil, errors.New("参数无效")
 	}
 
-	var article entity.Article
-	if err := l.svcCtx.Db.First(&article, in.ArticleId).Error; err != nil {
+	a, err := l.svcCtx.ArtRepo.FindByID(in.ArticleId)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("文章不存在")
 		}
 		return nil, err
 	}
 
-	if err := l.svcCtx.Db.Model(&entity.Article{}).Where("id = ?", in.ArticleId).
-		Update("view_count", gorm.Expr("view_count + ?", 1)).Error; err != nil {
+	if err := l.svcCtx.ArtRepo.IncView(in.ArticleId); err != nil {
 		return nil, err
 	}
 
-	if err := l.svcCtx.Db.Select("view_count").First(&article, in.ArticleId).Error; err != nil {
+	// fetch updated count
+	a, err = l.svcCtx.ArtRepo.FindByID(in.ArticleId)
+	if err != nil {
 		return nil, err
 	}
 
-	return &core.ViewArticleResp{ViewCount: article.ViewCount}, nil
+	return &core.ViewArticleResp{ViewCount: a.ViewCount}, nil
 }

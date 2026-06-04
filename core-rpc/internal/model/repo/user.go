@@ -78,3 +78,28 @@ func (u *UserModel) ResetPasswordByEmail(email, newPassword string) error {
 	}
 	return nil
 }
+
+// FindByID returns user by id
+func (u *UserModel) FindByID(id uint64) (*entity.User, error) {
+	user := &entity.User{}
+	if err := u.DB.Select("id", "name", "avatar").First(user, id).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// FindByIDs loads multiple users and returns a map keyed by user id
+func (u *UserModel) FindByIDs(ids []uint64) (map[uint64]entity.User, error) {
+	out := make(map[uint64]entity.User)
+	if len(ids) == 0 {
+		return out, nil
+	}
+	var users []entity.User
+	if err := u.DB.Where("id IN ?", ids).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	for _, us := range users {
+		out[us.ID] = us
+	}
+	return out, nil
+}

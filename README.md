@@ -2,6 +2,8 @@
 
 基于 [go-zero](https://github.com/zeromicro/go-zero) 的博客系统后端，采用 **HTTP 网关 + gRPC 微服务** 架构。本目录提供一键 Docker Compose 部署，涵盖基础设施、核心业务与 AI 知识库服务。
 
+注意:该README.md内容当前由ai生成，仅供参考
+
 ---
 
 ## 架构概览

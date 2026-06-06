@@ -1,0 +1,160 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.6.1
+    container_name: etcd
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd0
+      - --data-dir=/etcd-data
+      - --advertise-client-urls=http://etcd:2379
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd-data:/etcd-data
+    networks:
+      - chenaqi-net
+
+  mysql:
+    image: mysql:8.4.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: test
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../core-rpc/desc/sql:/docker-entrypoint-initdb.d
+    networks:
+      - chenaqi-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - chenaqi-net
+
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+    networks:
+      - chenaqi-net
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - chenaqi-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # 首次启动时拉取 embedding 模型（等价于 docker exec ollama ollama pull nomic-embed-text）
+  ollama-pull:
+    image: ollama/ollama
+    container_name: ollama-pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama pull nomic-embed-text
+    networks:
+      - chenaqi-net
+    restart: "no"
+
+  core-rpc:
+    build:
+      context: ../core-rpc
+      dockerfile: Dockerfile
+    container_name: core-rpc
+    depends_on:
+      etcd:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks:
+      - chenaqi-net
+    restart: unless-stopped
+
+  other-rpc:
+    build:
+      context: ../other-rpc
+      dockerfile: Dockerfile
+    container_name: other-rpc
+    depends_on:
+      etcd:
+        condition: service_started
+      chroma:
+        condition: service_started
+      ollama-pull:
+        condition: service_completed_successfully
+    ports:
+      - "8081:8081"
+    volumes:
+      - ../other-rpc/data/knowledge:/app/data/knowledge:ro
+    networks:
+      - chenaqi-net
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: gateway/Dockerfile
+    container_name: gateway
+    depends_on:
+      - etcd
+      - redis
+      - core-rpc
+    ports:
+      - "9000:9000"
+    networks:
+      - chenaqi-net
+    restart: unless-stopped
+
+volumes:
+  etcd-data:
+  mysql-data:
+  redis-data:
+  chroma-data:
+  ollama-data:
+
+networks:
+  chenaqi-net:
+    name: chenaqi-net
+    driver: bridge

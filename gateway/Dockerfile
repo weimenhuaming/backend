@@ -17,6 +17,7 @@ WORKDIR /app
 
 COPY --from=builder /app/gateway .
 COPY --from=builder /build/gateway/etc/gateway-docker.yaml etc/gateway.yaml
+RUN mkdir -p static/avatars static/blog
 
 EXPOSE 9000
 CMD ["./gateway", "-f", "etc/gateway.yaml"]

@@ -261,6 +261,12 @@ type GetUserCommentsResp struct {
 	Data GetUserCommentsData `json:"data"`
 }
 
+type GetUserProfileResp struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data UserProfile `json:"data"`
+}
+
 type LikeArticleData struct {
 	LikeCount uint32 `json:"like_count"`
 }
@@ -318,6 +324,42 @@ type ListCategoriesResp struct {
 	Code int                `json:"code"`
 	Msg  string             `json:"msg"`
 	Data ListCategoriesData `json:"data"`
+}
+
+type ListMyArticlesData struct {
+	Articles []ArticleInfo `json:"articles"`
+	Total    uint32        `json:"total"`
+	Page     uint32        `json:"page"`
+	PageSize uint32        `json:"page_size"`
+}
+
+type ListMyArticlesReq struct {
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
+}
+
+type ListMyArticlesResp struct {
+	Code int                `json:"code"`
+	Msg  string             `json:"msg"`
+	Data ListMyArticlesData `json:"data"`
+}
+
+type ListUserLikedArticlesData struct {
+	Articles []ArticleInfo `json:"articles"`
+	Total    uint32        `json:"total"`
+	Page     uint32        `json:"page"`
+	PageSize uint32        `json:"page_size"`
+}
+
+type ListUserLikedArticlesReq struct {
+	Page     uint32 `json:"page"`
+	PageSize uint32 `json:"page_size"`
+}
+
+type ListUserLikedArticlesResp struct {
+	Code int                       `json:"code"`
+	Msg  string                    `json:"msg"`
+	Data ListUserLikedArticlesData `json:"data"`
 }
 
 type LoginData struct {
@@ -429,6 +471,41 @@ type UpdateArticleReq struct {
 type UpdateArticleResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
+}
+
+type UpdateUserProfileReq struct {
+	Name   string `json:"name,optional"`
+	Phone  string `json:"phone,optional"`
+	Sex    string `json:"sex,optional"`
+	Age    uint64 `json:"age,optional"`
+	Avatar string `json:"avatar,optional"`
+}
+
+type UpdateUserProfileResp struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data UserProfile `json:"data"`
+}
+
+type UploadImageData struct {
+	Url string `json:"url"`
+}
+
+type UploadImageResp struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data UploadImageData `json:"data"`
+}
+
+type UserProfile struct {
+	Id     uint64 `json:"id"`
+	Name   string `json:"name"`
+	Phone  string `json:"phone"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Role   string `json:"role"`
+	Sex    string `json:"sex"`
+	Age    uint64 `json:"age"`
 }
 
 type ViewArticleData struct {

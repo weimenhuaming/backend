@@ -1,0 +1,30 @@
+syntax = "v1"
+
+info (
+	title: "上传api"
+	desc:  "头像与博客图片本地上传"
+)
+
+type (
+	UploadImageData {
+		Url string `json:"url"`
+	}
+
+	UploadImageResp {
+		Code int             `json:"code"`
+		Msg  string          `json:"msg"`
+		Data UploadImageData `json:"data"`
+	}
+)
+
+@server (
+	group:      upload
+	middleware: AuthMiddleware
+)
+service Gateway {
+	@handler UploadAvatar
+	post /upload/avatar returns (UploadImageResp)
+
+	@handler UploadBlogImage
+	post /upload/blog returns (UploadImageResp)
+}

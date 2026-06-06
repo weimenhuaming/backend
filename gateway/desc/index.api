@@ -7,7 +7,9 @@ info (
 
 // 引入依赖文件
 import "./login/login.api"
+import "./user/user.api"
 import "./article/article.api"
 import "./article/comment.api"
 import "./article/category.api"
 import "./article/interaction.api"
+import "./upload/upload.api"

@@ -46,6 +46,8 @@ type (
 	GetCommentRepliesResp         = core.GetCommentRepliesResp
 	GetUserCommentsReq            = core.GetUserCommentsReq
 	GetUserCommentsResp           = core.GetUserCommentsResp
+	GetUserProfileReq             = core.GetUserProfileReq
+	GetUserProfileResp            = core.GetUserProfileResp
 	LikeArticleReq                = core.LikeArticleReq
 	LikeArticleResp               = core.LikeArticleResp
 	LikeCommentReq                = core.LikeCommentReq
@@ -54,6 +56,8 @@ type (
 	ListArticlesResp              = core.ListArticlesResp
 	ListCategoriesReq             = core.ListCategoriesReq
 	ListCategoriesResp            = core.ListCategoriesResp
+	ListUserArticlesReq           = core.ListUserArticlesReq
+	ListUserLikedArticlesReq      = core.ListUserLikedArticlesReq
 	LoginResp                     = core.LoginResp
 	LogoutReq                     = core.LogoutReq
 	LogoutResp                    = core.LogoutResp
@@ -71,6 +75,9 @@ type (
 	UnlikeCommentResp             = core.UnlikeCommentResp
 	UpdateArticleReq              = core.UpdateArticleReq
 	UpdateArticleResp             = core.UpdateArticleResp
+	UpdateUserProfileReq          = core.UpdateUserProfileReq
+	UpdateUserProfileResp         = core.UpdateUserProfileResp
+	UserProfile                   = core.UserProfile
 	ViewArticleReq                = core.ViewArticleReq
 	ViewArticleResp               = core.ViewArticleResp
 
@@ -82,6 +89,11 @@ type (
 		EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error)
 		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
+		// person 部分
+		GetUserProfile(ctx context.Context, in *GetUserProfileReq, opts ...grpc.CallOption) (*GetUserProfileResp, error)
+		UpdateUserProfile(ctx context.Context, in *UpdateUserProfileReq, opts ...grpc.CallOption) (*UpdateUserProfileResp, error)
+		ListUserLikedArticles(ctx context.Context, in *ListUserLikedArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+		ListUserArticles(ctx context.Context, in *ListUserArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
 		// Category 部分
 		CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CreateCategoryResp, error)
 		ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
@@ -147,6 +159,27 @@ func (m *defaultCore) ResetPasswordByEmail(ctx context.Context, in *ResetPasswor
 func (m *defaultCore) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error) {
 	client := core.NewCoreClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
+}
+
+// person 部分
+func (m *defaultCore) GetUserProfile(ctx context.Context, in *GetUserProfileReq, opts ...grpc.CallOption) (*GetUserProfileResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.GetUserProfile(ctx, in, opts...)
+}
+
+func (m *defaultCore) UpdateUserProfile(ctx context.Context, in *UpdateUserProfileReq, opts ...grpc.CallOption) (*UpdateUserProfileResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.UpdateUserProfile(ctx, in, opts...)
+}
+
+func (m *defaultCore) ListUserLikedArticles(ctx context.Context, in *ListUserLikedArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.ListUserLikedArticles(ctx, in, opts...)
+}
+
+func (m *defaultCore) ListUserArticles(ctx context.Context, in *ListUserArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.ListUserArticles(ctx, in, opts...)
 }
 
 // Category 部分

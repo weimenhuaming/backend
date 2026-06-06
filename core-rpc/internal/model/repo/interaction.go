@@ -221,3 +221,26 @@ func (m *InteractionModel) UnlikeComment(userID, commentID uint64) (uint32, erro
 	})
 	return likeCount, err
 }
+
+// ListLikedArticles returns articles liked by a user
+func (m *InteractionModel) ListLikedArticles(userID uint64, offset, limit int) ([]entity.Article, int64, error) {
+	base := m.DB.Table("article").
+		Joins("INNER JOIN interaction_like ON interaction_like.object_id = article.id AND interaction_like.deleted_at IS NULL").
+		Where("interaction_like.user_id = ? AND interaction_like.object_type = ? AND interaction_like.action_type = ?",
+			userID, entity.ObjectTypeArticle, entity.ActionLike).
+		Where("article.deleted_at IS NULL")
+
+	var total int64
+	if err := base.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var rows []entity.Article
+	if err := base.Select("article.*").
+		Order("interaction_like.updated_at DESC").
+		Offset(offset).Limit(limit).
+		Find(&rows).Error; err != nil {
+		return nil, 0, err
+	}
+	return rows, total, nil
+}

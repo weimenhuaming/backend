@@ -15,10 +15,10 @@ service Core {
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
   // person 部分
-  // 1. 更新头像
-  // 2. 更新个人信息（昵称、性别、年龄等）
-  // 3. 查看自己的点赞列表（仅文章）
-  // 4. 查看自己发布的文章列表
+  rpc GetUserProfile(GetUserProfileReq) returns (GetUserProfileResp){};
+  rpc UpdateUserProfile(UpdateUserProfileReq) returns (UpdateUserProfileResp){};
+  rpc ListUserLikedArticles(ListUserLikedArticlesReq) returns (ListArticlesResp){};
+  rpc ListUserArticles(ListUserArticlesReq) returns (ListArticlesResp){};
 
   // Category 部分
   rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp){};  //  创建分类
@@ -100,6 +100,51 @@ message LogoutReq{
   string  RefreshToken = 2;
 }
 message LogoutResp{}
+
+//======================================================================================================================
+// 用户中心
+
+message UserProfile {
+  uint64 id = 1;
+  string name = 2;
+  string phone = 3;
+  string email = 4;
+  string avatar = 5;
+  string role = 6;
+  string sex = 7;
+  uint64 age = 8;
+}
+
+message GetUserProfileReq {
+  uint64 user_id = 1;
+}
+message GetUserProfileResp {
+  UserProfile profile = 1;
+}
+
+message UpdateUserProfileReq {
+  uint64 user_id = 1;
+  string name = 2;
+  string phone = 3;
+  string sex = 4;
+  uint64 age = 5;
+  string avatar = 6;
+}
+message UpdateUserProfileResp {
+  UserProfile profile = 1;
+}
+
+message ListUserLikedArticlesReq {
+  uint64 user_id = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
+}
+
+message ListUserArticlesReq {
+  uint64 user_id = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
+}
 
 //======================================================================================================================
 // 分类部分

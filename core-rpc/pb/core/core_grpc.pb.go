@@ -24,6 +24,10 @@ const (
 	Core_EmailLogin_FullMethodName                = "/core.Core/EmailLogin"
 	Core_ResetPasswordByEmail_FullMethodName      = "/core.Core/ResetPasswordByEmail"
 	Core_Logout_FullMethodName                    = "/core.Core/Logout"
+	Core_GetUserProfile_FullMethodName            = "/core.Core/GetUserProfile"
+	Core_UpdateUserProfile_FullMethodName         = "/core.Core/UpdateUserProfile"
+	Core_ListUserLikedArticles_FullMethodName     = "/core.Core/ListUserLikedArticles"
+	Core_ListUserArticles_FullMethodName          = "/core.Core/ListUserArticles"
 	Core_CreateCategory_FullMethodName            = "/core.Core/CreateCategory"
 	Core_ListCategories_FullMethodName            = "/core.Core/ListCategories"
 	Core_DeleteCategory_FullMethodName            = "/core.Core/DeleteCategory"
@@ -62,6 +66,11 @@ type CoreClient interface {
 	EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
+	// person 部分
+	GetUserProfile(ctx context.Context, in *GetUserProfileReq, opts ...grpc.CallOption) (*GetUserProfileResp, error)
+	UpdateUserProfile(ctx context.Context, in *UpdateUserProfileReq, opts ...grpc.CallOption) (*UpdateUserProfileResp, error)
+	ListUserLikedArticles(ctx context.Context, in *ListUserLikedArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
+	ListUserArticles(ctx context.Context, in *ListUserArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error)
 	// Category 部分
 	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CreateCategoryResp, error)
 	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
@@ -143,6 +152,46 @@ func (c *coreClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.Cal
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LogoutResp)
 	err := c.cc.Invoke(ctx, Core_Logout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) GetUserProfile(ctx context.Context, in *GetUserProfileReq, opts ...grpc.CallOption) (*GetUserProfileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserProfileResp)
+	err := c.cc.Invoke(ctx, Core_GetUserProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdateUserProfile(ctx context.Context, in *UpdateUserProfileReq, opts ...grpc.CallOption) (*UpdateUserProfileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserProfileResp)
+	err := c.cc.Invoke(ctx, Core_UpdateUserProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ListUserLikedArticles(ctx context.Context, in *ListUserLikedArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListArticlesResp)
+	err := c.cc.Invoke(ctx, Core_ListUserLikedArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ListUserArticles(ctx context.Context, in *ListUserArticlesReq, opts ...grpc.CallOption) (*ListArticlesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListArticlesResp)
+	err := c.cc.Invoke(ctx, Core_ListUserArticles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -392,6 +441,11 @@ type CoreServer interface {
 	EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error)
 	ResetPasswordByEmail(context.Context, *ResetPasswordEmailReq) (*ResetPasswordEmailResp, error)
 	Logout(context.Context, *LogoutReq) (*LogoutResp, error)
+	// person 部分
+	GetUserProfile(context.Context, *GetUserProfileReq) (*GetUserProfileResp, error)
+	UpdateUserProfile(context.Context, *UpdateUserProfileReq) (*UpdateUserProfileResp, error)
+	ListUserLikedArticles(context.Context, *ListUserLikedArticlesReq) (*ListArticlesResp, error)
+	ListUserArticles(context.Context, *ListUserArticlesReq) (*ListArticlesResp, error)
 	// Category 部分
 	CreateCategory(context.Context, *CreateCategoryReq) (*CreateCategoryResp, error)
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
@@ -443,6 +497,18 @@ func (UnimplementedCoreServer) ResetPasswordByEmail(context.Context, *ResetPassw
 }
 func (UnimplementedCoreServer) Logout(context.Context, *LogoutReq) (*LogoutResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedCoreServer) GetUserProfile(context.Context, *GetUserProfileReq) (*GetUserProfileResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserProfile not implemented")
+}
+func (UnimplementedCoreServer) UpdateUserProfile(context.Context, *UpdateUserProfileReq) (*UpdateUserProfileResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserProfile not implemented")
+}
+func (UnimplementedCoreServer) ListUserLikedArticles(context.Context, *ListUserLikedArticlesReq) (*ListArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserLikedArticles not implemented")
+}
+func (UnimplementedCoreServer) ListUserArticles(context.Context, *ListUserArticlesReq) (*ListArticlesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserArticles not implemented")
 }
 func (UnimplementedCoreServer) CreateCategory(context.Context, *CreateCategoryReq) (*CreateCategoryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
@@ -620,6 +686,78 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).Logout(ctx, req.(*LogoutReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_GetUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetUserProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetUserProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetUserProfile(ctx, req.(*GetUserProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdateUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdateUserProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdateUserProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdateUserProfile(ctx, req.(*UpdateUserProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ListUserLikedArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserLikedArticlesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ListUserLikedArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_ListUserLikedArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ListUserLikedArticles(ctx, req.(*ListUserLikedArticlesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ListUserArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserArticlesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ListUserArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_ListUserArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ListUserArticles(ctx, req.(*ListUserArticlesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1064,6 +1202,22 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Core_Logout_Handler,
+		},
+		{
+			MethodName: "GetUserProfile",
+			Handler:    _Core_GetUserProfile_Handler,
+		},
+		{
+			MethodName: "UpdateUserProfile",
+			Handler:    _Core_UpdateUserProfile_Handler,
+		},
+		{
+			MethodName: "ListUserLikedArticles",
+			Handler:    _Core_ListUserLikedArticles_Handler,
+		},
+		{
+			MethodName: "ListUserArticles",
+			Handler:    _Core_ListUserArticles_Handler,
 		},
 		{
 			MethodName: "CreateCategory",

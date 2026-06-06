@@ -115,6 +115,20 @@ func (m *ArtModel) Search(keyword string, categoryID uint64, offset, limit int) 
 	return rows, total, nil
 }
 
+// ListByUserID returns articles authored by a user
+func (m *ArtModel) ListByUserID(userID uint64, offset, limit int) ([]entity.Article, int64, error) {
+	var total int64
+	q := m.DB.Model(&entity.Article{}).Where("user_id = ?", userID).Order("created_at DESC")
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	var rows []entity.Article
+	if err := q.Offset(offset).Limit(limit).Find(&rows).Error; err != nil {
+		return nil, 0, err
+	}
+	return rows, total, nil
+}
+
 // UpdateByID updates fields for an article by id
 func (m *ArtModel) UpdateByID(id uint64, updates map[string]interface{}) error {
 	if len(updates) == 0 {

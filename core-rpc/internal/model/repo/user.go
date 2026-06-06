@@ -88,6 +88,24 @@ func (u *UserModel) FindByID(id uint64) (*entity.User, error) {
 	return user, nil
 }
 
+// FindProfileByID returns user profile fields without password
+func (u *UserModel) FindProfileByID(id uint64) (*entity.User, error) {
+	user := &entity.User{}
+	if err := u.DB.Select("id", "name", "phone", "email", "avatar", "role", "sex", "age").
+		First(user, id).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// UpdateProfile updates editable profile fields
+func (u *UserModel) UpdateProfile(id uint64, updates map[string]interface{}) error {
+	if len(updates) == 0 {
+		return nil
+	}
+	return u.DB.Model(&entity.User{}).Where("id = ?", id).Updates(updates).Error
+}
+
 // FindByIDs loads multiple users and returns a map keyed by user id
 func (u *UserModel) FindByIDs(ids []uint64) (map[uint64]entity.User, error) {
 	out := make(map[uint64]entity.User)

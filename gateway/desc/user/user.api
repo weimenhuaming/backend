@@ -1,0 +1,93 @@
+syntax = "v1"
+
+info (
+	title: "用户中心api"
+	desc:  "个人资料、点赞列表、我的文章"
+)
+
+type (
+	UserProfile {
+		Id     uint64 `json:"id"`
+		Name   string `json:"name"`
+		Phone  string `json:"phone"`
+		Email  string `json:"email"`
+		Avatar string `json:"avatar"`
+		Role   string `json:"role"`
+		Sex    string `json:"sex"`
+		Age    uint64 `json:"age"`
+	}
+
+	GetUserProfileResp {
+		Code int         `json:"code"`
+		Msg  string      `json:"msg"`
+		Data UserProfile `json:"data"`
+	}
+
+	UpdateUserProfileReq {
+		Name   string `json:"name,optional"`
+		Phone  string `json:"phone,optional"`
+		Sex    string `json:"sex,optional"`
+		Age    uint64 `json:"age,optional"`
+		Avatar string `json:"avatar,optional"`
+	}
+
+	UpdateUserProfileResp {
+		Code int         `json:"code"`
+		Msg  string      `json:"msg"`
+		Data UserProfile `json:"data"`
+	}
+
+	ListUserLikedArticlesReq {
+		Page     uint32 `json:"page"`
+		PageSize uint32 `json:"page_size"`
+	}
+
+	ListUserLikedArticlesData {
+		Articles []ArticleInfo `json:"articles"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
+
+	ListUserLikedArticlesResp {
+		Code int                       `json:"code"`
+		Msg  string                    `json:"msg"`
+		Data ListUserLikedArticlesData `json:"data"`
+	}
+
+	ListMyArticlesReq {
+		Page     uint32 `json:"page"`
+		PageSize uint32 `json:"page_size"`
+	}
+
+	ListMyArticlesData {
+		Articles []ArticleInfo `json:"articles"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
+
+	ListMyArticlesResp {
+		Code int                `json:"code"`
+		Msg  string             `json:"msg"`
+		Data ListMyArticlesData `json:"data"`
+	}
+)
+
+@server (
+	group:      user
+	middleware: AuthMiddleware
+)
+service Gateway {
+	@handler GetUserProfile
+	get /user/profile returns (GetUserProfileResp)
+
+	@handler UpdateUserProfile
+	put /user/profile (UpdateUserProfileReq) returns (UpdateUserProfileResp)
+
+	@handler ListUserLikedArticles
+	post /user/liked_articles (ListUserLikedArticlesReq) returns (ListUserLikedArticlesResp)
+
+	@handler ListMyArticles
+	post /user/my_articles (ListMyArticlesReq) returns (ListMyArticlesResp)
+}

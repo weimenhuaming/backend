@@ -50,6 +50,27 @@ func (s *CoreServer) Logout(ctx context.Context, in *core.LogoutReq) (*core.Logo
 	return l.Logout(in)
 }
 
+// person 部分
+func (s *CoreServer) GetUserProfile(ctx context.Context, in *core.GetUserProfileReq) (*core.GetUserProfileResp, error) {
+	l := logic.NewGetUserProfileLogic(ctx, s.svcCtx)
+	return l.GetUserProfile(in)
+}
+
+func (s *CoreServer) UpdateUserProfile(ctx context.Context, in *core.UpdateUserProfileReq) (*core.UpdateUserProfileResp, error) {
+	l := logic.NewUpdateUserProfileLogic(ctx, s.svcCtx)
+	return l.UpdateUserProfile(in)
+}
+
+func (s *CoreServer) ListUserLikedArticles(ctx context.Context, in *core.ListUserLikedArticlesReq) (*core.ListArticlesResp, error) {
+	l := logic.NewListUserLikedArticlesLogic(ctx, s.svcCtx)
+	return l.ListUserLikedArticles(in)
+}
+
+func (s *CoreServer) ListUserArticles(ctx context.Context, in *core.ListUserArticlesReq) (*core.ListArticlesResp, error) {
+	l := logic.NewListUserArticlesLogic(ctx, s.svcCtx)
+	return l.ListUserArticles(in)
+}
+
 // Category 部分
 func (s *CoreServer) CreateCategory(ctx context.Context, in *core.CreateCategoryReq) (*core.CreateCategoryResp, error) {
 	l := logic.NewCreateCategoryLogic(ctx, s.svcCtx)

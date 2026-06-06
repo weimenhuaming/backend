@@ -11,6 +11,8 @@ import (
 	comment "gateway/internal/handler/comment"
 	interaction "gateway/internal/handler/interaction"
 	login "gateway/internal/handler/login"
+	upload "gateway/internal/handler/upload"
+	user "gateway/internal/handler/user"
 	"gateway/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -222,6 +224,52 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/logout",
 					Handler: login.LogoutHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/upload/avatar",
+					Handler: upload.UploadAvatarHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/upload/blog",
+					Handler: upload.UploadBlogImageHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/liked_articles",
+					Handler: user.ListUserLikedArticlesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/my_articles",
+					Handler: user.ListMyArticlesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/user/profile",
+					Handler: user.GetUserProfileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/user/profile",
+					Handler: user.UpdateUserProfileHandler(serverCtx),
 				},
 			}...,
 		),

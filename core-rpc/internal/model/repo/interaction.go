@@ -21,7 +21,8 @@ func NewInteractionModel(db *gorm.DB) *InteractionModel {
 	}
 }
 
-// AddLike records a like (or flips an existing record to like). db can be a transaction or nil to use model DB
+// AddLike 记录点赞（或将已有记录切换为点赞）。
+// 参数 db 可以是事务（*gorm.DB）或 nil，若为 nil 则使用模型内置的 DB
 func (m *InteractionModel) AddLike(db *gorm.DB, userID uint64, objectType string, objectID uint64) (int32, error) {
 	if db == nil {
 		db = m.DB
@@ -46,7 +47,7 @@ func (m *InteractionModel) AddLike(db *gorm.DB, userID uint64, objectType string
 	return 1, db.Create(&row).Error
 }
 
-// RemoveLike marks a like as removed
+// RemoveLike 将点赞标记为已取消
 func (m *InteractionModel) RemoveLike(db *gorm.DB, userID uint64, objectType string, objectID uint64) (int32, error) {
 	if db == nil {
 		db = m.DB
@@ -65,17 +66,17 @@ func (m *InteractionModel) RemoveLike(db *gorm.DB, userID uint64, objectType str
 	return -1, db.Model(&row).Update("action_type", entity.ActionUnknown).Error
 }
 
-// AddArticleLike convenience
+// AddArticleLike 文章点赞的便捷包装
 func (m *InteractionModel) AddArticleLike(db *gorm.DB, userID, articleID uint64) (int32, error) {
 	return m.AddLike(db, userID, entity.ObjectTypeArticle, articleID)
 }
 
-// RemoveArticleLike convenience
+// RemoveArticleLike 文章取消点赞的便捷包装
 func (m *InteractionModel) RemoveArticleLike(db *gorm.DB, userID, articleID uint64) (int32, error) {
 	return m.RemoveLike(db, userID, entity.ObjectTypeArticle, articleID)
 }
 
-// AdjustArticleCounter adjusts a numeric field on article and returns the updated value
+// AdjustArticleCounter 调整文章的数值字段（例如 like_count、favor_count）并返回更新后的值
 func (m *InteractionModel) AdjustArticleCounter(db *gorm.DB, articleID uint64, field string, delta int32) (uint32, error) {
 	if db == nil {
 		db = m.DB
@@ -99,7 +100,7 @@ func (m *InteractionModel) AdjustArticleCounter(db *gorm.DB, articleID uint64, f
 	}
 }
 
-// IsObjectLiked checks if the user liked an object
+// IsObjectLiked 检查指定用户是否对某个对象（文章/评论等）进行了点赞
 func (m *InteractionModel) IsObjectLiked(db *gorm.DB, userID uint64, objectType string, objectID uint64) (bool, error) {
 	if db == nil {
 		db = m.DB
@@ -115,7 +116,7 @@ func (m *InteractionModel) IsObjectLiked(db *gorm.DB, userID uint64, objectType 
 	return count > 0, nil
 }
 
-// BatchCommentLiked returns a map of commentID->liked
+// BatchCommentLiked 批量查询评论的点赞状态，返回 map[commentID]bool
 func (m *InteractionModel) BatchCommentLiked(db *gorm.DB, userID uint64, commentIDs []uint64) (map[uint64]bool, error) {
 	if db == nil {
 		db = m.DB
@@ -140,7 +141,7 @@ func (m *InteractionModel) BatchCommentLiked(db *gorm.DB, userID uint64, comment
 	return out, nil
 }
 
-// AddCommentLike / RemoveCommentLike / AdjustCommentLikeCount
+// AddCommentLike / RemoveCommentLike / AdjustCommentLikeCount: 评论点赞/取消与计数调整的封装方法
 func (m *InteractionModel) AddCommentLike(db *gorm.DB, userID, commentID uint64) (int32, error) {
 	return m.AddLike(db, userID, entity.ObjectTypeComment, commentID)
 }
@@ -166,7 +167,7 @@ func (m *InteractionModel) AdjustCommentLikeCount(db *gorm.DB, commentID uint64,
 	return c.LikeCount, nil
 }
 
-// LikeArticle performs like operation within a transaction and returns updated like count
+// LikeArticle 在事务中执行文章点赞操作，并返回更新后的点赞数量
 func (m *InteractionModel) LikeArticle(userID, articleID uint64) (uint32, error) {
 	var likeCount uint32
 	err := m.DB.Transaction(func(tx *gorm.DB) error {
@@ -180,7 +181,7 @@ func (m *InteractionModel) LikeArticle(userID, articleID uint64) (uint32, error)
 	return likeCount, err
 }
 
-// UnlikeArticle performs unlike operation within a transaction and returns updated like count
+// UnlikeArticle 在事务中执行文章取消点赞操作，并返回更新后的点赞数量
 func (m *InteractionModel) UnlikeArticle(userID, articleID uint64) (uint32, error) {
 	var likeCount uint32
 	err := m.DB.Transaction(func(tx *gorm.DB) error {
@@ -194,7 +195,7 @@ func (m *InteractionModel) UnlikeArticle(userID, articleID uint64) (uint32, erro
 	return likeCount, err
 }
 
-// LikeComment performs like operation for a comment within a transaction and returns updated like count
+// LikeComment 在事务中执行评论点赞操作，并返回更新后的点赞数量
 func (m *InteractionModel) LikeComment(userID, commentID uint64) (uint32, error) {
 	var likeCount uint32
 	err := m.DB.Transaction(func(tx *gorm.DB) error {
@@ -208,7 +209,7 @@ func (m *InteractionModel) LikeComment(userID, commentID uint64) (uint32, error)
 	return likeCount, err
 }
 
-// UnlikeComment performs unlike operation for a comment within a transaction and returns updated like count
+// UnlikeComment 在事务中执行评论取消点赞操作，并返回更新后的点赞数量
 func (m *InteractionModel) UnlikeComment(userID, commentID uint64) (uint32, error) {
 	var likeCount uint32
 	err := m.DB.Transaction(func(tx *gorm.DB) error {

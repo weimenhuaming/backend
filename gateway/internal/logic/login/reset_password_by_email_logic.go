@@ -6,6 +6,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -44,7 +45,8 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		}, nil
 	}
 
-	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
+	key := "email:captcha:" + strings.ToLower(strings.TrimSpace(req.Email))
+	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, key)
 	if err != nil {
 		return &types.ResetPasswordResp{
 			Code: 400,

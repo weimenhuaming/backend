@@ -4,6 +4,7 @@ import (
 	"context"
 	"core-rpc/core_client"
 	"gateway/internal/utils"
+	"strings"
 
 	"gateway/internal/svc"
 	"gateway/internal/types"
@@ -40,8 +41,9 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		}, nil
 	}
 
-	// 2. 判断验证码是否有效
-	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
+	// 2. 判断验证码是否有效（使用与发送时相同的 key 前缀与规范化）
+	key := "email:captcha:" + strings.ToLower(strings.TrimSpace(req.Email))
+	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, key)
 	if err != nil {
 		return &types.RegisterResp{
 			Code: 400,

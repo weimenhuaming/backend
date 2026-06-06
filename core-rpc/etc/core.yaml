@@ -8,7 +8,7 @@ Etcd:
 
 Mysql:
   Host: 127.0.0.1
-  Port: "3306"
+  Port: "3307"
   Username: root
   Password: "123456"
   Config: charset=utf8mb4&parseTime=True&loc=Local

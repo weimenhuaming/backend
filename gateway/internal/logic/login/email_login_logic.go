@@ -4,6 +4,7 @@ import (
 	"context"
 	"core-rpc/core_client"
 	"gateway/internal/utils"
+	"strings"
 
 	"gateway/internal/svc"
 	"gateway/internal/types"
@@ -39,8 +40,9 @@ func (l *EmailLoginLogic) EmailLogin(req *types.LoginEmailReq) (resp *types.Logi
 		}, nil
 	}
 
-	// 从缓存中获取验证码
-	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
+	// 从缓存中获取验证码（使用与发送时相同的 key 前缀与规范化）
+	key := "email:captcha:" + strings.ToLower(strings.TrimSpace(req.Email))
+	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, key)
 	if err != nil {
 		return &types.LoginResp{
 			Code: 400,

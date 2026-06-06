@@ -3,6 +3,7 @@ package login
 import (
 	"context"
 	"gateway/internal/utils"
+	"strings"
 
 	"gateway/internal/svc"
 	"gateway/internal/types"
@@ -42,12 +43,13 @@ func (l *SendEmailLogic) SendEmail(req *types.EmailReq) (resp *types.EmailResp, 
 		}, err
 	}
 
-	// 2.存入缓存
+	// 2. 存入缓存（使用统一前缀并规范化邮箱，避免大小写/空格导致匹配失败）
+	key := "email:captcha:" + strings.ToLower(strings.TrimSpace(email))
 	if err = l.svcCtx.Cache.SetexCtx(
 		l.ctx,
-		email,
+		key,
 		captcha,
-		60,
+		300,
 	); err != nil {
 		return &types.EmailResp{
 			Code: 500,

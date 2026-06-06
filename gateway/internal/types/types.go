@@ -381,6 +381,13 @@ type LoginEmailReq struct {
 	Captcha string `json:"captcha"`
 }
 
+type LoginReq struct {
+	Name      string `json:"name"`
+	Password  string `json:"password"`
+	Code      string `json:"code"`
+	CaptchaId string `json:"captcha_id"`
+}
+
 type LoginResp struct {
 	Code int       `json:"code"`
 	Msg  string    `json:"msg"`

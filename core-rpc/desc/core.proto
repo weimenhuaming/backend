@@ -11,6 +11,7 @@ service Core {
   // Login 部分
   rpc Register(RegisterReq) returns (RegisterResp){};
   rpc EmailLogin(EmailLoginReq) returns (LoginResp){};
+  rpc NameLogin(NameLoginReq) returns (LoginResp){};
   rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
@@ -68,6 +69,12 @@ message EmailLoginReq {
   string email = 1;
   string captcha = 2;
 }
+
+message NameLoginReq {
+  string name = 1;
+  string password = 2;
+}
+
 message LoginResp {
   uint64 id = 1;
   string name =2;

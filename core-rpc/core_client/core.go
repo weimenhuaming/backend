@@ -61,6 +61,7 @@ type (
 	LoginResp                     = core.LoginResp
 	LogoutReq                     = core.LogoutReq
 	LogoutResp                    = core.LogoutResp
+	NameLoginReq                  = core.NameLoginReq
 	RegisterReq                   = core.RegisterReq
 	RegisterResp                  = core.RegisterResp
 	ResetPasswordEmailReq         = core.ResetPasswordEmailReq
@@ -87,6 +88,7 @@ type (
 		// Login 部分
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+		NameLogin(ctx context.Context, in *NameLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error)
 		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
 		// person 部分
@@ -149,6 +151,11 @@ func (m *defaultCore) Register(ctx context.Context, in *RegisterReq, opts ...grp
 func (m *defaultCore) EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	client := core.NewCoreClient(m.cli.Conn())
 	return client.EmailLogin(ctx, in, opts...)
+}
+
+func (m *defaultCore) NameLogin(ctx context.Context, in *NameLoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	client := core.NewCoreClient(m.cli.Conn())
+	return client.NameLogin(ctx, in, opts...)
 }
 
 func (m *defaultCore) ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error) {

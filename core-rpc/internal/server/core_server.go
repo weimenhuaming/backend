@@ -40,6 +40,11 @@ func (s *CoreServer) EmailLogin(ctx context.Context, in *core.EmailLoginReq) (*c
 	return l.EmailLogin(in)
 }
 
+func (s *CoreServer) NameLogin(ctx context.Context, in *core.NameLoginReq) (*core.LoginResp, error) {
+	l := logic.NewNameLoginLogic(ctx, s.svcCtx)
+	return l.NameLogin(in)
+}
+
 func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *core.ResetPasswordEmailReq) (*core.ResetPasswordEmailResp, error) {
 	l := logic.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
 	return l.ResetPasswordByEmail(in)

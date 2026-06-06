@@ -2,6 +2,7 @@ package repo
 
 import (
 	"core-rpc/internal/model/entity"
+	passwordutil "core-rpc/internal/utils"
 	"errors"
 
 	"github.com/go-sql-driver/mysql"
@@ -28,6 +29,21 @@ func (u *UserModel) EmailLogin(email string) (*entity.User, error) {
 			return nil, errors.New("该邮箱尚未注册")
 		}
 		return nil, err
+	}
+	return user, nil
+}
+
+func (u *UserModel) NameLogin(name, plainPassword string) (*entity.User, error) {
+	user := &entity.User{}
+	err := u.DB.Where("name = ?", name).First(user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("用户名或密码错误")
+		}
+		return nil, err
+	}
+	if !passwordutil.VerifyPassword(plainPassword, user.Password) {
+		return nil, errors.New("用户名或密码错误")
 	}
 	return user, nil
 }

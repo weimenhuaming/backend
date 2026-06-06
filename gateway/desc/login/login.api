@@ -44,6 +44,12 @@ type (
 		Email        string `json:"email"`
 		Captcha      string `json:"captcha"`
 	}
+	LoginReq {
+		Name      string `json:"name"`
+		Password  string `json:"password"`
+		Code      string `json:"code"`
+		CaptchaId string `json:"captcha_id"`
+	}
 	LoginResp {
 		Code int `json:"code"`
 		Msg  string `json:"msg"`
@@ -91,6 +97,9 @@ service Gateway {
     // 邮箱登入操作
 	@handler emailLogin
 	post /emaillogin (LoginEmailReq) returns (LoginResp)
+
+	@handler login
+	post /login (LoginReq) returns (LoginResp)
 
     // 注册功能
 	@handler register

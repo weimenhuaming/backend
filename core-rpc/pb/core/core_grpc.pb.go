@@ -22,6 +22,7 @@ const (
 	Core_Test_FullMethodName                      = "/core.Core/Test"
 	Core_Register_FullMethodName                  = "/core.Core/Register"
 	Core_EmailLogin_FullMethodName                = "/core.Core/EmailLogin"
+	Core_NameLogin_FullMethodName                 = "/core.Core/NameLogin"
 	Core_ResetPasswordByEmail_FullMethodName      = "/core.Core/ResetPasswordByEmail"
 	Core_Logout_FullMethodName                    = "/core.Core/Logout"
 	Core_GetUserProfile_FullMethodName            = "/core.Core/GetUserProfile"
@@ -64,6 +65,7 @@ type CoreClient interface {
 	// Login 部分
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+	NameLogin(ctx context.Context, in *NameLoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ResetPasswordByEmail(ctx context.Context, in *ResetPasswordEmailReq, opts ...grpc.CallOption) (*ResetPasswordEmailResp, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
 	// person 部分
@@ -132,6 +134,16 @@ func (c *coreClient) EmailLogin(ctx context.Context, in *EmailLoginReq, opts ...
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResp)
 	err := c.cc.Invoke(ctx, Core_EmailLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) NameLogin(ctx context.Context, in *NameLoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, Core_NameLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -439,6 +451,7 @@ type CoreServer interface {
 	// Login 部分
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error)
+	NameLogin(context.Context, *NameLoginReq) (*LoginResp, error)
 	ResetPasswordByEmail(context.Context, *ResetPasswordEmailReq) (*ResetPasswordEmailResp, error)
 	Logout(context.Context, *LogoutReq) (*LogoutResp, error)
 	// person 部分
@@ -491,6 +504,9 @@ func (UnimplementedCoreServer) Register(context.Context, *RegisterReq) (*Registe
 }
 func (UnimplementedCoreServer) EmailLogin(context.Context, *EmailLoginReq) (*LoginResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailLogin not implemented")
+}
+func (UnimplementedCoreServer) NameLogin(context.Context, *NameLoginReq) (*LoginResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NameLogin not implemented")
 }
 func (UnimplementedCoreServer) ResetPasswordByEmail(context.Context, *ResetPasswordEmailReq) (*ResetPasswordEmailResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPasswordByEmail not implemented")
@@ -650,6 +666,24 @@ func _Core_EmailLogin_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).EmailLogin(ctx, req.(*EmailLoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_NameLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameLoginReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).NameLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_NameLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).NameLogin(ctx, req.(*NameLoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1194,6 +1228,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EmailLogin",
 			Handler:    _Core_EmailLogin_Handler,
+		},
+		{
+			MethodName: "NameLogin",
+			Handler:    _Core_NameLogin_Handler,
 		},
 		{
 			MethodName: "ResetPasswordByEmail",

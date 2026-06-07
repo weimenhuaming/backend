@@ -2,6 +2,8 @@ Name: Gateway
 Host: 0.0.0.0
 Port: 9000
 
+Timeout: 120000  # HTTP 超时（毫秒），Agent 问答需较长时间
+
 CoreRpc:
   Etcd:
     Hosts:
@@ -13,6 +15,7 @@ AgentRpc:
     Hosts:
       - etcd:2379
     Key: agent.rpc
+  Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
 Cache:
   - Host: redis:6379

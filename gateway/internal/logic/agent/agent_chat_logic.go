@@ -38,7 +38,11 @@ func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentCh
 		sessionId = uuid.NewString()
 	}
 
-	r, err := l.svcCtx.Agent.Chat(l.ctx, &agent_client.ChatRequest{
+	// Agent 问答包含向量检索 + LLM 生成，使用独立超时避免继承过短的 HTTP 上下文。
+	chatCtx, cancel := context.WithTimeout(context.WithoutCancel(l.ctx), 2*time.Minute)
+	defer cancel()
+
+	r, err := l.svcCtx.Agent.Chat(chatCtx, &agent_client.ChatRequest{
 		Question: question,
 	})
 	if err != nil {

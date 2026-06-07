@@ -3,6 +3,25 @@
 
 package types
 
+type AgentChatData struct {
+	SessionId string `json:"session_id"`
+	Answer    string `json:"answer"`
+	MessageId string `json:"message_id"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+type AgentChatReq struct {
+	SessionId string `json:"session_id,optional"`
+	UserId    string `json:"user_id,optional"`
+	Question  string `json:"question"`
+}
+
+type AgentChatResp struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	Data AgentChatData `json:"data"`
+}
+
 type ArticleInfo struct {
 	Id           uint64 `json:"id"`
 	UserId       uint64 `json:"user_id"`
@@ -33,6 +52,22 @@ type BatchGetCommentLikeStatusResp struct {
 	Code int                           `json:"code"`
 	Msg  string                        `json:"msg"`
 	Data BatchGetCommentLikeStatusData `json:"data"`
+}
+
+type BuildKnowledgeData struct {
+	Message    string `json:"message"`
+	DocCount   int32  `json:"doc_count"`
+	ChunkCount int32  `json:"chunk_count"`
+}
+
+type BuildKnowledgeReq struct {
+	Collection string `json:"collection"`
+}
+
+type BuildKnowledgeResp struct {
+	Code int                `json:"code"`
+	Msg  string             `json:"msg"`
+	Data BuildKnowledgeData `json:"data"`
 }
 
 type CaptchaData struct {
@@ -131,6 +166,24 @@ type CreateReplyResp struct {
 	Data CreateReplyData `json:"data"`
 }
 
+type CreateSessionData struct {
+	SessionId string `json:"session_id"`
+	UserId    string `json:"user_id"`
+	CreatedAt int64  `json:"created_at"`
+	Message   string `json:"message"`
+}
+
+type CreateSessionReq struct {
+	SessionId string `json:"session_id,optional"`
+	UserId    string `json:"user_id,optional"`
+}
+
+type CreateSessionResp struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data CreateSessionData `json:"data"`
+}
+
 type DeleteArticleReq struct {
 	Id uint64 `json:"id"`
 }
@@ -154,6 +207,15 @@ type DeleteCommentReq struct {
 }
 
 type DeleteCommentResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type DeleteKnowledgeCollectionReq struct {
+	Collection string `json:"collection"`
+}
+
+type DeleteKnowledgeCollectionResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -267,6 +329,13 @@ type GetUserProfileResp struct {
 	Data UserProfile `json:"data"`
 }
 
+type KnowledgeCollectionInfo struct {
+	Name       string `json:"name"`
+	DocCount   int32  `json:"doc_count"`
+	ChunkCount int32  `json:"chunk_count"`
+	Count      int32  `json:"count"`
+}
+
 type LikeArticleData struct {
 	LikeCount uint32 `json:"like_count"`
 }
@@ -324,6 +393,19 @@ type ListCategoriesResp struct {
 	Code int                `json:"code"`
 	Msg  string             `json:"msg"`
 	Data ListCategoriesData `json:"data"`
+}
+
+type ListKnowledgeCollectionsData struct {
+	Collections []KnowledgeCollectionInfo `json:"collections"`
+}
+
+type ListKnowledgeCollectionsReq struct {
+}
+
+type ListKnowledgeCollectionsResp struct {
+	Code int                          `json:"code"`
+	Msg  string                       `json:"msg"`
+	Data ListKnowledgeCollectionsData `json:"data"`
 }
 
 type ListMyArticlesData struct {
@@ -446,6 +528,20 @@ type SearchArticlesResp struct {
 	Data SearchArticlesData `json:"data"`
 }
 
+type SwitchKnowledgeRetrieverData struct {
+	Message string `json:"message"`
+}
+
+type SwitchKnowledgeRetrieverReq struct {
+	Collection string `json:"collection"`
+}
+
+type SwitchKnowledgeRetrieverResp struct {
+	Code int                          `json:"code"`
+	Msg  string                       `json:"msg"`
+	Data SwitchKnowledgeRetrieverData `json:"data"`
+}
+
 type UnlikeArticleReq struct {
 	ArticleId uint64 `json:"article_id"`
 }
@@ -527,41 +623,4 @@ type ViewArticleResp struct {
 	Code int             `json:"code"`
 	Msg  string          `json:"msg"`
 	Data ViewArticleData `json:"data"`
-}
-
-type AgentChatData struct {
-	SessionId string `json:"session_id"`
-	Answer    string `json:"answer"`
-	MessageId string `json:"message_id"`
-	Timestamp int64  `json:"timestamp"`
-}
-
-type AgentChatReq struct {
-	SessionId string `json:"session_id"`
-	UserId    string `json:"user_id"`
-	Question  string `json:"question"`
-}
-
-type AgentChatResp struct {
-	Code int           `json:"code"`
-	Msg  string        `json:"msg"`
-	Data AgentChatData `json:"data"`
-}
-
-type CreateSessionData struct {
-	SessionId string `json:"session_id"`
-	UserId    string `json:"user_id"`
-	CreatedAt int64  `json:"created_at"`
-	Message   string `json:"message"`
-}
-
-type CreateSessionReq struct {
-	SessionId string `json:"session_id"`
-	UserId    string `json:"user_id"`
-}
-
-type CreateSessionResp struct {
-	Code int               `json:"code"`
-	Msg  string            `json:"msg"`
-	Data CreateSessionData `json:"data"`
 }

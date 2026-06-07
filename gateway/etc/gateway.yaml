@@ -2,6 +2,8 @@ Name: Gateway
 Host: 127.0.0.1
 Port: 9000
 
+Timeout: 120000  # HTTP 超时（毫秒），Agent 问答需较长时间
+
 # 下面这个配置通过etcd服务发现和注册的配置
 CoreRpc:
   Etcd:
@@ -14,6 +16,7 @@ AgentRpc:
     Hosts:
       - 127.0.0.1:2379
     Key: agent.rpc
+  Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
 Cache:
   - Host: 127.0.0.1:6379

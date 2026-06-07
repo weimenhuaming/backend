@@ -6,7 +6,7 @@ Etcd:
   Key: agent.rpc
 
 
-Timeout: 100000  # 改成 10 秒（毫秒）
+Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
 
 # 个人知识库 Agent（langchaingo RAG）

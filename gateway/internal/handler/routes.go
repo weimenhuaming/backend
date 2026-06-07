@@ -36,6 +36,34 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/agent/knowledge/build",
+					Handler: agent.BuildKnowledgeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/agent/knowledge/collection",
+					Handler: agent.DeleteKnowledgeCollectionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/agent/knowledge/collections",
+					Handler: agent.ListKnowledgeCollectionsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/agent/knowledge/switch",
+					Handler: agent.SwitchKnowledgeRetrieverHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,

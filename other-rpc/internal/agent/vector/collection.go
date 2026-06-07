@@ -19,7 +19,7 @@ type Collection struct {
 
 // NewCollection 新建知识库
 func (c *Chroma) NewCollection(ctx context.Context, name string, embedder embeddings.Embedder) (*Collection, error) {
-	collection, err := c.client.GetOrCreateCollection(ctx, name)
+	collection, err := c.client.GetOrCreateCollection(ctx, name, collectionCreateOptions()...)
 	if err != nil {
 		return nil, err
 	}

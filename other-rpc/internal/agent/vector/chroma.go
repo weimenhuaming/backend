@@ -7,6 +7,7 @@ import (
 	"other-rpc/internal/config"
 
 	chroma "github.com/amikos-tech/chroma-go/pkg/api/v2"
+	chromaembed "github.com/amikos-tech/chroma-go/pkg/embeddings"
 	"github.com/tmc/langchaingo/embeddings"
 	"github.com/tmc/langchaingo/schema"
 	"github.com/tmc/langchaingo/textsplitter"
@@ -170,8 +171,28 @@ func (c *Chroma) ListCollections(ctx context.Context) ([]CollectionInfo, error) 
 	return out, nil
 }
 
+// collectionCreateOptions 返回创建 Chroma collection 时的客户端选项。
+//
+// 背景：chroma-go 在 CreateCollection 时若未指定 EmbeddingFunction，会默认初始化
+// ONNX 本地嵌入（ort.NewDefaultEmbeddingFunction），需加载 libonnxruntime 和 libstdc++.so.6。
+// other-rpc 的 Docker 镜像基于 Alpine，不含 libstdc++.so.6，因此在容器内建库会失败；
+// 本地 Windows 开发环境有该库，所以同样代码在本地可能正常。
+//
+// 本项目实际不向 Chroma 要嵌入：向量由 Ollama 在客户端生成，写入/检索时通过
+// WithEmbeddings / WithQueryEmbeddings 传入（见 collection.go）。
+//
+// 因此这里：
+//   - WithEmbeddingFunctionCreate(ConsistentHash...)：纯 Go 占位，绕过 ONNX 默认嵌入；
+//   - WithDisableEFConfigStorage()：不把占位 EF 配置写入 Chroma 服务端。
+func collectionCreateOptions() []chroma.CreateCollectionOption {
+	return []chroma.CreateCollectionOption{
+		chroma.WithEmbeddingFunctionCreate(chromaembed.NewConsistentHashEmbeddingFunction()),
+		chroma.WithDisableEFConfigStorage(),
+	}
+}
+
 func (c *Chroma) createCollection(ctx context.Context, name string, embedder embeddings.Embedder) (*Collection, error) {
-	collection, err := c.client.CreateCollection(ctx, name)
+	collection, err := c.client.CreateCollection(ctx, name, collectionCreateOptions()...)
 	if err != nil {
 		return nil, err
 	}

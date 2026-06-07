@@ -2,6 +2,7 @@ FROM golang:1.25.8-alpine3.23 AS builder
 
 WORKDIR /build
 COPY core-rpc/ ./core-rpc/
+COPY other-rpc/ ./other-rpc/
 COPY gateway/go.mod gateway/go.sum ./gateway/
 
 WORKDIR /build/gateway

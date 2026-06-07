@@ -9,6 +9,12 @@ CoreRpc:
       - 127.0.0.1:2379
     Key: core.rpc
 
+AgentRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: agent.rpc
+
 Cache:
   - Host: 127.0.0.1:6379
     Type: node

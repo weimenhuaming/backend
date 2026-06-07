@@ -2,7 +2,10 @@ module gateway
 
 go 1.25.8
 
-require core-rpc v0.0.0
+require (
+	core-rpc v0.0.0
+	other-rpc v0.0.0
+)
 
 replace core-rpc => ../core-rpc
 

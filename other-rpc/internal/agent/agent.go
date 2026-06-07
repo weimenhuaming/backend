@@ -7,31 +7,24 @@ import (
 
 	"other-rpc/internal/agent/llm"
 	"other-rpc/internal/agent/rag"
-	"other-rpc/internal/agent/vector"
 	"other-rpc/internal/config"
 
-	"github.com/tmc/langchaingo/embeddings"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/vectorstores"
 )
 
-// Agent 聚合 LLM、Embedding、检索器与 RAG 问答链。
+// Agent 聚合 LLM、检索器与 RAG 问答链，仅负责对话。
 type Agent struct {
-	cfg      config.KnowledgeBaseConf
-	brain    llms.Model
-	embedder embeddings.Embedder
+	cfg   config.KnowledgeBaseConf
+	brain llms.Model
 
-	// 检索器
+	mu        sync.RWMutex
 	retriever vectorstores.Retriever
 	qa        *rag.QA
-
-	docCount   int
-	chunkCount int
-	mu         sync.RWMutex
 }
 
-// NewAgent 创建 Agent 运行时：仅加载已有检索器，不会在启动时重建。
-func NewAgent(cfg config.KnowledgeBaseConf, em embeddings.Embedder, retriever vectorstores.Retriever) (*Agent, error) {
+// NewAgent 创建 Agent 运行时：加载 LLM 与已有检索器，不会在启动时重建索引。
+func NewAgent(cfg config.KnowledgeBaseConf, retriever vectorstores.Retriever) (*Agent, error) {
 	chatModel, err := llm.NewChatModel(cfg.LLM)
 	if err != nil {
 		return nil, err
@@ -40,29 +33,19 @@ func NewAgent(cfg config.KnowledgeBaseConf, em embeddings.Embedder, retriever ve
 	a := &Agent{
 		cfg:       cfg,
 		brain:     chatModel,
-		embedder:  em,
 		retriever: retriever,
-		qa:        rag.NewQA(chatModel, retriever),
 	}
+
+	a.qa = rag.NewQA(chatModel, retriever)
 	return a, nil
 }
 
-// Build 从知识库目录构建向量索引并持久化
-func (a *Agent) Build(ctx context.Context) (int, int, error) {
-	cfg := a.cfg
-
-	// 使用已有Embedder构建向量索引
-	retriever, docCount, chunkCount, err := vector.BuildIndex(ctx, cfg, a.embedder)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	a.docCount = docCount
-	a.chunkCount = chunkCount
+// SetRetriever 切换当前问答使用的检索器。
+func (a *Agent) SetRetriever(retriever vectorstores.Retriever) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	a.retriever = retriever
 	a.qa = rag.NewQA(a.brain, retriever)
-
-	return docCount, chunkCount, nil
 }
 
 // Chat 基于已加载检索器的 RAG 问答。

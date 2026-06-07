@@ -14,17 +14,30 @@ import (
 )
 
 type (
-	BuildRequest  = agent.BuildRequest
-	BuildResponse = agent.BuildResponse
-	ChatRequest   = agent.ChatRequest
-	ChatResponse  = agent.ChatResponse
-	TestRequest   = agent.TestRequest
-	TestResponse  = agent.TestResponse
+	BuildRequest             = agent.BuildRequest
+	BuildResponse            = agent.BuildResponse
+	ChatRequest              = agent.ChatRequest
+	ChatResponse             = agent.ChatResponse
+	CollectionInfo           = agent.CollectionInfo
+	DeleteCollectionRequest  = agent.DeleteCollectionRequest
+	DeleteCollectionResponse = agent.DeleteCollectionResponse
+	ListCollectionsRequest   = agent.ListCollectionsRequest
+	ListCollectionsResponse  = agent.ListCollectionsResponse
+	SwitchRetrieverRequest   = agent.SwitchRetrieverRequest
+	SwitchRetrieverResponse  = agent.SwitchRetrieverResponse
+	TestRequest              = agent.TestRequest
+	TestResponse             = agent.TestResponse
 
 	Agent interface {
 		Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
 		// Build 从知识库目录构建向量索引（需先构建才能 Chat）
 		Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error)
+		// SwitchRetriever 切换当前问答使用的 collection 检索器
+		SwitchRetriever(ctx context.Context, in *SwitchRetrieverRequest, opts ...grpc.CallOption) (*SwitchRetrieverResponse, error)
+		// ListCollections 查看 Chroma 中所有 collection
+		ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
+		// DeleteCollection 删除指定 collection
+		DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error)
 		// Chat 基于已构建索引的 RAG 问答
 		Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	}
@@ -49,6 +62,24 @@ func (m *defaultAgent) Test(ctx context.Context, in *TestRequest, opts ...grpc.C
 func (m *defaultAgent) Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error) {
 	client := agent.NewAgentClient(m.cli.Conn())
 	return client.Build(ctx, in, opts...)
+}
+
+// SwitchRetriever 切换当前问答使用的 collection 检索器
+func (m *defaultAgent) SwitchRetriever(ctx context.Context, in *SwitchRetrieverRequest, opts ...grpc.CallOption) (*SwitchRetrieverResponse, error) {
+	client := agent.NewAgentClient(m.cli.Conn())
+	return client.SwitchRetriever(ctx, in, opts...)
+}
+
+// ListCollections 查看 Chroma 中所有 collection
+func (m *defaultAgent) ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error) {
+	client := agent.NewAgentClient(m.cli.Conn())
+	return client.ListCollections(ctx, in, opts...)
+}
+
+// DeleteCollection 删除指定 collection
+func (m *defaultAgent) DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error) {
+	client := agent.NewAgentClient(m.cli.Conn())
+	return client.DeleteCollection(ctx, in, opts...)
 }
 
 // Chat 基于已构建索引的 RAG 问答

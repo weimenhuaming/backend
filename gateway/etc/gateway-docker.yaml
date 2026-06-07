@@ -8,6 +8,12 @@ CoreRpc:
       - etcd:2379
     Key: core.rpc
 
+AgentRpc:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: agent.rpc
+
 Cache:
   - Host: redis:6379
     Type: node

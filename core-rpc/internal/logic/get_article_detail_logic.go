@@ -35,10 +35,6 @@ func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (
 		return nil, err
 	}
 
-	// increment view count
-	_ = l.svcCtx.ArtRepo.IncView(in.Id)
-	a.ViewCount++
-
 	// fetch author info
 	authorName, authorAvatar := "", ""
 	if u, err := l.svcCtx.UserRepo.FindByID(a.UserID); err == nil {

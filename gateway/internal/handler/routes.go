@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	agent "gateway/internal/handler/agent"
 	article "gateway/internal/handler/article"
 	category "gateway/internal/handler/category"
 	comment "gateway/internal/handler/comment"
@@ -19,6 +20,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/agent/chat",
+				Handler: agent.AgentChatHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/agent/session/create",
+				Handler: agent.CreateSessionHandler(serverCtx),
+			},
+		},
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

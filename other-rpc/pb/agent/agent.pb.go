@@ -110,9 +110,8 @@ func (x *TestResponse) GetReply() string {
 }
 
 type BuildRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// 可选，为空则使用配置中的 DataPath
-	DataPath      string `protobuf:"bytes,1,opt,name=data_path,json=dataPath,proto3" json:"data_path,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Collection    string                 `protobuf:"bytes,1,opt,name=collection,proto3" json:"collection,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -147,9 +146,9 @@ func (*BuildRequest) Descriptor() ([]byte, []int) {
 	return file_desc_agent_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *BuildRequest) GetDataPath() string {
+func (x *BuildRequest) GetCollection() string {
 	if x != nil {
-		return x.DataPath
+		return x.Collection
 	}
 	return ""
 }
@@ -214,6 +213,330 @@ func (x *BuildResponse) GetChunkCount() int32 {
 	return 0
 }
 
+type SwitchRetrieverRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Collection    string                 `protobuf:"bytes,1,opt,name=collection,proto3" json:"collection,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SwitchRetrieverRequest) Reset() {
+	*x = SwitchRetrieverRequest{}
+	mi := &file_desc_agent_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SwitchRetrieverRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SwitchRetrieverRequest) ProtoMessage() {}
+
+func (x *SwitchRetrieverRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SwitchRetrieverRequest.ProtoReflect.Descriptor instead.
+func (*SwitchRetrieverRequest) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SwitchRetrieverRequest) GetCollection() string {
+	if x != nil {
+		return x.Collection
+	}
+	return ""
+}
+
+type SwitchRetrieverResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SwitchRetrieverResponse) Reset() {
+	*x = SwitchRetrieverResponse{}
+	mi := &file_desc_agent_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SwitchRetrieverResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SwitchRetrieverResponse) ProtoMessage() {}
+
+func (x *SwitchRetrieverResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SwitchRetrieverResponse.ProtoReflect.Descriptor instead.
+func (*SwitchRetrieverResponse) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SwitchRetrieverResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type ListCollectionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCollectionsRequest) Reset() {
+	*x = ListCollectionsRequest{}
+	mi := &file_desc_agent_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCollectionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCollectionsRequest) ProtoMessage() {}
+
+func (x *ListCollectionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCollectionsRequest.ProtoReflect.Descriptor instead.
+func (*ListCollectionsRequest) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{6}
+}
+
+type CollectionInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	DocCount      int32                  `protobuf:"varint,2,opt,name=doc_count,json=docCount,proto3" json:"doc_count,omitempty"`
+	ChunkCount    int32                  `protobuf:"varint,3,opt,name=chunk_count,json=chunkCount,proto3" json:"chunk_count,omitempty"`
+	Count         int32                  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CollectionInfo) Reset() {
+	*x = CollectionInfo{}
+	mi := &file_desc_agent_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CollectionInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CollectionInfo) ProtoMessage() {}
+
+func (x *CollectionInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CollectionInfo.ProtoReflect.Descriptor instead.
+func (*CollectionInfo) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CollectionInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CollectionInfo) GetDocCount() int32 {
+	if x != nil {
+		return x.DocCount
+	}
+	return 0
+}
+
+func (x *CollectionInfo) GetChunkCount() int32 {
+	if x != nil {
+		return x.ChunkCount
+	}
+	return 0
+}
+
+func (x *CollectionInfo) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type ListCollectionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Collections   []*CollectionInfo      `protobuf:"bytes,1,rep,name=collections,proto3" json:"collections,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCollectionsResponse) Reset() {
+	*x = ListCollectionsResponse{}
+	mi := &file_desc_agent_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCollectionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCollectionsResponse) ProtoMessage() {}
+
+func (x *ListCollectionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCollectionsResponse.ProtoReflect.Descriptor instead.
+func (*ListCollectionsResponse) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListCollectionsResponse) GetCollections() []*CollectionInfo {
+	if x != nil {
+		return x.Collections
+	}
+	return nil
+}
+
+type DeleteCollectionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Collection    string                 `protobuf:"bytes,1,opt,name=collection,proto3" json:"collection,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCollectionRequest) Reset() {
+	*x = DeleteCollectionRequest{}
+	mi := &file_desc_agent_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCollectionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCollectionRequest) ProtoMessage() {}
+
+func (x *DeleteCollectionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCollectionRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCollectionRequest) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteCollectionRequest) GetCollection() string {
+	if x != nil {
+		return x.Collection
+	}
+	return ""
+}
+
+type DeleteCollectionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCollectionResponse) Reset() {
+	*x = DeleteCollectionResponse{}
+	mi := &file_desc_agent_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCollectionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCollectionResponse) ProtoMessage() {}
+
+func (x *DeleteCollectionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_desc_agent_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCollectionResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCollectionResponse) Descriptor() ([]byte, []int) {
+	return file_desc_agent_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteCollectionResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 type ChatRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Question      string                 `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
@@ -223,7 +546,7 @@ type ChatRequest struct {
 
 func (x *ChatRequest) Reset() {
 	*x = ChatRequest{}
-	mi := &file_desc_agent_proto_msgTypes[4]
+	mi := &file_desc_agent_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -235,7 +558,7 @@ func (x *ChatRequest) String() string {
 func (*ChatRequest) ProtoMessage() {}
 
 func (x *ChatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_agent_proto_msgTypes[4]
+	mi := &file_desc_agent_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,7 +571,7 @@ func (x *ChatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatRequest.ProtoReflect.Descriptor instead.
 func (*ChatRequest) Descriptor() ([]byte, []int) {
-	return file_desc_agent_proto_rawDescGZIP(), []int{4}
+	return file_desc_agent_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ChatRequest) GetQuestion() string {
@@ -267,7 +590,7 @@ type ChatResponse struct {
 
 func (x *ChatResponse) Reset() {
 	*x = ChatResponse{}
-	mi := &file_desc_agent_proto_msgTypes[5]
+	mi := &file_desc_agent_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -279,7 +602,7 @@ func (x *ChatResponse) String() string {
 func (*ChatResponse) ProtoMessage() {}
 
 func (x *ChatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_desc_agent_proto_msgTypes[5]
+	mi := &file_desc_agent_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -292,7 +615,7 @@ func (x *ChatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatResponse.ProtoReflect.Descriptor instead.
 func (*ChatResponse) Descriptor() ([]byte, []int) {
-	return file_desc_agent_proto_rawDescGZIP(), []int{5}
+	return file_desc_agent_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ChatResponse) GetAnswer() string {
@@ -310,21 +633,47 @@ const file_desc_agent_proto_rawDesc = "" +
 	"\vTestRequest\x12\x10\n" +
 	"\x03msg\x18\x01 \x01(\tR\x03msg\"$\n" +
 	"\fTestResponse\x12\x14\n" +
-	"\x05reply\x18\x01 \x01(\tR\x05reply\"+\n" +
-	"\fBuildRequest\x12\x1b\n" +
-	"\tdata_path\x18\x01 \x01(\tR\bdataPath\"g\n" +
+	"\x05reply\x18\x01 \x01(\tR\x05reply\".\n" +
+	"\fBuildRequest\x12\x1e\n" +
+	"\n" +
+	"collection\x18\x01 \x01(\tR\n" +
+	"collection\"g\n" +
 	"\rBuildResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1b\n" +
 	"\tdoc_count\x18\x02 \x01(\x05R\bdocCount\x12\x1f\n" +
 	"\vchunk_count\x18\x03 \x01(\x05R\n" +
-	"chunkCount\")\n" +
+	"chunkCount\"8\n" +
+	"\x16SwitchRetrieverRequest\x12\x1e\n" +
+	"\n" +
+	"collection\x18\x01 \x01(\tR\n" +
+	"collection\"3\n" +
+	"\x17SwitchRetrieverResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\x18\n" +
+	"\x16ListCollectionsRequest\"x\n" +
+	"\x0eCollectionInfo\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1b\n" +
+	"\tdoc_count\x18\x02 \x01(\x05R\bdocCount\x12\x1f\n" +
+	"\vchunk_count\x18\x03 \x01(\x05R\n" +
+	"chunkCount\x12\x14\n" +
+	"\x05count\x18\x04 \x01(\x05R\x05count\"R\n" +
+	"\x17ListCollectionsResponse\x127\n" +
+	"\vcollections\x18\x01 \x03(\v2\x15.agent.CollectionInfoR\vcollections\"9\n" +
+	"\x17DeleteCollectionRequest\x12\x1e\n" +
+	"\n" +
+	"collection\x18\x01 \x01(\tR\n" +
+	"collection\"4\n" +
+	"\x18DeleteCollectionResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\")\n" +
 	"\vChatRequest\x12\x1a\n" +
 	"\bquestion\x18\x01 \x01(\tR\bquestion\"&\n" +
 	"\fChatResponse\x12\x16\n" +
-	"\x06answer\x18\x01 \x01(\tR\x06answer2\x9d\x01\n" +
+	"\x06answer\x18\x01 \x01(\tR\x06answer2\x96\x03\n" +
 	"\x05Agent\x12/\n" +
 	"\x04Test\x12\x12.agent.TestRequest\x1a\x13.agent.TestResponse\x122\n" +
-	"\x05Build\x12\x13.agent.BuildRequest\x1a\x14.agent.BuildResponse\x12/\n" +
+	"\x05Build\x12\x13.agent.BuildRequest\x1a\x14.agent.BuildResponse\x12P\n" +
+	"\x0fSwitchRetriever\x12\x1d.agent.SwitchRetrieverRequest\x1a\x1e.agent.SwitchRetrieverResponse\x12P\n" +
+	"\x0fListCollections\x12\x1d.agent.ListCollectionsRequest\x1a\x1e.agent.ListCollectionsResponse\x12S\n" +
+	"\x10DeleteCollection\x12\x1e.agent.DeleteCollectionRequest\x1a\x1f.agent.DeleteCollectionResponse\x12/\n" +
 	"\x04Chat\x12\x12.agent.ChatRequest\x1a\x13.agent.ChatResponseB\tZ\a./agentb\x06proto3"
 
 var (
@@ -339,27 +688,41 @@ func file_desc_agent_proto_rawDescGZIP() []byte {
 	return file_desc_agent_proto_rawDescData
 }
 
-var file_desc_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_desc_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_desc_agent_proto_goTypes = []any{
-	(*TestRequest)(nil),   // 0: agent.TestRequest
-	(*TestResponse)(nil),  // 1: agent.TestResponse
-	(*BuildRequest)(nil),  // 2: agent.BuildRequest
-	(*BuildResponse)(nil), // 3: agent.BuildResponse
-	(*ChatRequest)(nil),   // 4: agent.ChatRequest
-	(*ChatResponse)(nil),  // 5: agent.ChatResponse
+	(*TestRequest)(nil),              // 0: agent.TestRequest
+	(*TestResponse)(nil),             // 1: agent.TestResponse
+	(*BuildRequest)(nil),             // 2: agent.BuildRequest
+	(*BuildResponse)(nil),            // 3: agent.BuildResponse
+	(*SwitchRetrieverRequest)(nil),   // 4: agent.SwitchRetrieverRequest
+	(*SwitchRetrieverResponse)(nil),  // 5: agent.SwitchRetrieverResponse
+	(*ListCollectionsRequest)(nil),   // 6: agent.ListCollectionsRequest
+	(*CollectionInfo)(nil),           // 7: agent.CollectionInfo
+	(*ListCollectionsResponse)(nil),  // 8: agent.ListCollectionsResponse
+	(*DeleteCollectionRequest)(nil),  // 9: agent.DeleteCollectionRequest
+	(*DeleteCollectionResponse)(nil), // 10: agent.DeleteCollectionResponse
+	(*ChatRequest)(nil),              // 11: agent.ChatRequest
+	(*ChatResponse)(nil),             // 12: agent.ChatResponse
 }
 var file_desc_agent_proto_depIdxs = []int32{
-	0, // 0: agent.Agent.Test:input_type -> agent.TestRequest
-	2, // 1: agent.Agent.Build:input_type -> agent.BuildRequest
-	4, // 2: agent.Agent.Chat:input_type -> agent.ChatRequest
-	1, // 3: agent.Agent.Test:output_type -> agent.TestResponse
-	3, // 4: agent.Agent.Build:output_type -> agent.BuildResponse
-	5, // 5: agent.Agent.Chat:output_type -> agent.ChatResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	7,  // 0: agent.ListCollectionsResponse.collections:type_name -> agent.CollectionInfo
+	0,  // 1: agent.Agent.Test:input_type -> agent.TestRequest
+	2,  // 2: agent.Agent.Build:input_type -> agent.BuildRequest
+	4,  // 3: agent.Agent.SwitchRetriever:input_type -> agent.SwitchRetrieverRequest
+	6,  // 4: agent.Agent.ListCollections:input_type -> agent.ListCollectionsRequest
+	9,  // 5: agent.Agent.DeleteCollection:input_type -> agent.DeleteCollectionRequest
+	11, // 6: agent.Agent.Chat:input_type -> agent.ChatRequest
+	1,  // 7: agent.Agent.Test:output_type -> agent.TestResponse
+	3,  // 8: agent.Agent.Build:output_type -> agent.BuildResponse
+	5,  // 9: agent.Agent.SwitchRetriever:output_type -> agent.SwitchRetrieverResponse
+	8,  // 10: agent.Agent.ListCollections:output_type -> agent.ListCollectionsResponse
+	10, // 11: agent.Agent.DeleteCollection:output_type -> agent.DeleteCollectionResponse
+	12, // 12: agent.Agent.Chat:output_type -> agent.ChatResponse
+	7,  // [7:13] is the sub-list for method output_type
+	1,  // [1:7] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_desc_agent_proto_init() }
@@ -373,7 +736,7 @@ func file_desc_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_desc_agent_proto_rawDesc), len(file_desc_agent_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

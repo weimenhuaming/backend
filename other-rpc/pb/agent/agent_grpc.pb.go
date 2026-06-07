@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Agent_Test_FullMethodName  = "/agent.Agent/Test"
-	Agent_Build_FullMethodName = "/agent.Agent/Build"
-	Agent_Chat_FullMethodName  = "/agent.Agent/Chat"
+	Agent_Test_FullMethodName             = "/agent.Agent/Test"
+	Agent_Build_FullMethodName            = "/agent.Agent/Build"
+	Agent_SwitchRetriever_FullMethodName  = "/agent.Agent/SwitchRetriever"
+	Agent_ListCollections_FullMethodName  = "/agent.Agent/ListCollections"
+	Agent_DeleteCollection_FullMethodName = "/agent.Agent/DeleteCollection"
+	Agent_Chat_FullMethodName             = "/agent.Agent/Chat"
 )
 
 // AgentClient is the client API for Agent service.
@@ -33,6 +36,12 @@ type AgentClient interface {
 	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
 	// Build 从知识库目录构建向量索引（需先构建才能 Chat）
 	Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error)
+	// SwitchRetriever 切换当前问答使用的 collection 检索器
+	SwitchRetriever(ctx context.Context, in *SwitchRetrieverRequest, opts ...grpc.CallOption) (*SwitchRetrieverResponse, error)
+	// ListCollections 查看 Chroma 中所有 collection
+	ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
+	// DeleteCollection 删除指定 collection
+	DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error)
 	// Chat 基于已构建索引的 RAG 问答
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 }
@@ -65,6 +74,36 @@ func (c *agentClient) Build(ctx context.Context, in *BuildRequest, opts ...grpc.
 	return out, nil
 }
 
+func (c *agentClient) SwitchRetriever(ctx context.Context, in *SwitchRetrieverRequest, opts ...grpc.CallOption) (*SwitchRetrieverResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SwitchRetrieverResponse)
+	err := c.cc.Invoke(ctx, Agent_SwitchRetriever_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentClient) ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCollectionsResponse)
+	err := c.cc.Invoke(ctx, Agent_ListCollections_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentClient) DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCollectionResponse)
+	err := c.cc.Invoke(ctx, Agent_DeleteCollection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *agentClient) Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChatResponse)
@@ -84,6 +123,12 @@ type AgentServer interface {
 	Test(context.Context, *TestRequest) (*TestResponse, error)
 	// Build 从知识库目录构建向量索引（需先构建才能 Chat）
 	Build(context.Context, *BuildRequest) (*BuildResponse, error)
+	// SwitchRetriever 切换当前问答使用的 collection 检索器
+	SwitchRetriever(context.Context, *SwitchRetrieverRequest) (*SwitchRetrieverResponse, error)
+	// ListCollections 查看 Chroma 中所有 collection
+	ListCollections(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error)
+	// DeleteCollection 删除指定 collection
+	DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error)
 	// Chat 基于已构建索引的 RAG 问答
 	Chat(context.Context, *ChatRequest) (*ChatResponse, error)
 	mustEmbedUnimplementedAgentServer()
@@ -101,6 +146,15 @@ func (UnimplementedAgentServer) Test(context.Context, *TestRequest) (*TestRespon
 }
 func (UnimplementedAgentServer) Build(context.Context, *BuildRequest) (*BuildResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Build not implemented")
+}
+func (UnimplementedAgentServer) SwitchRetriever(context.Context, *SwitchRetrieverRequest) (*SwitchRetrieverResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchRetriever not implemented")
+}
+func (UnimplementedAgentServer) ListCollections(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCollections not implemented")
+}
+func (UnimplementedAgentServer) DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
 }
 func (UnimplementedAgentServer) Chat(context.Context, *ChatRequest) (*ChatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Chat not implemented")
@@ -162,6 +216,60 @@ func _Agent_Build_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Agent_SwitchRetriever_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SwitchRetrieverRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServer).SwitchRetriever(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Agent_SwitchRetriever_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServer).SwitchRetriever(ctx, req.(*SwitchRetrieverRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Agent_ListCollections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServer).ListCollections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Agent_ListCollections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServer).ListCollections(ctx, req.(*ListCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Agent_DeleteCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServer).DeleteCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Agent_DeleteCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServer).DeleteCollection(ctx, req.(*DeleteCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Agent_Chat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChatRequest)
 	if err := dec(in); err != nil {
@@ -194,6 +302,18 @@ var Agent_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Build",
 			Handler:    _Agent_Build_Handler,
+		},
+		{
+			MethodName: "SwitchRetriever",
+			Handler:    _Agent_SwitchRetriever_Handler,
+		},
+		{
+			MethodName: "ListCollections",
+			Handler:    _Agent_ListCollections_Handler,
+		},
+		{
+			MethodName: "DeleteCollection",
+			Handler:    _Agent_DeleteCollection_Handler,
 		},
 		{
 			MethodName: "Chat",

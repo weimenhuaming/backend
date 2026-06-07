@@ -34,6 +34,24 @@ func (s *AgentServer) Build(ctx context.Context, in *agent.BuildRequest) (*agent
 	return l.Build(in)
 }
 
+// SwitchRetriever 切换当前问答使用的 collection 检索器
+func (s *AgentServer) SwitchRetriever(ctx context.Context, in *agent.SwitchRetrieverRequest) (*agent.SwitchRetrieverResponse, error) {
+	l := logic.NewSwitchRetrieverLogic(ctx, s.svcCtx)
+	return l.SwitchRetriever(in)
+}
+
+// ListCollections 查看 Chroma 中所有 collection
+func (s *AgentServer) ListCollections(ctx context.Context, in *agent.ListCollectionsRequest) (*agent.ListCollectionsResponse, error) {
+	l := logic.NewListCollectionsLogic(ctx, s.svcCtx)
+	return l.ListCollections(in)
+}
+
+// DeleteCollection 删除指定 collection
+func (s *AgentServer) DeleteCollection(ctx context.Context, in *agent.DeleteCollectionRequest) (*agent.DeleteCollectionResponse, error) {
+	l := logic.NewDeleteCollectionLogic(ctx, s.svcCtx)
+	return l.DeleteCollection(in)
+}
+
 // Chat 基于已构建索引的 RAG 问答
 func (s *AgentServer) Chat(ctx context.Context, in *agent.ChatRequest) (*agent.ChatResponse, error) {
 	l := logic.NewChatLogic(ctx, s.svcCtx)

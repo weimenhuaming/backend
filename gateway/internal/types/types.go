@@ -528,3 +528,40 @@ type ViewArticleResp struct {
 	Msg  string          `json:"msg"`
 	Data ViewArticleData `json:"data"`
 }
+
+type AgentChatData struct {
+	SessionId string `json:"session_id"`
+	Answer    string `json:"answer"`
+	MessageId string `json:"message_id"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+type AgentChatReq struct {
+	SessionId string `json:"session_id"`
+	UserId    string `json:"user_id"`
+	Question  string `json:"question"`
+}
+
+type AgentChatResp struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	Data AgentChatData `json:"data"`
+}
+
+type CreateSessionData struct {
+	SessionId string `json:"session_id"`
+	UserId    string `json:"user_id"`
+	CreatedAt int64  `json:"created_at"`
+	Message   string `json:"message"`
+}
+
+type CreateSessionReq struct {
+	SessionId string `json:"session_id"`
+	UserId    string `json:"user_id"`
+}
+
+type CreateSessionResp struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data CreateSessionData `json:"data"`
+}

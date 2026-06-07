@@ -1,147 +1,214 @@
-# Go 语言 AI 助手知识库
+# Chenaqi 个人博客 · 项目知识库
 
-本知识库面向 **Go 语言学习与开发** 场景的 AI 助手，覆盖版本信息、基础类型底层、并发、内存与常见实践。
-
----
-
-## 助手定位
-
-- 解答 Go 语法、标准库、工具链（`go`、`gofmt`、`go test`、`go mod`）相关问题。
-- 说明值类型与引用类型的**底层表示**（栈/堆、指针、slice 头、map 桶等）。
-- 对「当前最新版本」类问题，优先依据本知识库；若文档未更新，提示用户访问 https://go.dev/dl/ 核对。
+本知识库供站内 AI 助手「小陈」检索使用，介绍 **Chenaqi Web** 个人博客全栈项目的定位、架构与功能。
 
 ---
 
-## Go 当前版本（请以官网为准）
+## 项目概述
 
-截至本知识库维护时：
-当前go的版本已经发布到了1.26.3了，在2026.5.24
+**Chenaqi Web** 是博主「陈阿七」的个人博客与内容管理系统，包含：
 
-| 项目 | 说明 |
+- 面向读者的博客阅读、评论、点赞与互动
+- 面向作者的后台文章、分类与用户管理
+- 基于 RAG 的站内 AI 知识库问答（Agent 服务）
+
+仓库采用前后端分离：`frontend/` 为 Nuxt 4 前端，`backend/` 为 go-zero 微服务后端。
+
+---
+
+## 技术栈
+
+### 前端（`frontend/`）
+
+| 类别 | 选型 |
 |------|------|
-| 发布节奏 | 每年 2 月、8 月各一个 feature 版本 |
-| 模块路径 | Go 1.11+ 默认使用 Go modules（`go.mod`） |
-| 工具链命令 | `go version` 可查看本机安装版本 |
+| 框架 | Nuxt 4 · Vue 3 |
+| 状态管理 | Pinia |
+| HTTP | `$fetch` / `ofetch` |
+| Markdown | marked |
+| 样式 | 原生 CSS |
+| 运行时 | Node.js 22 |
 
-历史版本要点：Go 1.18 引入泛型；Go 1.20 起支持 WASI；Go 1.21 调整 `min`/`max` 等内置函数；Go 1.22 起 `for` 循环变量语义变更（每轮独立变量）。
+### 后端（`backend/`）
 
----
-
-## 基础类型与底层表示
-
-### 整数与浮点
-
-- **有符号整数**：`int8` `int16` `int32` `int64`；**无符号**：`uint8`（即 `byte`）`uint16` `uint32` `uint64`。
-- **`int` 与 `uint`**：字长与平台相关（32 位机 32 位，64 位机 64 位）。
-- **浮点**：`float32`、`float64`；运算中较小类型会提升为 `float64`。
-- 底层为二进制补码（整数）与 IEEE 754（浮点），由编译器直接映射到机器字。
-
-### bool、string
-
-- `bool`：1 字节，值为 0 或 1（仅应使用 `true`/`false`）。
-- **string**：只读字节序列；底层为 **指针 + 长度**（不暴露，语义上不可变）。与 `[]byte` 可零拷贝转换需注意：`string(b)` 会复制，`unsafe` 或 Go 1.20+ `unsafe.String` 等高级用法需谨慎。
-
-### 数组与 slice
-
-- **数组** `[N]T`：值类型，长度是类型的一部分，赋值/传参会复制整个数组。
-- **slice** `[]T`：运行时结构（slice header）大致包含：
-    - 指向底层数组的指针
-    - `len`（长度）
-    - `cap`（容量）
-- `append` 在 `len == cap` 时可能触发扩容（通常按约 2 倍增长，具体由运行时实现）。
-- **传 slice** 只复制 header，底层数组共享；修改元素会影响同一底层数组的其他 slice。
-
-### map
-
-- 引用类型，底层为 **哈希表**（桶 + 溢出桶，实现细节随版本演进）。
-- **未初始化的 map**（`var m map[K]V`）不能写入，会 panic；须 `make(map[K]V)` 或字面量初始化。
-- 遍历顺序**随机**，不要依赖顺序。
-- key 必须可比较（不可含 slice、map、func 等）。
-
-### struct 与指针
-
-- 字段按声明顺序排列，存在 **内存对齐**；较大对齐要求的字段可能产生 padding。
-- 指针 `*T` 存地址；`new(T)`、`&v` 获取指针。逃逸分析决定变量分配在栈还是堆。
-
-### interface
-
-- 底层为 **(type, value)** 二元组；`nil` interface 需 type 与 value 均为 nil 才为真 nil。
-- 空接口 `interface{}` 或 `any`（Go 1.18+）可承载任意具体类型。
-- 动态分发通过 **itable**（接口表）实现。
+| 类别 | 选型 |
+|------|------|
+| 语言 | Go 1.25 |
+| 框架 | go-zero（REST + zrpc） |
+| RPC | gRPC + Protocol Buffers |
+| ORM | GORM + MySQL 8.4 |
+| 缓存 | Redis 7 |
+| 服务发现 | etcd |
+| AI / RAG | langchaingo、Chroma、Ollama Embedding、智谱 GLM |
 
 ---
 
-## 函数、方法与 defer
+## 系统架构
 
-- 多返回值是常态；命名返回值在函数开头作用域内有效。
-- `defer`：函数返回前 LIFO 执行，常用于关闭资源、`Unlock`。
-- **方法**：值接收者与指针接收者影响是否复制 struct；大 struct 或需修改接收者时用指针接收者。
+```
+Browser → Nuxt Frontend (:3000)
+              │ /api/** 代理
+              ▼
+         Gateway (:9000)  HTTP 入口、JWT 鉴权
+              │ gRPC (etcd 发现)
+              ├── core-rpc (:8080)  用户 / 文章 / 分类 / 评论 / 点赞
+              └── other-rpc (:8081) Agent 知识库问答
+                        │
+                        ├── Chroma (:8000)  向量数据库
+                        └── Ollama (:11434)  Embedding（nomic-embed-text）
+```
 
----
-
-## 并发基础
-
-### goroutine
-
-- 轻量级用户态线程，由 Go 运行时调度（M:N 模型）。
-- 启动：`go f()`；不要在没有同步的情况下共享可变状态。
-
-### channel
-
-- `chan T`：有缓冲 `make(chan T, n)` 与无缓冲之分。
-- 无缓冲 channel：发送与接收必须同时就绪（同步握手）。
-- 关闭：`close(ch)`；接收方可用 `v, ok := <-ch` 判断是否已关闭。
-- 原则：**用 channel 传递所有权，用 mutex 保护共享状态**（按场景选择）。
-
-### 常见同步
-
-- `sync.Mutex` / `RWMutex`：互斥锁。
-- `sync.WaitGroup`：等待一组 goroutine 结束。
-- `context.Context`：取消、超时、传值（仅建议传请求作用域元数据）。
+| 服务 | 端口 | 职责 |
+|------|------|------|
+| gateway | 9000 | HTTP API 聚合、鉴权、上传、静态资源 |
+| core-rpc | 8080 | 核心业务 gRPC |
+| other-rpc | 8081 | Agent gRPC：RAG 知识库问答 |
+| mysql | 3306 | 业务数据 |
+| redis | 6379 | 验证码、Token 黑名单 |
+| chroma | 8000 | 向量存储 |
+| ollama | 11434 | 本地向量化 |
 
 ---
 
-## 内存与 GC（简要）
+## 前端功能
 
-- **垃圾回收**：并发标记清除，STW 时间已大幅缩短（具体因版本而异）。
-- 避免在热路径频繁分配；可用 `sync.Pool` 复用对象。
-- **逃逸分析**：编译器决定变量是否在堆上分配；可用 `go build -gcflags="-m"` 观察（学习用）。
+### 公开页面
 
----
+| 路由 | 说明 |
+|------|------|
+| `/` | 首页 Bento 布局（时钟、日历、音乐、推荐等） |
+| `/blog` | 博客列表 |
+| `/blog/:id` | 文章详情（Markdown、目录、评论、点赞） |
+| `/about` | 关于页 |
+| `/agent` | 站内 AI 助手 |
+| `/auth/login` | 登录 / 注册 / 重置密码 |
 
-## 错误处理
+### 用户后台（需登录）
 
-- 无 try/catch；使用 **`error` 接口**：`type error interface { Error() string }`。
-- 惯用法：`if err != nil { return ..., err }`。
-- Go 1.13+：`errors.Is`、`errors.As`；`fmt.Errorf("... %w", err)` 包装错误。
-- panic 仅用于不可恢复或编程错误；库代码应优先返回 error。
+| 路由 | 说明 |
+|------|------|
+| `/admin/profile` | 个人资料、头像上传 |
+| `/admin/likes` | 点赞文章列表 |
+| `/admin/my-articles` | 我的文章 |
 
----
+### 管理员后台（需 admin 角色）
 
-## 模块与项目布局
-
-- `go mod init example.com/foo` 创建模块。
-- 依赖写在 `go.mod`；`go get`、`go mod tidy` 管理版本。
-- 常见目录：`cmd/` 放 main，`internal/` 放私有包，`pkg/` 放可被外部引用的库（可选）。
-
----
-
-## 性能与工具
-
-- **pprof**：CPU、内存、阻塞分析。
-- **基准测试**：`func BenchmarkXxx(b *testing.B)`。
-- **竞态检测**：`go test -race`。
-- **静态分析**：`go vet`、staticcheck、golangci-lint 等。
+| 路由 | 说明 |
+|------|------|
+| `/admin/categories` | 分类管理 |
+| `/admin/articles` | 全站博客列表 |
+| `/admin/article/create` | 新建 / 编辑文章 |
 
 ---
 
-## 常见面试/实战要点
+## 后端业务模块（Gateway HTTP API）
 
-1. `slice` 与 `数组` 区别；`append` 扩容行为。
-2. `map` 并发读写需 `sync.Map` 或加锁，否则 panic。
-3. `interface` -nil 判断陷阱。
-4. `select` 多路复用 channel；`default` 实现非阻塞。
-5. **happens-before**：channel 操作、锁、`Once` 等建立同步关系。
-6. **值拷贝 vs 指针**：slice/map/channel 本身是小型描述符，传参复制描述符但共享底层。
+| 模块 | 路径前缀 | 说明 |
+|------|----------|------|
+| login | `/login/*` | 注册、登录、邮箱验证码、重置密码、登出 |
+| user | `/user/*` | 用户资料、我的文章、点赞文章 |
+| article | `/article/*` | 文章 CRUD、列表、搜索、分类筛选 |
+| category | `/category/*` | 分类增删查 |
+| comment | `/comment/*` | 评论、回复、删除、列表 |
+| interaction | `/interaction/*` | 浏览量、点赞 / 取消、点赞状态 |
+| upload | `/upload/*` | 头像、博客图片上传 |
 
 ---
+
+## Agent 知识库服务（other-rpc）
+
+基于 **langchaingo RAG** 的个人知识库问答，主要 gRPC 接口：
+
+| 方法 | 说明 |
+|------|------|
+| `Build` | 从 `data/knowledge/` 读取文档，切分向量化，创建新 collection（名称不可重复） |
+| `SwitchRetriever` | 切换当前问答使用的 collection |
+| `ListCollections` | 查看所有 collection 及文档 / 切片统计 |
+| `DeleteCollection` | 删除指定 collection |
+| `Chat` | 检索增强问答 |
+| `Test` | 连通性测试 |
+
+### 知识库目录
+
+默认路径：`other-rpc/data/knowledge/`
+
+将 Markdown、文本等文档放入此目录后，调用 `Build` 并指定 collection 名称即可建立索引。文档更新后需对新名称重新 `Build`，或通过 `SwitchRetriever` 切换到对应 collection。
+
+### 配置示例
+
+```yaml
+KnowledgeBase:
+  DataPath: ./data/knowledge
+  TopK: 4
+  ChunkSize: 800
+  ChunkOverlap: 100
+  Chroma:
+    URL: http://127.0.0.1:8000
+    Collection: chenaqi_knowledge
+  LLM:
+    Provider: openai
+    Model: glm-4-flash
+    BaseURL: https://open.bigmodel.cn/api/paas/v4/
+  Embedding:
+    Provider: ollama
+    Model: nomic-embed-text
+    BaseURL: http://127.0.0.1:11434
+```
+
+---
+
+## 数据库表（MySQL）
+
+| 表 | 说明 |
+|----|------|
+| user | 用户（角色 admin / user / guest） |
+| category | 文章分类 |
+| article | 文章及浏览 / 点赞 / 评论计数 |
+| comment | 一级 / 二级评论 |
+| interaction_like | 文章、评论点赞 |
+| token_blacklist | Refresh Token 黑名单 |
+
+---
+
+## 作者与博客
+
+- **博主昵称**：陈阿七
+- **项目名**：Chenaqi Web
+- **专注方向**：Go 语言开发、微服务架构、云原生、AI 应用
+- **博客定位**：分享技术实践与个人成长，帮助开发者少走弯路
+- **AI 助手名称**：小陈（站内 RAG 问答助手）
+
+---
+
+## 部署方式
+
+### Docker 一键部署
+
+```bash
+cd backend/deploy
+docker compose up -d --build
+```
+
+包含 gateway、core-rpc、other-rpc、mysql、redis、etcd、chroma、ollama 等。
+
+### 本地开发
+
+1. 启动中间件：`etcd`、`mysql`、`redis`、`chroma`、`ollama`
+2. 依次运行：`core-rpc` → `other-rpc` → `gateway`
+3. 前端：`cd frontend && npm run dev`（代理到 Gateway :9000）
+
+---
+
+## 常见问题
+
+**首次使用 Agent 问答无结果？**
+
+需先调用 `Build` 建立向量索引，并配置有效的 LLM API Key，确保 Chroma 与 Ollama 均已就绪。
+
+**如何管理多个知识库？**
+
+使用不同 collection 名称多次 `Build`，通过 `ListCollections` 查看，用 `SwitchRetriever` 切换，`DeleteCollection` 删除不需要的库。
+
+**知识库文档放在哪里？**
+
+`backend/other-rpc/data/knowledge/`，支持 Markdown 等文本格式，由 `doc_loader` 加载后切分入库。

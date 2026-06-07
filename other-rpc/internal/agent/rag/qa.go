@@ -7,6 +7,7 @@ import (
 
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms"
+	"github.com/tmc/langchaingo/prompts"
 	"github.com/tmc/langchaingo/vectorstores"
 )
 
@@ -15,10 +16,14 @@ type QA struct {
 	chain chains.RetrievalQA
 }
 
-// NewQA 使用 LLM + Retriever 构建检索问答链。
+// NewQA 使用 LLM + Retriever 构建带系统提示词的检索问答链。
 func NewQA(model llms.Model, retriever vectorstores.Retriever) *QA {
+	prompt := prompts.NewPromptTemplate(qaTemplate, []string{"context", "question"})
+	llmChain := chains.NewLLMChain(model, prompt)
+	combineChain := chains.NewStuffDocuments(llmChain)
+
 	return &QA{
-		chain: chains.NewRetrievalQAFromLLM(model, retriever),
+		chain: chains.NewRetrievalQA(combineChain, retriever),
 	}
 }
 

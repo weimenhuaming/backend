@@ -11,13 +11,26 @@ import (
 	"github.com/tmc/langchaingo/vectorstores"
 )
 
-// ChromaStore 基于 Chroma v2 API 的向量存储，实现 langchaingo VectorStore。
-type ChromaStore struct {
+// Collection 基于 Chroma v2 API 的向量存储，实现 langchaingo VectorStore。
+type Collection struct {
 	collection chroma.Collection
 	embedder   embeddings.Embedder
 }
 
-func (s *ChromaStore) AddDocuments(ctx context.Context, docs []schema.Document, _ ...vectorstores.Option) ([]string, error) {
+// NewCollection 新建知识库
+func (c *Chroma) NewCollection(ctx context.Context, name string, embedder embeddings.Embedder) (*Collection, error) {
+	collection, err := c.client.GetOrCreateCollection(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Collection{
+		collection: collection,
+		embedder:   embedder,
+	}, nil
+}
+
+func (s *Collection) AddDocuments(ctx context.Context, docs []schema.Document, _ ...vectorstores.Option) ([]string, error) {
 	if len(docs) == 0 {
 		return nil, nil
 	}
@@ -49,7 +62,7 @@ func (s *ChromaStore) AddDocuments(ctx context.Context, docs []schema.Document, 
 	return nil, nil
 }
 
-func (s *ChromaStore) SimilaritySearch(ctx context.Context, query string, numDocuments int, _ ...vectorstores.Option) ([]schema.Document, error) {
+func (s *Collection) SimilaritySearch(ctx context.Context, query string, numDocuments int, _ ...vectorstores.Option) ([]schema.Document, error) {
 	if numDocuments <= 0 {
 		numDocuments = 4
 	}

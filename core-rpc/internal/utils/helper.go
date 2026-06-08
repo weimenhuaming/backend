@@ -115,19 +115,3 @@ func UserDisplay(m map[uint64]entity.User, userID uint64) (name, avatar string) 
 	}
 	return fmt.Sprintf("用户%d", userID), ""
 }
-
-func UserToProfile(u *entity.User) *core.UserProfile {
-	if u == nil {
-		return nil
-	}
-	return &core.UserProfile{
-		Id:     u.ID,
-		Name:   u.Name,
-		Phone:  u.Phone,
-		Email:  u.Email,
-		Avatar: u.Avatar,
-		Role:   u.Role,
-		Sex:    u.Sex,
-		Age:    u.Age,
-	}
-}

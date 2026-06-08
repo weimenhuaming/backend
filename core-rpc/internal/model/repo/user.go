@@ -2,14 +2,11 @@ package repo
 
 import (
 	"core-rpc/internal/model/entity"
-	passwordutil "core-rpc/internal/utils"
 	"errors"
 
 	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
-
-//======================================================================================================================
 
 type UserModel struct {
 	DB *gorm.DB
@@ -20,6 +17,9 @@ func NewUserModel(db *gorm.DB) *UserModel {
 		DB: db,
 	}
 }
+
+//======================================================================================================================
+// login section
 
 func (u *UserModel) EmailLogin(email string) (*entity.User, error) {
 	user := &entity.User{}
@@ -42,8 +42,8 @@ func (u *UserModel) NameLogin(name, plainPassword string) (*entity.User, error) 
 		}
 		return nil, err
 	}
-	if !passwordutil.VerifyPassword(plainPassword, user.Password) {
-		return nil, errors.New("用户名或密码错误")
+	if user.Password != plainPassword {
+		return nil, errors.New("用户名或者密码错误")
 	}
 	return user, nil
 }
@@ -58,7 +58,9 @@ func (u *UserModel) EmailRegister(name, email, password string) (*entity.User, e
 	// 直接插入，依靠数据库唯一索引防重复
 	err := u.DB.Create(user).Error
 	if err != nil {
-		if isDuplicateError(err) {
+		// 判断 MySQL 唯一键冲突
+		var mysqlErr *mysql.MySQLError
+		if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
 			return nil, errors.New("该邮箱已注册")
 		}
 		return nil, err
@@ -67,19 +69,13 @@ func (u *UserModel) EmailRegister(name, email, password string) (*entity.User, e
 	return user, nil
 }
 
-// 判断 MySQL 唯一键冲突
-func isDuplicateError(err error) bool {
-	var mysqlErr *mysql.MySQLError
-	return errors.As(err, &mysqlErr) && mysqlErr.Number == 1062
-}
-
 func (u *UserModel) Logout() {
 	// todo Logout暂时不做修改 后续在管理，当前是存入缓存
 }
 
 func (u *UserModel) ResetPasswordByEmail(email, newPassword string) error {
 	user := &entity.User{}
-	// 第一步：查用户是否存在
+	// 1. 查用户是否存在
 	err := u.DB.Where("email = ?", email).First(user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -88,6 +84,7 @@ func (u *UserModel) ResetPasswordByEmail(email, newPassword string) error {
 		return err
 	}
 
+	// 2. 更新密码
 	err = u.DB.Model(user).Update("password", newPassword).Error
 	if err != nil {
 		return err
@@ -95,7 +92,9 @@ func (u *UserModel) ResetPasswordByEmail(email, newPassword string) error {
 	return nil
 }
 
-// FindByID returns user by id
+// =====================================================================================================================
+// user info section
+
 func (u *UserModel) FindByID(id uint64) (*entity.User, error) {
 	user := &entity.User{}
 	if err := u.DB.Select("id", "name", "avatar").First(user, id).Error; err != nil {
@@ -104,7 +103,6 @@ func (u *UserModel) FindByID(id uint64) (*entity.User, error) {
 	return user, nil
 }
 
-// FindProfileByID returns user profile fields without password
 func (u *UserModel) FindProfileByID(id uint64) (*entity.User, error) {
 	user := &entity.User{}
 	if err := u.DB.Select("id", "name", "phone", "email", "avatar", "role", "sex", "age").
@@ -114,7 +112,6 @@ func (u *UserModel) FindProfileByID(id uint64) (*entity.User, error) {
 	return user, nil
 }
 
-// UpdateProfile updates editable profile fields
 func (u *UserModel) UpdateProfile(id uint64, updates map[string]interface{}) error {
 	if len(updates) == 0 {
 		return nil
@@ -122,7 +119,6 @@ func (u *UserModel) UpdateProfile(id uint64, updates map[string]interface{}) err
 	return u.DB.Model(&entity.User{}).Where("id = ?", id).Updates(updates).Error
 }
 
-// FindByIDs loads multiple users and returns a map keyed by user id
 func (u *UserModel) FindByIDs(ids []uint64) (map[uint64]entity.User, error) {
 	out := make(map[uint64]entity.User)
 	if len(ids) == 0 {

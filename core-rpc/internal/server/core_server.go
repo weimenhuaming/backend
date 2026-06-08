@@ -6,6 +6,12 @@ package server
 
 import (
 	"context"
+	"core-rpc/internal/logic/article"
+	"core-rpc/internal/logic/category"
+	"core-rpc/internal/logic/comment"
+	"core-rpc/internal/logic/interaction"
+	"core-rpc/internal/logic/login"
+	"core-rpc/internal/logic/user"
 
 	"core-rpc/internal/logic"
 	"core-rpc/internal/svc"
@@ -31,166 +37,166 @@ func (s *CoreServer) Test(ctx context.Context, in *core.TestRequest) (*core.Test
 
 // Login 部分
 func (s *CoreServer) Register(ctx context.Context, in *core.RegisterReq) (*core.RegisterResp, error) {
-	l := logic.NewRegisterLogic(ctx, s.svcCtx)
+	l := login.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
 func (s *CoreServer) EmailLogin(ctx context.Context, in *core.EmailLoginReq) (*core.LoginResp, error) {
-	l := logic.NewEmailLoginLogic(ctx, s.svcCtx)
+	l := login.NewEmailLoginLogic(ctx, s.svcCtx)
 	return l.EmailLogin(in)
 }
 
 func (s *CoreServer) NameLogin(ctx context.Context, in *core.NameLoginReq) (*core.LoginResp, error) {
-	l := logic.NewNameLoginLogic(ctx, s.svcCtx)
+	l := login.NewNameLoginLogic(ctx, s.svcCtx)
 	return l.NameLogin(in)
 }
 
 func (s *CoreServer) ResetPasswordByEmail(ctx context.Context, in *core.ResetPasswordEmailReq) (*core.ResetPasswordEmailResp, error) {
-	l := logic.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
+	l := login.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
 	return l.ResetPasswordByEmail(in)
 }
 
 func (s *CoreServer) Logout(ctx context.Context, in *core.LogoutReq) (*core.LogoutResp, error) {
-	l := logic.NewLogoutLogic(ctx, s.svcCtx)
+	l := login.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }
 
 // person 部分
 func (s *CoreServer) GetUserProfile(ctx context.Context, in *core.GetUserProfileReq) (*core.GetUserProfileResp, error) {
-	l := logic.NewGetUserProfileLogic(ctx, s.svcCtx)
+	l := user.NewGetUserProfileLogic(ctx, s.svcCtx)
 	return l.GetUserProfile(in)
 }
 
 func (s *CoreServer) UpdateUserProfile(ctx context.Context, in *core.UpdateUserProfileReq) (*core.UpdateUserProfileResp, error) {
-	l := logic.NewUpdateUserProfileLogic(ctx, s.svcCtx)
+	l := user.NewUpdateUserProfileLogic(ctx, s.svcCtx)
 	return l.UpdateUserProfile(in)
 }
 
 func (s *CoreServer) ListUserLikedArticles(ctx context.Context, in *core.ListUserLikedArticlesReq) (*core.ListArticlesResp, error) {
-	l := logic.NewListUserLikedArticlesLogic(ctx, s.svcCtx)
+	l := user.NewListUserLikedArticlesLogic(ctx, s.svcCtx)
 	return l.ListUserLikedArticles(in)
 }
 
 func (s *CoreServer) ListUserArticles(ctx context.Context, in *core.ListUserArticlesReq) (*core.ListArticlesResp, error) {
-	l := logic.NewListUserArticlesLogic(ctx, s.svcCtx)
+	l := user.NewListUserArticlesLogic(ctx, s.svcCtx)
 	return l.ListUserArticles(in)
 }
 
 // Category 部分
 func (s *CoreServer) CreateCategory(ctx context.Context, in *core.CreateCategoryReq) (*core.CreateCategoryResp, error) {
-	l := logic.NewCreateCategoryLogic(ctx, s.svcCtx)
+	l := category.NewCreateCategoryLogic(ctx, s.svcCtx)
 	return l.CreateCategory(in)
 }
 
 func (s *CoreServer) ListCategories(ctx context.Context, in *core.ListCategoriesReq) (*core.ListCategoriesResp, error) {
-	l := logic.NewListCategoriesLogic(ctx, s.svcCtx)
+	l := category.NewListCategoriesLogic(ctx, s.svcCtx)
 	return l.ListCategories(in)
 }
 
 func (s *CoreServer) DeleteCategory(ctx context.Context, in *core.DeleteCategoryReq) (*core.DeleteCategoryResp, error) {
-	l := logic.NewDeleteCategoryLogic(ctx, s.svcCtx)
+	l := category.NewDeleteCategoryLogic(ctx, s.svcCtx)
 	return l.DeleteCategory(in)
 }
 
 // Article 部分
 func (s *CoreServer) CreateArticle(ctx context.Context, in *core.CreateArticleReq) (*core.CreateArticleResp, error) {
-	l := logic.NewCreateArticleLogic(ctx, s.svcCtx)
+	l := article.NewCreateArticleLogic(ctx, s.svcCtx)
 	return l.CreateArticle(in)
 }
 
 func (s *CoreServer) UpdateArticle(ctx context.Context, in *core.UpdateArticleReq) (*core.UpdateArticleResp, error) {
-	l := logic.NewUpdateArticleLogic(ctx, s.svcCtx)
+	l := article.NewUpdateArticleLogic(ctx, s.svcCtx)
 	return l.UpdateArticle(in)
 }
 
 func (s *CoreServer) DeleteArticle(ctx context.Context, in *core.DeleteArticleReq) (*core.DeleteArticleResp, error) {
-	l := logic.NewDeleteArticleLogic(ctx, s.svcCtx)
+	l := article.NewDeleteArticleLogic(ctx, s.svcCtx)
 	return l.DeleteArticle(in)
 }
 
 func (s *CoreServer) GetArticleDetail(ctx context.Context, in *core.GetArticleDetailReq) (*core.GetArticleDetailResp, error) {
-	l := logic.NewGetArticleDetailLogic(ctx, s.svcCtx)
+	l := article.NewGetArticleDetailLogic(ctx, s.svcCtx)
 	return l.GetArticleDetail(in)
 }
 
 func (s *CoreServer) ListArticles(ctx context.Context, in *core.ListArticlesReq) (*core.ListArticlesResp, error) {
-	l := logic.NewListArticlesLogic(ctx, s.svcCtx)
+	l := article.NewListArticlesLogic(ctx, s.svcCtx)
 	return l.ListArticles(in)
 }
 
 func (s *CoreServer) GetArticlesByCategory(ctx context.Context, in *core.GetArticlesByCategoryReq) (*core.ListArticlesResp, error) {
-	l := logic.NewGetArticlesByCategoryLogic(ctx, s.svcCtx)
+	l := article.NewGetArticlesByCategoryLogic(ctx, s.svcCtx)
 	return l.GetArticlesByCategory(in)
 }
 
 func (s *CoreServer) SearchArticles(ctx context.Context, in *core.SearchArticlesReq) (*core.SearchArticlesResp, error) {
-	l := logic.NewSearchArticlesLogic(ctx, s.svcCtx)
+	l := article.NewSearchArticlesLogic(ctx, s.svcCtx)
 	return l.SearchArticles(in)
 }
 
 // interaction 部分
 func (s *CoreServer) LikeArticle(ctx context.Context, in *core.LikeArticleReq) (*core.LikeArticleResp, error) {
-	l := logic.NewLikeArticleLogic(ctx, s.svcCtx)
+	l := article.NewLikeArticleLogic(ctx, s.svcCtx)
 	return l.LikeArticle(in)
 }
 
 func (s *CoreServer) UnlikeArticle(ctx context.Context, in *core.UnlikeArticleReq) (*core.UnlikeArticleResp, error) {
-	l := logic.NewUnlikeArticleLogic(ctx, s.svcCtx)
+	l := interaction.NewUnlikeArticleLogic(ctx, s.svcCtx)
 	return l.UnlikeArticle(in)
 }
 
 func (s *CoreServer) LikeComment(ctx context.Context, in *core.LikeCommentReq) (*core.LikeCommentResp, error) {
-	l := logic.NewLikeCommentLogic(ctx, s.svcCtx)
+	l := interaction.NewLikeCommentLogic(ctx, s.svcCtx)
 	return l.LikeComment(in)
 }
 
 func (s *CoreServer) UnlikeComment(ctx context.Context, in *core.UnlikeCommentReq) (*core.UnlikeCommentResp, error) {
-	l := logic.NewUnlikeCommentLogic(ctx, s.svcCtx)
+	l := comment.NewUnlikeCommentLogic(ctx, s.svcCtx)
 	return l.UnlikeComment(in)
 }
 
 func (s *CoreServer) ViewArticle(ctx context.Context, in *core.ViewArticleReq) (*core.ViewArticleResp, error) {
-	l := logic.NewViewArticleLogic(ctx, s.svcCtx)
+	l := interaction.NewViewArticleLogic(ctx, s.svcCtx)
 	return l.ViewArticle(in)
 }
 
 func (s *CoreServer) GetArticleLikeStatus(ctx context.Context, in *core.GetArticleLikeStatusReq) (*core.GetArticleLikeStatusResp, error) {
-	l := logic.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
+	l := article.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
 	return l.GetArticleLikeStatus(in)
 }
 
 func (s *CoreServer) BatchGetCommentLikeStatus(ctx context.Context, in *core.BatchGetCommentLikeStatusReq) (*core.BatchGetCommentLikeStatusResp, error) {
-	l := logic.NewBatchGetCommentLikeStatusLogic(ctx, s.svcCtx)
+	l := interaction.NewBatchGetCommentLikeStatusLogic(ctx, s.svcCtx)
 	return l.BatchGetCommentLikeStatus(in)
 }
 
 // comment 部分
 func (s *CoreServer) CreateComment(ctx context.Context, in *core.CreateCommentReq) (*core.CreateCommentResp, error) {
-	l := logic.NewCreateCommentLogic(ctx, s.svcCtx)
+	l := comment.NewCreateCommentLogic(ctx, s.svcCtx)
 	return l.CreateComment(in)
 }
 
 func (s *CoreServer) CreateReply(ctx context.Context, in *core.CreateReplyReq) (*core.CreateReplyResp, error) {
-	l := logic.NewCreateReplyLogic(ctx, s.svcCtx)
+	l := comment.NewCreateReplyLogic(ctx, s.svcCtx)
 	return l.CreateReply(in)
 }
 
 func (s *CoreServer) DeleteComment(ctx context.Context, in *core.DeleteCommentReq) (*core.DeleteCommentResp, error) {
-	l := logic.NewDeleteCommentLogic(ctx, s.svcCtx)
+	l := comment.NewDeleteCommentLogic(ctx, s.svcCtx)
 	return l.DeleteComment(in)
 }
 
 func (s *CoreServer) GetArticleComments(ctx context.Context, in *core.GetArticleCommentsReq) (*core.GetArticleCommentsResp, error) {
-	l := logic.NewGetArticleCommentsLogic(ctx, s.svcCtx)
+	l := comment.NewGetArticleCommentsLogic(ctx, s.svcCtx)
 	return l.GetArticleComments(in)
 }
 
 func (s *CoreServer) GetCommentReplies(ctx context.Context, in *core.GetCommentRepliesReq) (*core.GetCommentRepliesResp, error) {
-	l := logic.NewGetCommentRepliesLogic(ctx, s.svcCtx)
+	l := comment.NewGetCommentRepliesLogic(ctx, s.svcCtx)
 	return l.GetCommentReplies(in)
 }
 
 func (s *CoreServer) GetUserComments(ctx context.Context, in *core.GetUserCommentsReq) (*core.GetUserCommentsResp, error) {
-	l := logic.NewGetUserCommentsLogic(ctx, s.svcCtx)
+	l := comment.NewGetUserCommentsLogic(ctx, s.svcCtx)
 	return l.GetUserComments(in)
 }

@@ -15,7 +15,7 @@ service Core {
   rpc ResetPasswordByEmail(ResetPasswordEmailReq) returns (ResetPasswordEmailResp){};
   rpc Logout(LogoutReq) returns (LogoutResp){};
 
-  // person 部分
+  // user 部分
   rpc GetUserProfile(GetUserProfileReq) returns (GetUserProfileResp){};
   rpc UpdateUserProfile(UpdateUserProfileReq) returns (UpdateUserProfileResp){};
   rpc ListUserLikedArticles(ListUserLikedArticlesReq) returns (ListArticlesResp){};

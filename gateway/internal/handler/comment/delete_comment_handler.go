@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"gateway/internal/logic/comment"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -21,11 +22,7 @@ func DeleteCommentHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := comment.NewDeleteCommentLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteComment(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		err := l.DeleteComment(&req)
+		response.Response(w, nil, err)
 	}
 }

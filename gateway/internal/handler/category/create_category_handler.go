@@ -1,9 +1,13 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package category
 
 import (
 	"net/http"
 
 	"gateway/internal/logic/category"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -18,11 +22,7 @@ func CreateCategoryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := category.NewCreateCategoryLogic(r.Context(), svcCtx)
-		resp, err := l.CreateCategory(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		err := l.CreateCategory(&req)
+		response.Response(w, nil, err)
 	}
 }

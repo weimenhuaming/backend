@@ -9,12 +9,6 @@ type (
 	UploadImageData {
 		Url string `json:"url"`
 	}
-
-	UploadImageResp {
-		Code int             `json:"code"`
-		Msg  string          `json:"msg"`
-		Data UploadImageData `json:"data"`
-	}
 )
 
 @server (
@@ -23,8 +17,8 @@ type (
 )
 service Gateway {
 	@handler UploadAvatar
-	post /upload/avatar returns (UploadImageResp)
+	post /upload/avatar returns (UploadImageData)
 
 	@handler UploadBlogImage
-	post /upload/blog returns (UploadImageResp)
+	post /upload/blog returns (UploadImageData)
 }

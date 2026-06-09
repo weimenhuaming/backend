@@ -1,154 +1,116 @@
 syntax = "v1"
 
-info(
-    title: "评论服务api"
-    desc: "评论服务api内容"
+info (
+	title: "评论服务api"
+	desc: "评论服务api内容"
 )
 
 type (
-    // 评论信息（一级评论和二级回复共用）
-    CommentInfo {
-        Id          uint64 `json:"id"`
-        ArticleId   uint64 `json:"article_id"`
-        UserId      uint64 `json:"user_id"`
-        ParentId    uint64 `json:"parent_id"`     // 父评论ID，0表示一级评论
-        RootId      uint64 `json:"root_id"`       // 根评论ID，一级评论时等于id
-        ReplyToId   uint64 `json:"reply_to_id,optional"`
-        ReplyToName string `json:"reply_to_name,optional"`
-        Content     string `json:"content"`
-        LikeCount   uint32 `json:"like_count"`
-        ChildCount  uint32 `json:"child_count"`   // 子评论数量
-        CreatedAt   string `json:"created_at"`
-        UserName    string `json:"user_name"`
-        UserAvatar  string `json:"user_avatar"`
-        Replies     []CommentInfo `json:"replies,optional"` // 回复列表（最多显示3条）
-    }
+	CommentInfo {
+		Id          uint64        `json:"id"`
+		ArticleId   uint64        `json:"article_id"`
+		UserId      uint64        `json:"user_id"`
+		ParentId    uint64        `json:"parent_id"`
+		RootId      uint64        `json:"root_id"`
+		ReplyToId   uint64        `json:"reply_to_id,optional"`
+		ReplyToName string        `json:"reply_to_name,optional"`
+		Content     string        `json:"content"`
+		LikeCount   uint32        `json:"like_count"`
+		ChildCount  uint32        `json:"child_count"`
+		CreatedAt   string        `json:"created_at"`
+		UserName    string        `json:"user_name"`
+		UserAvatar  string        `json:"user_avatar"`
+		Replies     []CommentInfo `json:"replies,optional"`
+	}
 
-        // 发表一级评论
-    CreateCommentReq {
-        ArticleId uint64 `json:"article_id"`
-        UserId    uint64 `json:"user_id"`
-        Content   string `json:"content"`
-    }
-    CreateCommentResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-        Data CreateCommentData `json:"data"`
-    }
-    CreateCommentData {
-        CommentId uint64 `json:"comment_id"`
-    }
+	CreateCommentReq {
+		ArticleId uint64 `json:"article_id"`
+		UserId    uint64 `json:"user_id"`
+		Content   string `json:"content"`
+	}
+	CreateCommentData {
+		CommentId uint64 `json:"comment_id"`
+	}
 
-        // 发表回复（二级评论）
-    CreateReplyReq {
-        RootId      uint64 `json:"root_id"`       // 根评论ID（一级评论的ID）
-        ParentId    uint64 `json:"parent_id"`     // 被回复的评论ID
-        UserId      uint64 `json:"user_id"`
-        ReplyToId   uint64 `json:"reply_to_id"`
-        ReplyToName string `json:"reply_to_name"`
-        Content     string `json:"content"`
-    }
-    CreateReplyResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-        Data CreateReplyData `json:"data"`
-    }
-    CreateReplyData {
-        ReplyId uint64 `json:"reply_id"`
-    }
+	CreateReplyReq {
+		RootId      uint64 `json:"root_id"`
+		ParentId    uint64 `json:"parent_id"`
+		UserId      uint64 `json:"user_id"`
+		ReplyToId   uint64 `json:"reply_to_id"`
+		ReplyToName string `json:"reply_to_name"`
+		Content     string `json:"content"`
+	}
+	CreateReplyData {
+		ReplyId uint64 `json:"reply_id"`
+	}
 
-        // 删除评论（软删除）
-    DeleteCommentReq {
-        Id uint64 `json:"id"`
-    }
-    DeleteCommentResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	DeleteCommentReq {
+		Id uint64 `json:"id"`
+	}
 
-        // 获取文章评论列表（只返回一级评论，parent_id=0）
-    GetArticleCommentsReq {
-        ArticleId uint64 `json:"article_id"`
-        Page      uint32 `json:"page"`
-        PageSize  uint32 `json:"page_size"`
-        OrderBy   string `json:"order_by,optional"` // hot, time
-    }
-    GetArticleCommentsResp {
-        Code int                   `json:"code"`
-        Msg  string                `json:"msg"`
-        Data GetArticleCommentsData `json:"data"`
-    }
-    GetArticleCommentsData {
-        Comments   []CommentInfo `json:"comments"`
-        Total      uint32        `json:"total"`
-        Page       uint32        `json:"page"`
-        PageSize   uint32        `json:"page_size"`
-    }
+	GetArticleCommentsReq {
+		ArticleId uint64 `json:"article_id"`
+		Page      uint32 `json:"page"`
+		PageSize  uint32 `json:"page_size"`
+		OrderBy   string `json:"order_by,optional"`
+	}
+	GetArticleCommentsData {
+		Comments []CommentInfo `json:"comments"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
 
-        // 获取评论的回复列表（点击更多时调用）
-    GetCommentRepliesReq {
-        RootId   uint64 `json:"root_id"`   // 根评论ID
-        Page     uint32 `json:"page"`
-        PageSize uint32 `json:"page_size"`
-    }
-    GetCommentRepliesResp {
-        Code int                    `json:"code"`
-        Msg  string                 `json:"msg"`
-        Data GetCommentRepliesData  `json:"data"`
-    }
-    GetCommentRepliesData {
-        Replies  []CommentInfo `json:"replies"`
-        Total    uint32        `json:"total"`
-        Page     uint32        `json:"page"`
-        PageSize uint32        `json:"page_size"`
-    }
+	GetCommentRepliesReq {
+		RootId   uint64 `json:"root_id"`
+		Page     uint32 `json:"page"`
+		PageSize uint32 `json:"page_size"`
+	}
+	GetCommentRepliesData {
+		Replies  []CommentInfo `json:"replies"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
 
-        // 获取用户的所有评论（包括一级评论和回复）
-    GetUserCommentsReq {
-        UserId   uint64 `json:"user_id"`
-        Page     uint32 `json:"page"`
-        PageSize uint32 `json:"page_size"`
-    }
-    GetUserCommentsResp {
-        Code int                 `json:"code"`
-        Msg  string              `json:"msg"`
-        Data GetUserCommentsData `json:"data"`
-    }
-    GetUserCommentsData {
-        Comments []CommentInfo `json:"comments"`
-        Total    uint32        `json:"total"`
-        Page     uint32        `json:"page"`
-        PageSize uint32        `json:"page_size"`
-    }
+	GetUserCommentsReq {
+		UserId   uint64 `json:"user_id"`
+		Page     uint32 `json:"page"`
+		PageSize uint32 `json:"page_size"`
+	}
+	GetUserCommentsData {
+		Comments []CommentInfo `json:"comments"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
 )
 
-// 获取文章评论列表（无需认证）
-@server(
-    group: comment
+@server (
+	group: comment
 )
 service Gateway {
-    @handler getArticleComments
-    post /comment/article_list (GetArticleCommentsReq) returns (GetArticleCommentsResp)
+	@handler getArticleComments
+	post /comment/article_list (GetArticleCommentsReq) returns (GetArticleCommentsData)
 
-    @handler getCommentReplies
-    post /comment/art_replies_list (GetCommentRepliesReq) returns (GetCommentRepliesResp)
+	@handler getCommentReplies
+	post /comment/art_replies_list (GetCommentRepliesReq) returns (GetCommentRepliesData)
 }
 
-// 需要认证的接口
-@server(
-    middleware: AuthMiddleware
-    group: comment
+@server (
+	middleware: AuthMiddleware
+	group:      comment
 )
 service Gateway {
-    @handler createComment
-    post /comment/create (CreateCommentReq) returns (CreateCommentResp)
+	@handler createComment
+	post /comment/create (CreateCommentReq) returns (CreateCommentData)
 
-    @handler createReply
-    post /comment/reply/create (CreateReplyReq) returns (CreateReplyResp)
+	@handler createReply
+	post /comment/reply/create (CreateReplyReq) returns (CreateReplyData)
 
-    @handler deleteComment
-    delete /comment/delete (DeleteCommentReq) returns (DeleteCommentResp)
+	@handler deleteComment
+	delete /comment/delete (DeleteCommentReq)
 
-    @handler getUserComments
-    get /comment/user/list (GetUserCommentsReq) returns (GetUserCommentsResp)
+	@handler getUserComments
+	get /comment/user/list (GetUserCommentsReq) returns (GetUserCommentsData)
 }

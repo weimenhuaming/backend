@@ -1,9 +1,13 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package agent
 
 import (
 	"net/http"
 
 	"gateway/internal/logic/agent"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -18,11 +22,7 @@ func DeleteKnowledgeCollectionHandler(svcCtx *svc.ServiceContext) http.HandlerFu
 		}
 
 		l := agent.NewDeleteKnowledgeCollectionLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteKnowledgeCollection(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		err := l.DeleteKnowledgeCollection(&req)
+		response.Response(w, nil, err)
 	}
 }

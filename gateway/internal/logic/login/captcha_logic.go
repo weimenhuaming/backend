@@ -24,7 +24,7 @@ func NewCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CaptchaLo
 	}
 }
 
-func (l *CaptchaLogic) Captcha() (resp *types.CaptchaResp, err error) {
+func (l *CaptchaLogic) Captcha() (resp *types.CaptchaData, err error) {
 	// 定义验证码配置
 	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80) // 高度、宽度、位数、干扰、字体大小
 	captcha := base64Captcha.NewCaptcha(driver, base64Captcha.DefaultMemStore)
@@ -34,12 +34,8 @@ func (l *CaptchaLogic) Captcha() (resp *types.CaptchaResp, err error) {
 		return nil, err
 	}
 
-	return &types.CaptchaResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.CaptchaData{
-			CaptchaId: id,
-			PicBase64: b64s,
-		},
+	return &types.CaptchaData{
+		CaptchaId: id,
+		PicBase64: b64s,
 	}, nil
 }

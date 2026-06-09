@@ -7,6 +7,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -27,10 +28,10 @@ func NewGetUserCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 	}
 }
 
-func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (resp *types.GetUserCommentsResp, err error) {
+func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (resp *types.GetUserCommentsData, err error) {
 	userId, ok := l.ctx.Value("X-user-Id").(uint64)
 	if !ok || userId == 0 {
-		return &types.GetUserCommentsResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 
 	page := int32(req.Page)
@@ -48,17 +49,13 @@ func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (r
 		Size:   size,
 	})
 	if err != nil {
-		return &types.GetUserCommentsResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.GetUserCommentsResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.GetUserCommentsData{
-			Comments: toTypesCommentList(r.GetComments()),
-			Total:    uint32(r.GetTotal()),
-			Page:     uint32(r.GetPage()),
-			PageSize: uint32(r.GetSize()),
-		},
+	return &types.GetUserCommentsData{
+		Comments: toTypesCommentList(r.GetComments()),
+		Total:    uint32(r.GetTotal()),
+		Page:     uint32(r.GetPage()),
+		PageSize: uint32(r.GetSize()),
 	}, nil
 }

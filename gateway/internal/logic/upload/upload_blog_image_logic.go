@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
@@ -25,20 +26,16 @@ func NewUploadBlogImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 	}
 }
 
-func (l *UploadBlogImageLogic) UploadBlogImage(r *http.Request) (resp *types.UploadImageResp, err error) {
+func (l *UploadBlogImageLogic) UploadBlogImage(r *http.Request) (resp *types.UploadImageData, err error) {
 	userId, ok := l.ctx.Value("X-user-Id").(uint64)
 	if !ok || userId == 0 {
-		return &types.UploadImageResp{Code: 401, Msg: "请先登录"}, nil
+		return nil, response.NewError(401, "请先登录")
 	}
 
 	urlPath, saveErr := utils.SaveUploadedImage(r, "file", "blog")
 	if saveErr != nil {
-		return &types.UploadImageResp{Code: 400, Msg: saveErr.Error()}, nil
+		return nil, response.NewError(400, saveErr.Error())
 	}
 
-	return &types.UploadImageResp{
-		Code: 200,
-		Msg:  "上传成功",
-		Data: types.UploadImageData{Url: urlPath},
-	}, nil
+	return &types.UploadImageData{Url: urlPath}, nil
 }

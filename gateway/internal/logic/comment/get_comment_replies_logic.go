@@ -7,6 +7,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -27,9 +28,9 @@ func NewGetCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesReq) (resp *types.GetCommentRepliesResp, err error) {
+func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesReq) (resp *types.GetCommentRepliesData, err error) {
 	if req.RootId == 0 {
-		return &types.GetCommentRepliesResp{Code: 400, Msg: "根评论ID不存在"}, nil
+		return nil, response.NewError(400, "根评论ID不存在")
 	}
 
 	page := int32(req.Page)
@@ -47,17 +48,13 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesR
 		Size:   size,
 	})
 	if err != nil {
-		return &types.GetCommentRepliesResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.GetCommentRepliesResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.GetCommentRepliesData{
-			Replies:  toTypesCommentList(r.GetReplies()),
-			Total:    uint32(r.GetTotal()),
-			Page:     uint32(r.GetPage()),
-			PageSize: uint32(r.GetSize()),
-		},
+	return &types.GetCommentRepliesData{
+		Replies:  toTypesCommentList(r.GetReplies()),
+		Total:    uint32(r.GetTotal()),
+		Page:     uint32(r.GetPage()),
+		PageSize: uint32(r.GetSize()),
 	}, nil
 }

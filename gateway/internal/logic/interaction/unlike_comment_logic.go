@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,13 +25,13 @@ func NewUnlikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unl
 	}
 }
 
-func (l *UnlikeCommentLogic) UnlikeComment(req *types.UnlikeCommentReq) (resp *types.UnlikeCommentResp, err error) {
+func (l *UnlikeCommentLogic) UnlikeComment(req *types.UnlikeCommentReq) (resp *types.LikeCommentData, err error) {
 	userID, ok, msg := likeUserFromCtx(l.ctx)
 	if !ok {
-		return &types.UnlikeCommentResp{Code: authFailCode(msg), Msg: msg}, nil
+		return nil, response.NewError(authFailCode(msg), msg)
 	}
 	if req.CommentId == 0 {
-		return &types.UnlikeCommentResp{Code: 400, Msg: "评论ID无效"}, nil
+		return nil, response.NewError(400, "评论ID无效")
 	}
 
 	r, err := l.svcCtx.Core.UnlikeComment(l.ctx, &core_client.UnlikeCommentReq{
@@ -38,12 +39,8 @@ func (l *UnlikeCommentLogic) UnlikeComment(req *types.UnlikeCommentReq) (resp *t
 		UserId:    userID,
 	})
 	if err != nil {
-		return &types.UnlikeCommentResp{Code: likeErrCode(err), Msg: err.Error()}, nil
+		return nil, response.NewError(likeErrCode(err), err.Error())
 	}
 
-	return &types.UnlikeCommentResp{
-		Code: 200,
-		Msg:  "已取消点赞",
-		Data: types.LikeCommentData{LikeCount: r.GetLikeCount()},
-	}, nil
+	return &types.LikeCommentData{LikeCount: r.GetLikeCount()}, nil
 }

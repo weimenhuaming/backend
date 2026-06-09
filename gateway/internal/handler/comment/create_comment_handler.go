@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"gateway/internal/logic/comment"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -22,10 +23,6 @@ func CreateCommentHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		l := comment.NewCreateCommentLogic(r.Context(), svcCtx)
 		resp, err := l.CreateComment(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		response.Response(w, resp, err)
 	}
 }

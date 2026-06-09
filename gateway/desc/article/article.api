@@ -1,157 +1,114 @@
 syntax = "v1"
 
 info (
-    title: "文章服务api"
-    desc: "文章服务api内容"
+	title: "文章服务api"
+	desc: "文章服务api内容"
 )
 
 type (
-    // 文章信息
-    ArticleInfo {
-        Id           uint64 `json:"id"`
-        UserId       uint64 `json:"user_id"`
-        CategoryId   uint64 `json:"category_id"`
-        Title        string `json:"title"`
-        Summary      string `json:"summary"`
-        Content      string `json:"content"`
-        Cover        string `json:"cover"`
-        ViewCount    uint32 `json:"view_count"`
-        LikeCount    uint32 `json:"like_count"`
-        FavorCount   uint32 `json:"favor_count"`
-        CommentCount uint32 `json:"comment_count"`
-        CreatedAt    string `json:"created_at"`
-        UpdatedAt    string `json:"updated_at"`
-        AuthorName   string `json:"author_name"`
-        AuthorAvatar string `json:"author_avatar"`
-    }
+	ArticleInfo {
+		Id           uint64 `json:"id"`
+		UserId       uint64 `json:"user_id"`
+		CategoryId   uint64 `json:"category_id"`
+		Title        string `json:"title"`
+		Summary      string `json:"summary"`
+		Content      string `json:"content"`
+		Cover        string `json:"cover"`
+		ViewCount    uint32 `json:"view_count"`
+		LikeCount    uint32 `json:"like_count"`
+		FavorCount   uint32 `json:"favor_count"`
+		CommentCount uint32 `json:"comment_count"`
+		CreatedAt    string `json:"created_at"`
+		UpdatedAt    string `json:"updated_at"`
+		AuthorName   string `json:"author_name"`
+		AuthorAvatar string `json:"author_avatar"`
+	}
 
-    // 创建文章
-    CreateArticleReq {
-        CategoryId uint64 `json:"category_id"`
-        Title      string `json:"title"`
-        Summary    string `json:"summary"`
-        Content    string `json:"content"`
-        Cover      string `json:"cover"`
-        UserId     uint64 `json:"user_id"`
-    }
-    CreateArticleResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	CreateArticleReq {
+		CategoryId uint64 `json:"category_id"`
+		Title      string `json:"title"`
+		Summary    string `json:"summary"`
+		Content    string `json:"content"`
+		Cover      string `json:"cover"`
+		UserId     uint64 `json:"user_id"`
+	}
 
-    // 更新文章
-    UpdateArticleReq {
-        Id         uint64 `json:"id"`
-        CategoryId uint64 `json:"category_id,optional"`
-        Title      string `json:"title,optional"`
-        Summary    string `json:"summary,optional"`
-        Content    string `json:"content,optional"`
-        Cover      string `json:"cover,optional"`
-    }
-    UpdateArticleResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	UpdateArticleReq {
+		Id         uint64 `json:"id"`
+		CategoryId uint64 `json:"category_id,optional"`
+		Title      string `json:"title,optional"`
+		Summary    string `json:"summary,optional"`
+		Content    string `json:"content,optional"`
+		Cover      string `json:"cover,optional"`
+	}
 
-    // 删除文章
-    DeleteArticleReq {
-        Id uint64 `json:"id"`
-    }
-    DeleteArticleResp {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	DeleteArticleReq {
+		Id uint64 `json:"id"`
+	}
 
-    // 获取文章详情
-    GetArticleDetailReq {
-        Id uint64 `json:"id"`
-    }
-    GetArticleDetailResp {
-        Code int         `json:"code"`
-        Msg  string      `json:"msg"`
-        Data ArticleInfo `json:"data"`
-    }
+	GetArticleDetailReq {
+		Id uint64 `json:"id"`
+	}
 
-    // 文章列表
-    ListArticlesReq {
-        Page       uint32 `json:"page"`
-        PageSize   uint32 `json:"page_size"`
-    }
-    ListArticlesResp {
-        Code int            `json:"code"`
-        Msg  string         `json:"msg"`
-        Data ListArticlesData `json:"data"`
-    }
-    ListArticlesData {
-        Articles []ArticleInfo `json:"articles"`
-        Total    uint32        `json:"total"`
-        Page     uint32        `json:"page"`
-        PageSize uint32        `json:"page_size"`
-    }
+	ListArticlesReq {
+		Page     uint32 `json:"page"`
+		PageSize uint32 `json:"page_size"`
+	}
+	ListArticlesData {
+		Articles []ArticleInfo `json:"articles"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
 
-    // 获取分类下文章列表
-    GetArticlesByCategoryReq {
-        CategoryId uint64 `json:"category_id"`
-        Page       uint32 `json:"page"`
-        PageSize   uint32 `json:"page_size"`
-    }
-    GetArticlesByCategoryResp {
-        Code int            `json:"code"`
-        Msg  string         `json:"msg"`
-        Data ListArticlesData `json:"data"`
-    }
+	GetArticlesByCategoryReq {
+		CategoryId uint64 `json:"category_id"`
+		Page       uint32 `json:"page"`
+		PageSize   uint32 `json:"page_size"`
+	}
 
-    // 搜索文章
-    SearchArticlesReq {
-        Keyword    string `json:"keyword"`
-        Page       uint32 `json:"page"`
-        PageSize   uint32 `json:"page_size"`
-        CategoryId uint64 `json:"category_id,optional"`
-    }
-    SearchArticlesResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data SearchArticlesData `json:"data"`
-    }
-    SearchArticlesData {
-        Articles []ArticleInfo `json:"articles"`
-        Total    uint32        `json:"total"`
-        Page     uint32        `json:"page"`
-        PageSize uint32        `json:"page_size"`
-    }
+	SearchArticlesReq {
+		Keyword    string `json:"keyword"`
+		Page       uint32 `json:"page"`
+		PageSize   uint32 `json:"page_size"`
+		CategoryId uint64 `json:"category_id,optional"`
+	}
+	SearchArticlesData {
+		Articles []ArticleInfo `json:"articles"`
+		Total    uint32        `json:"total"`
+		Page     uint32        `json:"page"`
+		PageSize uint32        `json:"page_size"`
+	}
 )
 
-// 定义文章服务api的描述
 @server (
-    group: article
+	group: article
 )
 service Gateway {
-    @handler getArticleDetail
-    post /article/detail (GetArticleDetailReq) returns (GetArticleDetailResp)
+	@handler getArticleDetail
+	post /article/detail (GetArticleDetailReq) returns (ArticleInfo)
 
-    @handler listArticles
-    post /article/list (ListArticlesReq) returns (ListArticlesResp)
+	@handler listArticles
+	post /article/list (ListArticlesReq) returns (ListArticlesData)
 
-    @handler searchArticles
-    post /article/search (SearchArticlesReq) returns (SearchArticlesResp)
+	@handler searchArticles
+	post /article/search (SearchArticlesReq) returns (SearchArticlesData)
 
-    @handler getArticlesByCategory
-    post /article/list_by_category (GetArticlesByCategoryReq) returns (GetArticlesByCategoryResp)
+	@handler getArticlesByCategory
+	post /article/list_by_category (GetArticlesByCategoryReq) returns (ListArticlesData)
 }
 
-
 @server (
-    middleware: AuthMiddleware // 认证中间件，所有请求都需要经过这个中间件进行认证
-    group: article
+	middleware: AuthMiddleware
+	group:      article
 )
 service Gateway {
-     @handler createArticle
-     post /article/create (CreateArticleReq) returns (CreateArticleResp)
+	@handler createArticle
+	post /article/create (CreateArticleReq)
 
-     @handler updateArticle
-     put /article/update (UpdateArticleReq) returns (UpdateArticleResp)
+	@handler updateArticle
+	put /article/update (UpdateArticleReq)
 
-     @handler deleteArticle
-     delete /article/delete (DeleteArticleReq) returns (DeleteArticleResp)
-
+	@handler deleteArticle
+	delete /article/delete (DeleteArticleReq)
 }

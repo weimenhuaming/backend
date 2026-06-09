@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,9 +25,9 @@ func NewGetArticleLikeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLikeStatusReq) (resp *types.GetArticleLikeStatusResp, err error) {
+func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLikeStatusReq) (resp *types.GetArticleLikeStatusData, err error) {
 	if req.ArticleId == 0 {
-		return &types.GetArticleLikeStatusResp{Code: 400, Msg: "文章ID无效"}, nil
+		return nil, response.NewError(400, "文章ID无效")
 	}
 
 	r, err := l.svcCtx.Core.GetArticleLikeStatus(l.ctx, &core_client.GetArticleLikeStatusReq{
@@ -34,12 +35,8 @@ func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLi
 		UserId:    userIDFromCtx(l.ctx),
 	})
 	if err != nil {
-		return &types.GetArticleLikeStatusResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.GetArticleLikeStatusResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.GetArticleLikeStatusData{Liked: r.GetLiked()},
-	}, nil
+	return &types.GetArticleLikeStatusData{Liked: r.GetLiked()}, nil
 }

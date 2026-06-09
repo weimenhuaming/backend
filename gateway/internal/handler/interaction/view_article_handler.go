@@ -1,9 +1,13 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package interaction
 
 import (
 	"net/http"
 
 	"gateway/internal/logic/interaction"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -19,10 +23,6 @@ func ViewArticleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		l := interaction.NewViewArticleLogic(r.Context(), svcCtx)
 		resp, err := l.ViewArticle(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		response.Response(w, resp, err)
 	}
 }

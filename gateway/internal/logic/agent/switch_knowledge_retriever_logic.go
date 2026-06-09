@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	agent_client "other-rpc/agent_client"
@@ -27,14 +28,14 @@ func NewSwitchKnowledgeRetrieverLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.SwitchKnowledgeRetrieverReq) (resp *types.SwitchKnowledgeRetrieverResp, err error) {
+func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.SwitchKnowledgeRetrieverReq) (resp *types.SwitchKnowledgeRetrieverData, err error) {
 	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return &types.SwitchKnowledgeRetrieverResp{Code: code, Msg: msg}, nil
+		return nil, response.NewError(code, msg)
 	}
 
 	collection := strings.TrimSpace(req.Collection)
 	if collection == "" {
-		return &types.SwitchKnowledgeRetrieverResp{Code: 400, Msg: "collection 名称不能为空"}, nil
+		return nil, response.NewError(400, "collection 名称不能为空")
 	}
 
 	r, err := l.svcCtx.Agent.SwitchRetriever(l.ctx, &agent_client.SwitchRetrieverRequest{
@@ -42,17 +43,13 @@ func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.Swit
 	})
 	if err != nil {
 		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
-			return &types.SwitchKnowledgeRetrieverResp{Code: 404, Msg: st.Message()}, nil
+			return nil, response.NewError(404, st.Message())
 		}
 		l.Errorf("switch knowledge retriever failed: %v", err)
-		return &types.SwitchKnowledgeRetrieverResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.SwitchKnowledgeRetrieverResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.SwitchKnowledgeRetrieverData{
-			Message: r.GetMessage(),
-		},
+	return &types.SwitchKnowledgeRetrieverData{
+		Message: r.GetMessage(),
 	}, nil
 }

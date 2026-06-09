@@ -5,55 +5,37 @@ info (
 	desc:  "登入服务api内容"
 )
 
-// goctl api go -api desc/login/login.api -dir . -style gozero
+// 生成代码: make gateway-code
 type (
-    // 普通验证码
-    CaptchaResp {
-        Code int `json:"code"`
-        Msg  string `json:"msg"`
-        Data CaptchaData `json:"data"`
-    }
-    CaptchaData {
-        CaptchaId string `json:"captcha_id"`
-        PicBase64 string `json:"pic_base64"`
-    }
+	// 普通验证码
+	CaptchaData {
+		CaptchaId string `json:"captcha_id"`
+		PicBase64 string `json:"pic_base64"`
+	}
 
-    // 发送验证码到邮箱
-    EmailReq {
-        Email string `json:"email"`
-    }
-    EmailResp {
-        Code int `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	// 发送验证码到邮箱
+	EmailReq {
+		Email string `json:"email"`
+	}
 
-    // 注册请求和响应
+	// 注册请求
 	RegisterReq {
-	    Name    string `json:"name"`
+		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 		Captcha  string `json:"captcha"`
 	}
-	RegisterResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
-	}
 
-    // 登入请求和响应
+	// 登入请求和响应
 	LoginEmailReq {
-		Email        string `json:"email"`
-		Captcha      string `json:"captcha"`
+		Email   string `json:"email"`
+		Captcha string `json:"captcha"`
 	}
 	LoginReq {
 		Name      string `json:"name"`
 		Password  string `json:"password"`
 		Code      string `json:"code"`
 		CaptchaId string `json:"captcha_id"`
-	}
-	LoginResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
-		Data LoginData `json:"data"`
 	}
 	LoginData {
 		Id           uint64 `json:"id"`
@@ -64,65 +46,51 @@ type (
 		Avatar       string `json:"avatar"`
 		Role         string `json:"role"`
 		Sex          string `json:"sex"`
-		Age          uint64  `json:"age"`
+		Age          uint64 `json:"age"`
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
 	}
 
-    // 找回密码请求和响应
+	// 找回密码
 	ResetPasswordReq {
-		Email    string `json:"email"`
-		Captcha  string `json:"captcha"`
-		NewPassword string `json:"newpassword"`
-		ConfirmPassword  string `json:"confirmpassword"`
-	}
-	ResetPasswordResp {
-		Code int `json:"code"`
-		Msg  string `json:"msg"`
+		Email           string `json:"email"`
+		Captcha         string `json:"captcha"`
+		NewPassword     string `json:"newpassword"`
+		ConfirmPassword string `json:"confirmpassword"`
 	}
 
-    LogoutReq{}
-    LogoutResp {
-        Code int `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	LogoutReq {}
 )
 
 //======================================================================================================================
-// 定义user api 服务的描述
 @server (
 	group: login
 )
 service Gateway {
-    // 邮箱登入操作
 	@handler emailLogin
-	post /emaillogin (LoginEmailReq) returns (LoginResp)
+	post /emaillogin (LoginEmailReq) returns (LoginData)
 
 	@handler login
-	post /login (LoginReq) returns (LoginResp)
+	post /login (LoginReq) returns (LoginData)
 
-    // 注册功能
 	@handler register
-	post /register (RegisterReq) returns (RegisterResp)
+	post /register (RegisterReq)
 
-    // 验证码生成
 	@handler captcha
-	get /captcha returns (CaptchaResp)
+	get /captcha returns (CaptchaData)
 
-    // 发送验证码到邮箱
 	@handler sendEmail
-	post /sendemail (EmailReq) returns (EmailResp)
+	post /sendemail (EmailReq)
 
-    // 通过邮箱修改密码
 	@handler reset_password_by_email
-	post /reset_password_by_email (ResetPasswordReq) returns (ResetPasswordResp)
+	post /reset_password_by_email (ResetPasswordReq)
 }
 
 @server (
-    middleware: AuthMiddleware // 认证中间件，所有请求都需要经过这个中间件进行认证
-    group: login
+	middleware: AuthMiddleware
+	group:      login
 )
 service Gateway {
-  @handler logout
-  get /logout (LogoutReq) returns (LogoutResp)
+	@handler logout
+	get /logout (LogoutReq)
 }

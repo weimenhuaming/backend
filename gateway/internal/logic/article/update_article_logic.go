@@ -23,8 +23,8 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 	}
 }
 
-func (l *UpdateArticleLogic) UpdateArticle(req *types.UpdateArticleReq) (resp *types.UpdateArticleResp, err error) {
+func (l *UpdateArticleLogic) UpdateArticle(req *types.UpdateArticleReq) error {
 	// todo: add your logic here and delete this line
 
-	return
+	return nil
 }

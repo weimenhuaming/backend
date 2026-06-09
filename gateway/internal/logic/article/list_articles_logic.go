@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,7 +25,7 @@ func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 	}
 }
 
-func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesResp, err error) {
+func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesData, err error) {
 	// call core rpc
 	rpcReq := &core_client.ListArticlesReq{
 		Page:     req.Page,
@@ -33,10 +34,7 @@ func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *type
 
 	r, err := l.svcCtx.Core.ListArticles(l.ctx, rpcReq)
 	if err != nil {
-		return &types.ListArticlesResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
 	var arts []types.ArticleInfo
@@ -60,14 +58,10 @@ func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *type
 		})
 	}
 
-	return &types.ListArticlesResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ListArticlesData{
-			Articles: arts,
-			Total:    r.GetTotal(),
-			Page:     r.GetPage(),
-			PageSize: r.GetPageSize(),
-		},
+	return &types.ListArticlesData{
+		Articles: arts,
+		Total:    r.GetTotal(),
+		Page:     r.GetPage(),
+		PageSize: r.GetPageSize(),
 	}, nil
 }

@@ -3,6 +3,7 @@ package article
 import (
 	"context"
 	"core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -23,26 +24,20 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 	}
 }
 
-func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *types.CreateArticleResp, err error) {
+func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) error {
 	// basic validation
 	role := l.ctx.Value("X-user-Role")
 	if role != "admin" {
-		return &types.CreateArticleResp{
-			Code: 403,
-			Msg:  "非管理员，没有权限执行",
-		}, nil
+		return response.NewError(403, "非管理员，没有权限执行")
 	}
 
 	if req.Title == "" && req.Content == "" {
-		return &types.CreateArticleResp{
-			Code: 400,
-			Msg:  "title is required",
-		}, nil
+		return response.NewError(400, "title is required")
 	}
 
 	// call core rpc
 	UserId := l.ctx.Value("X-user-Id").(uint64)
-	_, err = l.svcCtx.Core.CreateArticle(l.ctx, &core_client.CreateArticleReq{
+	_, err := l.svcCtx.Core.CreateArticle(l.ctx, &core_client.CreateArticleReq{
 		CategoryId: req.CategoryId,
 		Title:      req.Title,
 		Summary:    req.Summary,
@@ -51,14 +46,8 @@ func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *t
 		UserId:     UserId,
 	})
 	if err != nil {
-		return &types.CreateArticleResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
+		return response.NewError(500, err.Error())
 	}
 
-	return &types.CreateArticleResp{
-		Code: 200,
-		Msg:  "创建成功",
-	}, nil
+	return nil
 }

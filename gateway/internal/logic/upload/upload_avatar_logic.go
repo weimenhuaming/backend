@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
@@ -25,20 +26,16 @@ func NewUploadAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Uplo
 	}
 }
 
-func (l *UploadAvatarLogic) UploadAvatar(r *http.Request) (resp *types.UploadImageResp, err error) {
+func (l *UploadAvatarLogic) UploadAvatar(r *http.Request) (resp *types.UploadImageData, err error) {
 	role, _ := l.ctx.Value("X-user-Role").(string)
 	if role != "admin" {
-		return &types.UploadImageResp{Code: 403, Msg: "仅管理员可上传头像"}, nil
+		return nil, response.NewError(403, "仅管理员可上传头像")
 	}
 
 	urlPath, saveErr := utils.SaveUploadedImage(r, "file", "avatars")
 	if saveErr != nil {
-		return &types.UploadImageResp{Code: 400, Msg: saveErr.Error()}, nil
+		return nil, response.NewError(400, saveErr.Error())
 	}
 
-	return &types.UploadImageResp{
-		Code: 200,
-		Msg:  "上传成功",
-		Data: types.UploadImageData{Url: urlPath},
-	}, nil
+	return &types.UploadImageData{Url: urlPath}, nil
 }

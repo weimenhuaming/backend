@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	agent_client "other-rpc/agent_client"
@@ -27,10 +28,10 @@ func NewAgentChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AgentCh
 	}
 }
 
-func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentChatResp, err error) {
+func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentChatData, err error) {
 	question := strings.TrimSpace(req.Question)
 	if question == "" {
-		return &types.AgentChatResp{Code: 400, Msg: "问题不能为空"}, nil
+		return nil, response.NewError(400, "问题不能为空")
 	}
 
 	sessionId := strings.TrimSpace(req.SessionId)
@@ -47,17 +48,13 @@ func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentCh
 	})
 	if err != nil {
 		l.Errorf("agent chat failed: %v", err)
-		return &types.AgentChatResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.AgentChatResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.AgentChatData{
-			SessionId: sessionId,
-			Answer:    r.GetAnswer(),
-			MessageId: uuid.NewString(),
-			Timestamp: time.Now().Unix(),
-		},
+	return &types.AgentChatData{
+		SessionId: sessionId,
+		Answer:    r.GetAnswer(),
+		MessageId: uuid.NewString(),
+		Timestamp: time.Now().Unix(),
 	}, nil
 }

@@ -1,122 +1,87 @@
 syntax = "v1"
 
 info (
-    title: "互动服务api"
-    desc:  "点赞、浏览等互动接口"
+	title: "互动服务api"
+	desc:  "点赞、浏览等互动接口"
 )
 
 type (
-    LikeArticleReq {
-        ArticleId uint64 `json:"article_id"`
-    }
-    LikeArticleResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data LikeArticleData  `json:"data"`
-    }
-    LikeArticleData {
-        LikeCount uint32 `json:"like_count"`
-    }
+	LikeArticleReq {
+		ArticleId uint64 `json:"article_id"`
+	}
+	LikeArticleData {
+		LikeCount uint32 `json:"like_count"`
+	}
 
-    UnlikeArticleReq {
-        ArticleId uint64 `json:"article_id"`
-    }
-    UnlikeArticleResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data LikeArticleData  `json:"data"`
-    }
+	UnlikeArticleReq {
+		ArticleId uint64 `json:"article_id"`
+	}
 
-    LikeCommentReq {
-        CommentId uint64 `json:"comment_id"`
-    }
-    LikeCommentResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data LikeCommentData  `json:"data"`
-    }
-    LikeCommentData {
-        LikeCount uint32 `json:"like_count"`
-    }
+	LikeCommentReq {
+		CommentId uint64 `json:"comment_id"`
+	}
+	LikeCommentData {
+		LikeCount uint32 `json:"like_count"`
+	}
 
-    UnlikeCommentReq {
-        CommentId uint64 `json:"comment_id"`
-    }
-    UnlikeCommentResp {
-        Code int              `json:"code"`
-        Msg  string           `json:"msg"`
-        Data LikeCommentData  `json:"data"`
-    }
+	UnlikeCommentReq {
+		CommentId uint64 `json:"comment_id"`
+	}
 
-    ViewArticleReq {
-        ArticleId uint64 `json:"article_id"`
-    }
-    ViewArticleResp {
-        Code int             `json:"code"`
-        Msg  string          `json:"msg"`
-        Data ViewArticleData `json:"data"`
-    }
-    ViewArticleData {
-        ViewCount uint32 `json:"view_count"`
-    }
+	ViewArticleReq {
+		ArticleId uint64 `json:"article_id"`
+	}
+	ViewArticleData {
+		ViewCount uint32 `json:"view_count"`
+	}
 
-    GetArticleLikeStatusReq {
-        ArticleId uint64 `json:"article_id"`
-    }
-    GetArticleLikeStatusResp {
-        Code int                      `json:"code"`
-        Msg  string                   `json:"msg"`
-        Data GetArticleLikeStatusData `json:"data"`
-    }
-    GetArticleLikeStatusData {
-        Liked bool `json:"liked"`
-    }
+	GetArticleLikeStatusReq {
+		ArticleId uint64 `json:"article_id"`
+	}
+	GetArticleLikeStatusData {
+		Liked bool `json:"liked"`
+	}
 
-    BatchGetCommentLikeStatusReq {
-        CommentIds []uint64 `json:"comment_ids"`
-    }
-    BatchGetCommentLikeStatusResp {
-        Code int                           `json:"code"`
-        Msg  string                        `json:"msg"`
-        Data BatchGetCommentLikeStatusData `json:"data"`
-    }
-    CommentLikeStatusItem {
-        CommentId uint64 `json:"comment_id"`
-        Liked     bool   `json:"liked"`
-    }
-    BatchGetCommentLikeStatusData {
-        Items []CommentLikeStatusItem `json:"items"`
-    }
+	BatchGetCommentLikeStatusReq {
+		CommentIds []uint64 `json:"comment_ids"`
+	}
+	CommentLikeStatusItem {
+		CommentId uint64 `json:"comment_id"`
+		Liked     bool   `json:"liked"`
+	}
+	BatchGetCommentLikeStatusData {
+		Items []CommentLikeStatusItem `json:"items"`
+	}
 )
 
 @server (
-    group: interaction
+	group: interaction
 )
 service Gateway {
-    @handler viewArticle
-    post /article/view (ViewArticleReq) returns (ViewArticleResp)
+	@handler viewArticle
+	post /article/view (ViewArticleReq) returns (ViewArticleData)
 }
 
 @server (
-    middleware: AuthMiddleware
-    group: interaction
+	middleware: AuthMiddleware
+	group:      interaction
 )
 service Gateway {
-    @handler likeArticle
-    post /article/like (LikeArticleReq) returns (LikeArticleResp)
+	@handler likeArticle
+	post /article/like (LikeArticleReq) returns (LikeArticleData)
 
-    @handler unlikeArticle
-    post /article/unlike (UnlikeArticleReq) returns (UnlikeArticleResp)
+	@handler unlikeArticle
+	post /article/unlike (UnlikeArticleReq) returns (LikeArticleData)
 
-    @handler likeComment
-    post /comment/like (LikeCommentReq) returns (LikeCommentResp)
+	@handler likeComment
+	post /comment/like (LikeCommentReq) returns (LikeCommentData)
 
-    @handler unlikeComment
-    post /comment/unlike (UnlikeCommentReq) returns (UnlikeCommentResp)
+	@handler unlikeComment
+	post /comment/unlike (UnlikeCommentReq) returns (LikeCommentData)
 
-    @handler getArticleLikeStatus
-    post /article/like_status (GetArticleLikeStatusReq) returns (GetArticleLikeStatusResp)
+	@handler getArticleLikeStatus
+	post /article/like_status (GetArticleLikeStatusReq) returns (GetArticleLikeStatusData)
 
-    @handler batchGetCommentLikeStatus
-    post /comment/like_status/batch (BatchGetCommentLikeStatusReq) returns (BatchGetCommentLikeStatusResp)
+	@handler batchGetCommentLikeStatus
+	post /comment/like_status/batch (BatchGetCommentLikeStatusReq) returns (BatchGetCommentLikeStatusData)
 }

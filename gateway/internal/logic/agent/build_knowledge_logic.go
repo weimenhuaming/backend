@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	agent_client "other-rpc/agent_client"
@@ -28,14 +29,14 @@ func NewBuildKnowledgeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bu
 	}
 }
 
-func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp *types.BuildKnowledgeResp, err error) {
+func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp *types.BuildKnowledgeData, err error) {
 	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return &types.BuildKnowledgeResp{Code: code, Msg: msg}, nil
+		return nil, response.NewError(code, msg)
 	}
 
 	collection := strings.TrimSpace(req.Collection)
 	if collection == "" {
-		return &types.BuildKnowledgeResp{Code: 400, Msg: "collection 名称不能为空"}, nil
+		return nil, response.NewError(400, "collection 名称不能为空")
 	}
 
 	buildCtx, cancel := context.WithTimeout(context.WithoutCancel(l.ctx), 2*time.Minute)
@@ -48,22 +49,18 @@ func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
 			case codes.AlreadyExists:
-				return &types.BuildKnowledgeResp{Code: 409, Msg: st.Message()}, nil
+				return nil, response.NewError(409, st.Message())
 			case codes.InvalidArgument:
-				return &types.BuildKnowledgeResp{Code: 400, Msg: st.Message()}, nil
+				return nil, response.NewError(400, st.Message())
 			}
 		}
 		l.Errorf("build knowledge failed: %v", err)
-		return &types.BuildKnowledgeResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.BuildKnowledgeResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.BuildKnowledgeData{
-			Message:    r.GetMessage(),
-			DocCount:   r.GetDocCount(),
-			ChunkCount: r.GetChunkCount(),
-		},
+	return &types.BuildKnowledgeData{
+		Message:    r.GetMessage(),
+		DocCount:   r.GetDocCount(),
+		ChunkCount: r.GetChunkCount(),
 	}, nil
 }

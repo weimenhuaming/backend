@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,21 +25,17 @@ func NewViewArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ViewA
 	}
 }
 
-func (l *ViewArticleLogic) ViewArticle(req *types.ViewArticleReq) (resp *types.ViewArticleResp, err error) {
+func (l *ViewArticleLogic) ViewArticle(req *types.ViewArticleReq) (resp *types.ViewArticleData, err error) {
 	if req.ArticleId == 0 {
-		return &types.ViewArticleResp{Code: 400, Msg: "文章ID无效"}, nil
+		return nil, response.NewError(400, "文章ID无效")
 	}
 
 	r, err := l.svcCtx.Core.ViewArticle(l.ctx, &core_client.ViewArticleReq{
 		ArticleId: req.ArticleId,
 	})
 	if err != nil {
-		return &types.ViewArticleResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.ViewArticleResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ViewArticleData{ViewCount: r.GetViewCount()},
-	}, nil
+	return &types.ViewArticleData{ViewCount: r.GetViewCount()}, nil
 }

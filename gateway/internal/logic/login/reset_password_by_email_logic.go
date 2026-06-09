@@ -3,6 +3,7 @@ package login
 import (
 	"context"
 	"core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
@@ -24,38 +25,23 @@ func NewReset_password_by_emailLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetPasswordReq) (resp *types.ResetPasswordResp, err error) {
+func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetPasswordReq) error {
 	if !utils.IsValidEmail(req.Email) {
-		return &types.ResetPasswordResp{
-			Code: 400,
-			Msg:  "邮箱格式不正确",
-		}, nil
+		return response.NewError(400, "邮箱格式不正确")
 	}
 	if req.NewPassword == "" || req.Captcha == "" {
-		return &types.ResetPasswordResp{
-			Code: 400,
-			Msg:  "密码或验证码不能为空",
-		}, nil
+		return response.NewError(400, "密码或验证码不能为空")
 	}
 	if req.NewPassword != req.ConfirmPassword {
-		return &types.ResetPasswordResp{
-			Code: 400,
-			Msg:  "两次输入的密码不一致",
-		}, nil
+		return response.NewError(400, "两次输入的密码不一致")
 	}
 
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
-		return &types.ResetPasswordResp{
-			Code: 400,
-			Msg:  "验证码不存在或已过期",
-		}, nil
+		return response.NewError(400, "验证码不存在或已过期")
 	}
 	if captcha != req.Captcha {
-		return &types.ResetPasswordResp{
-			Code: 400,
-			Msg:  "验证码错误",
-		}, nil
+		return response.NewError(400, "验证码错误")
 	}
 
 	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core_client.ResetPasswordEmailReq{
@@ -63,14 +49,8 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		Password: utils.Bcrypt(req.NewPassword),
 	})
 	if err != nil {
-		return &types.ResetPasswordResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
+		return response.NewError(500, err.Error())
 	}
 
-	return &types.ResetPasswordResp{
-		Code: 200,
-		Msg:  "密码重置成功",
-	}, nil
+	return nil
 }

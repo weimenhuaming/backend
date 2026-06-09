@@ -4,6 +4,7 @@ import (
 	"context"
 	"core-rpc/core_client"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,14 +25,11 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 	}
 }
 
-func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesResp, err error) {
+func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesData, err error) {
 	_ = req
 	rpcResp, err := l.svcCtx.Core.ListCategories(l.ctx, &core_client.ListCategoriesReq{})
 	if err != nil {
-		return &types.ListCategoriesResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
 	var cats []types.CategoryInfo
@@ -42,11 +40,7 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 		})
 	}
 
-	return &types.ListCategoriesResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ListCategoriesData{Categories: cats},
-	}, nil
+	return &types.ListCategoriesData{Categories: cats}, nil
 
 	return
 }

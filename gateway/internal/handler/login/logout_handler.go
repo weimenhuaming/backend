@@ -1,12 +1,16 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package login
 
 import (
-	"gateway/internal/utils"
 	"net/http"
 
 	"gateway/internal/logic/login"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
@@ -19,16 +23,14 @@ func LogoutHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := login.NewLogoutLogic(r.Context(), svcCtx)
-		RefreshToken, err2 := utils.GetRefreshTokenFromRequest(r)
-		if err2 != nil {
+		refreshToken, err := utils.GetRefreshTokenFromRequest(r)
+		if err != nil {
+			response.Response(w, nil, err)
 			return
 		}
-		resp, err := l.Logout(&req, RefreshToken)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+
+		l := login.NewLogoutLogic(r.Context(), svcCtx)
+		err = l.Logout(&req, refreshToken)
+		response.Response(w, nil, err)
 	}
 }

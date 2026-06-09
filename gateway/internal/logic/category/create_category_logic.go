@@ -4,6 +4,7 @@ import (
 	"context"
 	"core-rpc/core_client"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,34 +25,22 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 	}
 }
 
-func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp *types.CreateCategoryResp, err error) {
+func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) error {
 	role := l.ctx.Value("X-user-Role")
 	if role != "admin" {
-		return &types.CreateCategoryResp{
-			Code: 403,
-			Msg:  "非管理员，没有权限执行",
-		}, nil
+		return response.NewError(403, "非管理员，没有权限执行")
 	}
 
 	if req == nil || req.Name == "" {
-		return &types.CreateCategoryResp{
-			Code: 400,
-			Msg:  "name is required",
-		}, nil
+		return response.NewError(400, "name is required")
 	}
 
-	_, err = l.svcCtx.Core.CreateCategory(l.ctx, &core_client.CreateCategoryReq{
+	_, err := l.svcCtx.Core.CreateCategory(l.ctx, &core_client.CreateCategoryReq{
 		Name: req.Name,
 	})
 	if err != nil {
-		return &types.CreateCategoryResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
+		return response.NewError(500, err.Error())
 	}
 
-	return &types.CreateCategoryResp{
-		Code: 200,
-		Msg:  "ok",
-	}, nil
+	return nil
 }

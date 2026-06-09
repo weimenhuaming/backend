@@ -18,12 +18,6 @@ type (
 		Message   string `json:"message"`
 	}
 
-	CreateSessionResp {
-		Code int               `json:"code"`
-		Msg  string            `json:"msg"`
-		Data CreateSessionData `json:"data"`
-	}
-
 	AgentChatReq {
 		SessionId string `json:"session_id,optional"`
 		UserId    string `json:"user_id,optional"`
@@ -37,12 +31,6 @@ type (
 		Timestamp int64  `json:"timestamp"`
 	}
 
-	AgentChatResp {
-		Code int           `json:"code"`
-		Msg  string        `json:"msg"`
-		Data AgentChatData `json:"data"`
-	}
-
 	KnowledgeCollectionInfo {
 		Name       string `json:"name"`
 		DocCount   int32  `json:"doc_count"`
@@ -51,54 +39,28 @@ type (
 	}
 
 	ListKnowledgeCollectionsReq {}
-
 	ListKnowledgeCollectionsData {
 		Collections []KnowledgeCollectionInfo `json:"collections"`
-	}
-
-	ListKnowledgeCollectionsResp {
-		Code int                        `json:"code"`
-		Msg  string                     `json:"msg"`
-		Data ListKnowledgeCollectionsData `json:"data"`
 	}
 
 	BuildKnowledgeReq {
 		Collection string `json:"collection"`
 	}
-
 	BuildKnowledgeData {
 		Message    string `json:"message"`
 		DocCount   int32  `json:"doc_count"`
 		ChunkCount int32  `json:"chunk_count"`
 	}
 
-	BuildKnowledgeResp {
-		Code int              `json:"code"`
-		Msg  string           `json:"msg"`
-		Data BuildKnowledgeData `json:"data"`
-	}
-
 	SwitchKnowledgeRetrieverReq {
 		Collection string `json:"collection"`
 	}
-
 	SwitchKnowledgeRetrieverData {
 		Message string `json:"message"`
 	}
 
-	SwitchKnowledgeRetrieverResp {
-		Code int                        `json:"code"`
-		Msg  string                     `json:"msg"`
-		Data SwitchKnowledgeRetrieverData `json:"data"`
-	}
-
 	DeleteKnowledgeCollectionReq {
 		Collection string `json:"collection"`
-	}
-
-	DeleteKnowledgeCollectionResp {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
 	}
 )
 
@@ -107,10 +69,10 @@ type (
 )
 service Gateway {
 	@handler CreateSession
-	post /agent/session/create (CreateSessionReq) returns (CreateSessionResp)
+	post /agent/session/create (CreateSessionReq) returns (CreateSessionData)
 
 	@handler AgentChat
-	post /agent/chat (AgentChatReq) returns (AgentChatResp)
+	post /agent/chat (AgentChatReq) returns (AgentChatData)
 }
 
 @server (
@@ -119,14 +81,14 @@ service Gateway {
 )
 service Gateway {
 	@handler ListKnowledgeCollections
-	get /agent/knowledge/collections (ListKnowledgeCollectionsReq) returns (ListKnowledgeCollectionsResp)
+	get /agent/knowledge/collections (ListKnowledgeCollectionsReq) returns (ListKnowledgeCollectionsData)
 
 	@handler BuildKnowledge
-	post /agent/knowledge/build (BuildKnowledgeReq) returns (BuildKnowledgeResp)
+	post /agent/knowledge/build (BuildKnowledgeReq) returns (BuildKnowledgeData)
 
 	@handler SwitchKnowledgeRetriever
-	post /agent/knowledge/switch (SwitchKnowledgeRetrieverReq) returns (SwitchKnowledgeRetrieverResp)
+	post /agent/knowledge/switch (SwitchKnowledgeRetrieverReq) returns (SwitchKnowledgeRetrieverData)
 
 	@handler DeleteKnowledgeCollection
-	delete /agent/knowledge/collection (DeleteKnowledgeCollectionReq) returns (DeleteKnowledgeCollectionResp)
+	delete /agent/knowledge/collection (DeleteKnowledgeCollectionReq)
 }

@@ -5,6 +5,7 @@ info (
 	desc:  "测试，后续作为各个api的总描述文件"
 )
 
+// 生成代码: make gateway-code
 // 引入依赖文件
 import "./login/login.api"
 import "./user/user.api"

@@ -7,6 +7,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -27,16 +28,16 @@ func NewCreateReplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 	}
 }
 
-func (l *CreateReplyLogic) CreateReply(req *types.CreateReplyReq) (resp *types.CreateReplyResp, err error) {
+func (l *CreateReplyLogic) CreateReply(req *types.CreateReplyReq) (resp *types.CreateReplyData, err error) {
 	userId, ok := l.ctx.Value("X-user-Id").(uint64)
 	if !ok || userId == 0 {
-		return &types.CreateReplyResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 	if req.RootId == 0 || req.ParentId == 0 {
-		return &types.CreateReplyResp{Code: 400, Msg: "评论参数无效"}, nil
+		return nil, response.NewError(400, "评论参数无效")
 	}
 	if req.Content == "" {
-		return &types.CreateReplyResp{Code: 400, Msg: "回复内容不能为空"}, nil
+		return nil, response.NewError(400, "回复内容不能为空")
 	}
 
 	r, err := l.svcCtx.Core.CreateReply(l.ctx, &core_client.CreateReplyReq{
@@ -48,12 +49,8 @@ func (l *CreateReplyLogic) CreateReply(req *types.CreateReplyReq) (resp *types.C
 		Content:     req.Content,
 	})
 	if err != nil {
-		return &types.CreateReplyResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.CreateReplyResp{
-		Code: 200,
-		Msg:  "回复成功",
-		Data: types.CreateReplyData{ReplyId: r.GetReplyId()},
-	}, nil
+	return &types.CreateReplyData{ReplyId: r.GetReplyId()}, nil
 }

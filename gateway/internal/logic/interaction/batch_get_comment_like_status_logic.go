@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,13 +25,9 @@ func NewBatchGetCommentLikeStatusLogic(ctx context.Context, svcCtx *svc.ServiceC
 	}
 }
 
-func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.BatchGetCommentLikeStatusReq) (resp *types.BatchGetCommentLikeStatusResp, err error) {
+func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.BatchGetCommentLikeStatusReq) (resp *types.BatchGetCommentLikeStatusData, err error) {
 	if len(req.CommentIds) == 0 {
-		return &types.BatchGetCommentLikeStatusResp{
-			Code: 200,
-			Msg:  "ok",
-			Data: types.BatchGetCommentLikeStatusData{Items: []types.CommentLikeStatusItem{}},
-		}, nil
+		return &types.BatchGetCommentLikeStatusData{Items: []types.CommentLikeStatusItem{}}, nil
 	}
 
 	r, err := l.svcCtx.Core.BatchGetCommentLikeStatus(l.ctx, &core_client.BatchGetCommentLikeStatusReq{
@@ -38,7 +35,7 @@ func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.Ba
 		UserId:     userIDFromCtx(l.ctx),
 	})
 	if err != nil {
-		return &types.BatchGetCommentLikeStatusResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
 	items := make([]types.CommentLikeStatusItem, 0, len(r.GetItems()))
@@ -49,9 +46,5 @@ func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.Ba
 		})
 	}
 
-	return &types.BatchGetCommentLikeStatusResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.BatchGetCommentLikeStatusData{Items: items},
-	}, nil
+	return &types.BatchGetCommentLikeStatusData{Items: items}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,10 +25,10 @@ func NewListUserLikedArticlesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
-func (l *ListUserLikedArticlesLogic) ListUserLikedArticles(req *types.ListUserLikedArticlesReq) (resp *types.ListUserLikedArticlesResp, err error) {
+func (l *ListUserLikedArticlesLogic) ListUserLikedArticles(req *types.ListUserLikedArticlesReq) (resp *types.ListUserLikedArticlesData, err error) {
 	userId, ok := currentUserID(l.ctx)
 	if !ok {
-		return &types.ListUserLikedArticlesResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 
 	page := req.Page
@@ -45,17 +46,13 @@ func (l *ListUserLikedArticlesLogic) ListUserLikedArticles(req *types.ListUserLi
 		PageSize: pageSize,
 	})
 	if err != nil {
-		return &types.ListUserLikedArticlesResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.ListUserLikedArticlesResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ListUserLikedArticlesData{
-			Articles: toTypesArticleList(r.GetArticles()),
-			Total:    r.GetTotal(),
-			Page:     r.GetPage(),
-			PageSize: r.GetPageSize(),
-		},
+	return &types.ListUserLikedArticlesData{
+		Articles: toTypesArticleList(r.GetArticles()),
+		Total:    r.GetTotal(),
+		Page:     r.GetPage(),
+		PageSize: r.GetPageSize(),
 	}, nil
 }

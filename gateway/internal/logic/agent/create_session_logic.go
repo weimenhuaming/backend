@@ -26,7 +26,7 @@ func NewCreateSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 	}
 }
 
-func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *types.CreateSessionResp, err error) {
+func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *types.CreateSessionData, err error) {
 	sessionId := strings.TrimSpace(req.SessionId)
 	if sessionId == "" {
 		sessionId = uuid.NewString()
@@ -39,14 +39,10 @@ func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *t
 
 	now := time.Now().Unix()
 
-	return &types.CreateSessionResp{
-		Code: 200,
-		Msg:  "会话创建成功",
-		Data: types.CreateSessionData{
-			SessionId: sessionId,
-			UserId:    userId,
-			CreatedAt: now,
-			Message:   "ready",
-		},
+	return &types.CreateSessionData{
+		SessionId: sessionId,
+		UserId:    userId,
+		CreatedAt: now,
+		Message:   "ready",
 	}, nil
 }

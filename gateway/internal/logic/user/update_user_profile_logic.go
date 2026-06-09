@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -25,10 +26,10 @@ func NewUpdateUserProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileReq) (resp *types.UpdateUserProfileResp, err error) {
+func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileReq) (resp *types.UserProfile, err error) {
 	userId, ok := currentUserID(l.ctx)
 	if !ok {
-		return &types.UpdateUserProfileResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 
 	rpcReq := &core_client.UpdateUserProfileReq{
@@ -41,19 +42,16 @@ func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileR
 
 	if avatar := strings.TrimSpace(req.Avatar); avatar != "" {
 		if currentUserRole(l.ctx) != "admin" {
-			return &types.UpdateUserProfileResp{Code: 403, Msg: "仅管理员可修改头像"}, nil
+			return nil, response.NewError(403, "仅管理员可修改头像")
 		}
 		rpcReq.Avatar = avatar
 	}
 
 	r, err := l.svcCtx.Core.UpdateUserProfile(l.ctx, rpcReq)
 	if err != nil {
-		return &types.UpdateUserProfileResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.UpdateUserProfileResp{
-		Code: 200,
-		Msg:  "更新成功",
-		Data: toTypesUserProfile(r.GetProfile()),
-	}, nil
+	profile := toTypesUserProfile(r.GetProfile())
+	return &profile, nil
 }

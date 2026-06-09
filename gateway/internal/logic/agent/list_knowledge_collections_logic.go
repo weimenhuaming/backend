@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	agent_client "other-rpc/agent_client"
@@ -24,17 +25,17 @@ func NewListKnowledgeCollectionsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *ListKnowledgeCollectionsLogic) ListKnowledgeCollections(req *types.ListKnowledgeCollectionsReq) (resp *types.ListKnowledgeCollectionsResp, err error) {
+func (l *ListKnowledgeCollectionsLogic) ListKnowledgeCollections(req *types.ListKnowledgeCollectionsReq) (resp *types.ListKnowledgeCollectionsData, err error) {
 	_ = req
 
 	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return &types.ListKnowledgeCollectionsResp{Code: code, Msg: msg}, nil
+		return nil, response.NewError(code, msg)
 	}
 
 	r, err := l.svcCtx.Agent.ListCollections(l.ctx, &agent_client.ListCollectionsRequest{})
 	if err != nil {
 		l.Errorf("list knowledge collections failed: %v", err)
-		return &types.ListKnowledgeCollectionsResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
 	collections := make([]types.KnowledgeCollectionInfo, 0, len(r.GetCollections()))
@@ -47,11 +48,7 @@ func (l *ListKnowledgeCollectionsLogic) ListKnowledgeCollections(req *types.List
 		})
 	}
 
-	return &types.ListKnowledgeCollectionsResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ListKnowledgeCollectionsData{
-			Collections: collections,
-		},
+	return &types.ListKnowledgeCollectionsData{
+		Collections: collections,
 	}, nil
 }

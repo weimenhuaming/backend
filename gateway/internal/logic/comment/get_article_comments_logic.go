@@ -7,6 +7,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -27,9 +28,9 @@ func NewGetArticleCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommentsReq) (resp *types.GetArticleCommentsResp, err error) {
+func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommentsReq) (resp *types.GetArticleCommentsData, err error) {
 	if req.ArticleId == 0 {
-		return &types.GetArticleCommentsResp{Code: 400, Msg: "文章ID不存在"}, nil
+		return nil, response.NewError(400, "文章ID不存在")
 	}
 
 	page := int32(req.Page)
@@ -48,17 +49,13 @@ func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommen
 		OrderBy:   req.OrderBy,
 	})
 	if err != nil {
-		return &types.GetArticleCommentsResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.GetArticleCommentsResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.GetArticleCommentsData{
-			Comments: toTypesCommentList(r.GetComments()),
-			Total:    uint32(r.GetTotal()),
-			Page:     uint32(r.GetPage()),
-			PageSize: uint32(r.GetSize()),
-		},
+	return &types.GetArticleCommentsData{
+		Comments: toTypesCommentList(r.GetComments()),
+		Total:    uint32(r.GetTotal()),
+		Page:     uint32(r.GetPage()),
+		PageSize: uint32(r.GetSize()),
 	}, nil
 }

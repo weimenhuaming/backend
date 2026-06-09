@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,22 +25,19 @@ func NewGetUserProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-func (l *GetUserProfileLogic) GetUserProfile() (resp *types.GetUserProfileResp, err error) {
+func (l *GetUserProfileLogic) GetUserProfile() (resp *types.UserProfile, err error) {
 	userId, ok := currentUserID(l.ctx)
 	if !ok {
-		return &types.GetUserProfileResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 
 	r, err := l.svcCtx.Core.GetUserProfile(l.ctx, &core_client.GetUserProfileReq{
 		UserId: userId,
 	})
 	if err != nil {
-		return &types.GetUserProfileResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.GetUserProfileResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: toTypesUserProfile(r.GetProfile()),
-	}, nil
+	profile := toTypesUserProfile(r.GetProfile())
+	return &profile, nil
 }

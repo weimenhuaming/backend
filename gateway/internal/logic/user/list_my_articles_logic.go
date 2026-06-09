@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,14 +25,14 @@ func NewListMyArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 	}
 }
 
-func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp *types.ListMyArticlesResp, err error) {
+func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp *types.ListMyArticlesData, err error) {
 	if currentUserRole(l.ctx) != "admin" {
-		return &types.ListMyArticlesResp{Code: 403, Msg: "非管理员，没有权限执行"}, nil
+		return nil, response.NewError(403, "非管理员，没有权限执行")
 	}
 
 	userId, ok := currentUserID(l.ctx)
 	if !ok {
-		return &types.ListMyArticlesResp{Code: 401, Msg: "用户未登录"}, nil
+		return nil, response.NewError(401, "用户未登录")
 	}
 
 	page := req.Page
@@ -49,17 +50,13 @@ func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp
 		PageSize: pageSize,
 	})
 	if err != nil {
-		return &types.ListMyArticlesResp{Code: 500, Msg: err.Error()}, nil
+		return nil, response.NewError(500, err.Error())
 	}
 
-	return &types.ListMyArticlesResp{
-		Code: 200,
-		Msg:  "ok",
-		Data: types.ListMyArticlesData{
-			Articles: toTypesArticleList(r.GetArticles()),
-			Total:    r.GetTotal(),
-			Page:     r.GetPage(),
-			PageSize: r.GetPageSize(),
-		},
+	return &types.ListMyArticlesData{
+		Articles: toTypesArticleList(r.GetArticles()),
+		Total:    r.GetTotal(),
+		Page:     r.GetPage(),
+		PageSize: r.GetPageSize(),
 	}, nil
 }

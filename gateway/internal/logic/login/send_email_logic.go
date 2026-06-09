@@ -4,6 +4,7 @@ import (
 	"context"
 	"gateway/internal/utils"
 
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,45 +25,24 @@ func NewSendEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendEma
 	}
 }
 
-func (l *SendEmailLogic) SendEmail(req *types.EmailReq) (resp *types.EmailResp, err error) {
+func (l *SendEmailLogic) SendEmail(req *types.EmailReq) error {
 	email := req.Email
 	if !utils.IsValidEmail(email) {
-		return &types.EmailResp{
-			Code: 400,
-			Msg:  "邮箱格式不正确",
-		}, nil
+		return response.NewError(400, "邮箱格式不正确")
 	}
 
-	// 拿到邮箱和生成验证码
 	captcha, err := utils.GenerateCode()
 	if err != nil {
-		return &types.EmailResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, err
+		return response.NewError(500, err.Error())
 	}
 
-	// 2.存入缓存
-	if err = l.svcCtx.Cache.SetexCtx(
-		l.ctx,
-		email,
-		captcha,
-		60,
-	); err != nil {
-		return &types.EmailResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, err
+	if err = l.svcCtx.Cache.SetexCtx(l.ctx, email, captcha, 60); err != nil {
+		return response.NewError(500, err.Error())
 	}
 
 	if err = utils.SendEmailVerificationCode(email, captcha); err != nil {
-		return &types.EmailResp{
-			Code: 500,
-			Msg:  err.Error(),
-		}, err
+		return response.NewError(500, err.Error())
 	}
-	return &types.EmailResp{
-		Code: 200,
-		Msg:  "发送成功",
-	}, nil
+
+	return nil
 }

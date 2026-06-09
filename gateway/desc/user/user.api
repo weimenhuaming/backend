@@ -17,12 +17,6 @@ type (
 		Age    uint64 `json:"age"`
 	}
 
-	GetUserProfileResp {
-		Code int         `json:"code"`
-		Msg  string      `json:"msg"`
-		Data UserProfile `json:"data"`
-	}
-
 	UpdateUserProfileReq {
 		Name   string `json:"name,optional"`
 		Phone  string `json:"phone,optional"`
@@ -31,17 +25,10 @@ type (
 		Avatar string `json:"avatar,optional"`
 	}
 
-	UpdateUserProfileResp {
-		Code int         `json:"code"`
-		Msg  string      `json:"msg"`
-		Data UserProfile `json:"data"`
-	}
-
 	ListUserLikedArticlesReq {
 		Page     uint32 `json:"page"`
 		PageSize uint32 `json:"page_size"`
 	}
-
 	ListUserLikedArticlesData {
 		Articles []ArticleInfo `json:"articles"`
 		Total    uint32        `json:"total"`
@@ -49,28 +36,15 @@ type (
 		PageSize uint32        `json:"page_size"`
 	}
 
-	ListUserLikedArticlesResp {
-		Code int                       `json:"code"`
-		Msg  string                    `json:"msg"`
-		Data ListUserLikedArticlesData `json:"data"`
-	}
-
 	ListMyArticlesReq {
 		Page     uint32 `json:"page"`
 		PageSize uint32 `json:"page_size"`
 	}
-
 	ListMyArticlesData {
 		Articles []ArticleInfo `json:"articles"`
 		Total    uint32        `json:"total"`
 		Page     uint32        `json:"page"`
 		PageSize uint32        `json:"page_size"`
-	}
-
-	ListMyArticlesResp {
-		Code int                `json:"code"`
-		Msg  string             `json:"msg"`
-		Data ListMyArticlesData `json:"data"`
 	}
 )
 
@@ -80,14 +54,14 @@ type (
 )
 service Gateway {
 	@handler GetUserProfile
-	get /user/profile returns (GetUserProfileResp)
+	get /user/profile returns (UserProfile)
 
 	@handler UpdateUserProfile
-	put /user/profile (UpdateUserProfileReq) returns (UpdateUserProfileResp)
+	put /user/profile (UpdateUserProfileReq) returns (UserProfile)
 
 	@handler ListUserLikedArticles
-	post /user/liked_articles (ListUserLikedArticlesReq) returns (ListUserLikedArticlesResp)
+	post /user/liked_articles (ListUserLikedArticlesReq) returns (ListUserLikedArticlesData)
 
 	@handler ListMyArticles
-	post /user/my_articles (ListMyArticlesReq) returns (ListMyArticlesResp)
+	post /user/my_articles (ListMyArticlesReq) returns (ListMyArticlesData)
 }

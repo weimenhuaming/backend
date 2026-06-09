@@ -4,6 +4,7 @@ import (
 	"context"
 
 	core_client "core-rpc/core_client"
+	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
 
@@ -24,13 +25,13 @@ func NewLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeC
 	}
 }
 
-func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.LikeCommentResp, err error) {
+func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.LikeCommentData, err error) {
 	userID, ok, msg := likeUserFromCtx(l.ctx)
 	if !ok {
-		return &types.LikeCommentResp{Code: authFailCode(msg), Msg: msg}, nil
+		return nil, response.NewError(authFailCode(msg), msg)
 	}
 	if req.CommentId == 0 {
-		return &types.LikeCommentResp{Code: 400, Msg: "评论ID无效"}, nil
+		return nil, response.NewError(400, "评论ID无效")
 	}
 
 	r, err := l.svcCtx.Core.LikeComment(l.ctx, &core_client.LikeCommentReq{
@@ -38,12 +39,8 @@ func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.L
 		UserId:    userID,
 	})
 	if err != nil {
-		return &types.LikeCommentResp{Code: likeErrCode(err), Msg: err.Error()}, nil
+		return nil, response.NewError(likeErrCode(err), err.Error())
 	}
 
-	return &types.LikeCommentResp{
-		Code: 200,
-		Msg:  "点赞成功",
-		Data: types.LikeCommentData{LikeCount: r.GetLikeCount()},
-	}, nil
+	return &types.LikeCommentData{LikeCount: r.GetLikeCount()}, nil
 }

@@ -5,11 +5,11 @@ import (
 	"gateway/internal/types"
 )
 
-func ToUserProfile(p *core_client.UserProfile) types.UserProfile {
+func ToUserProfile(p *core_client.UserProfile) *types.UserProfile {
 	if p == nil {
-		return types.UserProfile{}
+		return &types.UserProfile{}
 	}
-	return types.UserProfile{
+	return &types.UserProfile{
 		Id:     p.GetId(),
 		Name:   p.GetName(),
 		Phone:  p.GetPhone(),

@@ -40,6 +40,5 @@ func (l *GetUserProfileLogic) GetUserProfile() (resp *types.UserProfile, err err
 		return nil, response.ErrorInternalServer(err.Error())
 	}
 
-	profile := converter.ToUserProfile(r.GetProfile())
-	return &profile, nil
+	return converter.ToUserProfile(r.GetProfile()), nil
 }

@@ -54,6 +54,5 @@ func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileR
 		return nil, response.ErrorInternalServer(err.Error())
 	}
 
-	profile := converter.ToUserProfile(r.GetProfile())
-	return &profile, nil
+	return converter.ToUserProfile(r.GetProfile()), nil
 }

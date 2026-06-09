@@ -7,6 +7,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
+	"gateway/internal/utils/converter"
 
 	"github.com/mojocn/base64Captcha"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,27 +28,29 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginData, err error) {
-	name := req.Name
-	password := req.Password
-	if name == "" || password == "" {
+	// 1. Validate whether the data is empty.
+	if req.Name == "" || req.Password == "" {
 		return nil, response.ErrorBadRequest("用户名和密码不能为空")
 	}
 	if req.CaptchaId == "" || req.Code == "" {
 		return nil, response.ErrorBadRequest("请填写验证码")
 	}
 
+	// 2.Check if the verification code has expired.
 	if !base64Captcha.DefaultMemStore.Verify(req.CaptchaId, req.Code, true) {
 		return nil, response.ErrorBadRequest("验证码错误或已过期")
 	}
 
+	// 3.Call core-rpc
 	rpcResp, err := l.svcCtx.Core.NameLogin(l.ctx, &core_client.NameLoginReq{
-		Name:     name,
-		Password: password,
+		Name:     req.Name,
+		Password: req.Password,
 	})
 	if err != nil {
 		return nil, response.ErrorBadRequest(err.Error())
 	}
 
+	// 4.Configure JWT
 	jwt := utils.NewJWT(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.RefreshSecret)
 	accessToken, err := jwt.GetAccessToken(rpcResp.Id, rpcResp.Role, l.svcCtx.Config.Auth.AccessExpire)
 	if err != nil {
@@ -58,17 +61,5 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginData, err erro
 		return nil, response.ErrorInternalServer(err.Error())
 	}
 
-	return &types.LoginData{
-		Id:           rpcResp.Id,
-		Name:         rpcResp.Name,
-		Phone:        rpcResp.Phone,
-		Email:        rpcResp.Email,
-		Avatar:       rpcResp.Avatar,
-		Uuid:         rpcResp.Uuid,
-		Role:         rpcResp.Role,
-		Sex:          rpcResp.Sex,
-		Age:          rpcResp.Age,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+	return converter.ToLoginData(rpcResp, accessToken, refreshToken), nil
 }

@@ -32,15 +32,18 @@ func (l *SendEmailLogic) SendEmail(req *types.EmailReq) error {
 		return response.ErrorBadRequest("邮箱格式不正确")
 	}
 
+	// Generate verification code
 	captcha, err := utils.GenerateCode()
 	if err != nil {
 		return response.ErrorInternalServer(err.Error())
 	}
 
+	// store in cache
 	if err = l.svcCtx.Cache.SetexCtx(l.ctx, email, captcha, 60); err != nil {
 		return response.ErrorInternalServer(err.Error())
 	}
 
+	// send to email
 	if err = utils.SendEmailVerificationCode(email, captcha); err != nil {
 		return response.ErrorInternalServer(err.Error())
 	}

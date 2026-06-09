@@ -25,8 +25,8 @@ func NewCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CaptchaLo
 }
 
 func (l *CaptchaLogic) Captcha() (resp *types.CaptchaData, err error) {
-	// 定义验证码配置
-	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80) // 高度、宽度、位数、干扰、字体大小
+	// 高度、宽度、位数、干扰、字体大小
+	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80)
 	captcha := base64Captcha.NewCaptcha(driver, base64Captcha.DefaultMemStore)
 
 	id, b64s, _, err := captcha.Generate()

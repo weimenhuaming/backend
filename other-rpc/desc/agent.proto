@@ -7,16 +7,15 @@ option go_package = "./agent";
 // Agent 个人知识库服务：先 Build 构建索引，再 Chat 问答
 service Agent {
   rpc Test(TestRequest) returns (TestResponse);
-  // Build 从知识库目录构建向量索引（需先构建才能 Chat）
-  rpc Build(BuildRequest) returns (BuildResponse);
-  // SwitchRetriever 切换当前问答使用的 collection 检索器
-  rpc SwitchRetriever(SwitchRetrieverRequest) returns (SwitchRetrieverResponse);
-  // ListCollections 查看 Chroma 中所有 collection
-  rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse);
-  // DeleteCollection 删除指定 collection
-  rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
-  // Chat 基于已构建索引的 RAG 问答
+
+  // agent section
   rpc Chat(ChatRequest) returns (ChatResponse);
+  rpc SwitchRetriever(SwitchRetrieverRequest) returns (SwitchRetrieverResponse);
+
+  // vector section
+  rpc Build(BuildRequest) returns (BuildResponse);
+  rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse);
+  rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
 }
 
 message TestRequest {
@@ -24,6 +23,22 @@ message TestRequest {
 }
 message TestResponse {
   string reply = 1;
+}
+
+message ChatRequest {
+  string question = 1;
+}
+
+message ChatResponse {
+  string answer = 1;
+}
+
+message SwitchRetrieverRequest {
+  string collection = 1;
+}
+
+message SwitchRetrieverResponse {
+  string message = 1;
 }
 
 message BuildRequest {
@@ -34,14 +49,6 @@ message BuildResponse {
   string message = 1;
   int32 doc_count = 2;
   int32 chunk_count = 3;
-}
-
-message SwitchRetrieverRequest {
-  string collection = 1;
-}
-
-message SwitchRetrieverResponse {
-  string message = 1;
 }
 
 message ListCollectionsRequest {}
@@ -65,10 +72,4 @@ message DeleteCollectionResponse {
   string message = 1;
 }
 
-message ChatRequest {
-  string question = 1;
-}
 
-message ChatResponse {
-  string answer = 1;
-}

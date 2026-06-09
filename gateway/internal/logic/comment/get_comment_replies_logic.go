@@ -10,6 +10,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +31,7 @@ func NewGetCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesReq) (resp *types.GetCommentRepliesData, err error) {
 	if req.RootId == 0 {
-		return nil, response.NewError(400, "根评论ID不存在")
+		return nil, response.ErrorBadRequest("根评论ID不存在")
 	}
 
 	page := int32(req.Page)
@@ -48,11 +49,11 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesR
 		Size:   size,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.GetCommentRepliesData{
-		Replies:  toTypesCommentList(r.GetReplies()),
+		Replies:  converter.ToCommentList(r.GetReplies()),
 		Total:    uint32(r.GetTotal()),
 		Page:     uint32(r.GetPage()),
 		PageSize: uint32(r.GetSize()),

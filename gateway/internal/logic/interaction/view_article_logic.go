@@ -27,14 +27,14 @@ func NewViewArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ViewA
 
 func (l *ViewArticleLogic) ViewArticle(req *types.ViewArticleReq) (resp *types.ViewArticleData, err error) {
 	if req.ArticleId == 0 {
-		return nil, response.NewError(400, "文章ID无效")
+		return nil, response.ErrorBadRequest("文章ID无效")
 	}
 
 	r, err := l.svcCtx.Core.ViewArticle(l.ctx, &core_client.ViewArticleReq{
 		ArticleId: req.ArticleId,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.ViewArticleData{ViewCount: r.GetViewCount()}, nil

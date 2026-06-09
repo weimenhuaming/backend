@@ -9,6 +9,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,15 +29,15 @@ func NewCreateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *types.CreateCommentData, err error) {
-	userId, ok := l.ctx.Value("X-user-Id").(uint64)
-	if !ok || userId == 0 {
-		return nil, response.NewError(401, "用户未登录")
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 	if req.ArticleId == 0 {
-		return nil, response.NewError(400, "文章ID不存在")
+		return nil, response.ErrorBadRequest("文章ID不存在")
 	}
 	if req.Content == "" {
-		return nil, response.NewError(400, "评论内容不能为空")
+		return nil, response.ErrorBadRequest("评论内容不能为空")
 	}
 
 	r, err := l.svcCtx.Core.CreateComment(l.ctx, &core_client.CreateCommentReq{
@@ -45,7 +46,7 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 		Content:   req.Content,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.CreateCommentData{CommentId: r.GetCommentId()}, nil

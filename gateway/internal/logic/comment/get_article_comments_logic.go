@@ -10,6 +10,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +31,7 @@ func NewGetArticleCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommentsReq) (resp *types.GetArticleCommentsData, err error) {
 	if req.ArticleId == 0 {
-		return nil, response.NewError(400, "文章ID不存在")
+		return nil, response.ErrorBadRequest("文章ID不存在")
 	}
 
 	page := int32(req.Page)
@@ -49,11 +50,11 @@ func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommen
 		OrderBy:   req.OrderBy,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.GetArticleCommentsData{
-		Comments: toTypesCommentList(r.GetComments()),
+		Comments: converter.ToCommentList(r.GetComments()),
 		Total:    uint32(r.GetTotal()),
 		Page:     uint32(r.GetPage()),
 		PageSize: uint32(r.GetSize()),

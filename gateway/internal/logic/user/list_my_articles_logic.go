@@ -7,6 +7,8 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,13 +28,13 @@ func NewListMyArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp *types.ListMyArticlesData, err error) {
-	if currentUserRole(l.ctx) != "admin" {
-		return nil, response.NewError(403, "非管理员，没有权限执行")
+	if !vaild.IsAdmin(l.ctx) {
+		return nil, response.ErrorForbidden("非管理员，没有权限执行")
 	}
 
-	userId, ok := currentUserID(l.ctx)
+	userId, ok := vaild.GetUserID(l.ctx)
 	if !ok {
-		return nil, response.NewError(401, "用户未登录")
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
 	page := req.Page
@@ -50,11 +52,11 @@ func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp
 		PageSize: pageSize,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.ListMyArticlesData{
-		Articles: toTypesArticleList(r.GetArticles()),
+		Articles: converter.ToArticleList(r.GetArticles()),
 		Total:    r.GetTotal(),
 		Page:     r.GetPage(),
 		PageSize: r.GetPageSize(),

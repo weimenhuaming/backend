@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 	"strings"
 
 	"gateway/internal/response"
@@ -29,13 +30,13 @@ func NewSwitchKnowledgeRetrieverLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.SwitchKnowledgeRetrieverReq) (resp *types.SwitchKnowledgeRetrieverData, err error) {
-	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return nil, response.NewError(code, msg)
+	if ok := vaild.IsAdmin(l.ctx); !ok {
+		return nil, response.ErrorForbidden("非管理员，无权限操作")
 	}
 
 	collection := strings.TrimSpace(req.Collection)
 	if collection == "" {
-		return nil, response.NewError(400, "collection 名称不能为空")
+		return nil, response.ErrorBadRequest("collection 名称不能为空")
 	}
 
 	r, err := l.svcCtx.Agent.SwitchRetriever(l.ctx, &agent_client.SwitchRetrieverRequest{
@@ -43,10 +44,10 @@ func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.Swit
 	})
 	if err != nil {
 		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
-			return nil, response.NewError(404, st.Message())
+			return nil, response.ErrorNotFound(st.Message())
 		}
 		l.Errorf("switch knowledge retriever failed: %v", err)
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.SwitchKnowledgeRetrieverData{

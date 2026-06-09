@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 	"strings"
 	"time"
 
@@ -30,15 +31,16 @@ func NewBuildKnowledgeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bu
 }
 
 func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp *types.BuildKnowledgeData, err error) {
-	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return nil, response.NewError(code, msg)
+	if ok := vaild.IsAdmin(l.ctx); !ok {
+		return nil, response.ErrorForbidden("非管理员，无权限操作")
 	}
 
 	collection := strings.TrimSpace(req.Collection)
 	if collection == "" {
-		return nil, response.NewError(400, "collection 名称不能为空")
+		return nil, response.ErrorBadRequest("collection 名称不能为空")
 	}
 
+	//
 	buildCtx, cancel := context.WithTimeout(context.WithoutCancel(l.ctx), 2*time.Minute)
 	defer cancel()
 
@@ -49,13 +51,13 @@ func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
 			case codes.AlreadyExists:
-				return nil, response.NewError(409, st.Message())
+				return nil, response.ErrorConflict(st.Message())
 			case codes.InvalidArgument:
-				return nil, response.NewError(400, st.Message())
+				return nil, response.ErrorBadRequest(st.Message())
 			}
 		}
 		l.Errorf("build knowledge failed: %v", err)
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.BuildKnowledgeData{

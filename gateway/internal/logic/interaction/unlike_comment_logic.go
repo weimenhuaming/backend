@@ -28,10 +28,10 @@ func NewUnlikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unl
 func (l *UnlikeCommentLogic) UnlikeComment(req *types.UnlikeCommentReq) (resp *types.LikeCommentData, err error) {
 	userID, ok, msg := likeUserFromCtx(l.ctx)
 	if !ok {
-		return nil, response.NewError(authFailCode(msg), msg)
+		return nil, authFailError(msg)
 	}
 	if req.CommentId == 0 {
-		return nil, response.NewError(400, "评论ID无效")
+		return nil, response.ErrorBadRequest("评论ID无效")
 	}
 
 	r, err := l.svcCtx.Core.UnlikeComment(l.ctx, &core_client.UnlikeCommentReq{
@@ -39,7 +39,7 @@ func (l *UnlikeCommentLogic) UnlikeComment(req *types.UnlikeCommentReq) (resp *t
 		UserId:    userID,
 	})
 	if err != nil {
-		return nil, response.NewError(likeErrCode(err), err.Error())
+		return nil, likeRPCError(err)
 	}
 
 	return &types.LikeCommentData{LikeCount: r.GetLikeCount()}, nil

@@ -7,6 +7,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,30 +30,13 @@ func (l *GetArticleDetailLogic) GetArticleDetail(req *types.GetArticleDetailReq)
 	// call core rpc to get article detail
 	r, err := l.svcCtx.Core.GetArticleDetail(l.ctx, &core_client.GetArticleDetailReq{Id: req.Id})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	if r == nil || r.Article == nil {
-		return nil, response.NewError(404, "article not found")
+		return nil, response.ErrorNotFound("article not found")
 	}
 
-	a := r.Article
-
-	return &types.ArticleInfo{
-		Id:           a.Id,
-		UserId:       a.UserId,
-		CategoryId:   a.CategoryId,
-		Title:        a.Title,
-		Summary:      a.Summary,
-		Content:      a.Content,
-		Cover:        a.Cover,
-		ViewCount:    a.ViewCount,
-		LikeCount:    a.LikeCount,
-		FavorCount:   a.FavorCount,
-		CommentCount: a.CommentCount,
-		CreatedAt:    a.CreatedAt,
-		UpdatedAt:    a.UpdatedAt,
-		AuthorName:   a.AuthorName,
-		AuthorAvatar: a.AuthorAvatar,
-	}, nil
+	info := converter.ToArticleInfo(r.GetArticle())
+	return &info, nil
 }

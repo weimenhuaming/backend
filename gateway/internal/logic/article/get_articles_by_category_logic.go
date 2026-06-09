@@ -7,6 +7,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,32 +35,11 @@ func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(req *types.GetArticle
 
 	r, err := l.svcCtx.Core.GetArticlesByCategory(l.ctx, rpcReq)
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
-	}
-
-	var arts []types.ArticleInfo
-	for _, a := range r.GetArticles() {
-		arts = append(arts, types.ArticleInfo{
-			Id:           a.GetId(),
-			UserId:       a.GetUserId(),
-			CategoryId:   a.GetCategoryId(),
-			Title:        a.GetTitle(),
-			Summary:      a.GetSummary(),
-			Content:      a.GetContent(),
-			Cover:        a.GetCover(),
-			ViewCount:    a.GetViewCount(),
-			LikeCount:    a.GetLikeCount(),
-			FavorCount:   a.GetFavorCount(),
-			CommentCount: a.GetCommentCount(),
-			CreatedAt:    a.GetCreatedAt(),
-			UpdatedAt:    a.GetUpdatedAt(),
-			AuthorName:   a.GetAuthorName(),
-			AuthorAvatar: a.GetAuthorAvatar(),
-		})
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.ListArticlesData{
-		Articles: arts,
+		Articles: converter.ToArticleList(r.GetArticles()),
 		Total:    r.GetTotal(),
 		Page:     r.GetPage(),
 		PageSize: r.GetPageSize(),

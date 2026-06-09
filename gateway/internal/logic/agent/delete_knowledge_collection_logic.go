@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 	"strings"
 
 	"gateway/internal/response"
@@ -29,13 +30,13 @@ func NewDeleteKnowledgeCollectionLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *DeleteKnowledgeCollectionLogic) DeleteKnowledgeCollection(req *types.DeleteKnowledgeCollectionReq) error {
-	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return response.NewError(code, msg)
+	if ok := vaild.IsAdmin(l.ctx); !ok {
+		return response.ErrorForbidden("非管理员，无权限操作")
 	}
 
 	collection := strings.TrimSpace(req.Collection)
 	if collection == "" {
-		return response.NewError(400, "collection 名称不能为空")
+		return response.ErrorBadRequest("collection 名称不能为空")
 	}
 
 	_, err := l.svcCtx.Agent.DeleteCollection(l.ctx, &agent_client.DeleteCollectionRequest{
@@ -43,10 +44,10 @@ func (l *DeleteKnowledgeCollectionLogic) DeleteKnowledgeCollection(req *types.De
 	})
 	if err != nil {
 		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
-			return response.NewError(404, st.Message())
+			return response.ErrorNotFound(st.Message())
 		}
 		l.Errorf("delete knowledge collection failed: %v", err)
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 
 	return nil

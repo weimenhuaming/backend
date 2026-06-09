@@ -10,6 +10,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,15 +30,15 @@ func NewCreateReplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 }
 
 func (l *CreateReplyLogic) CreateReply(req *types.CreateReplyReq) (resp *types.CreateReplyData, err error) {
-	userId, ok := l.ctx.Value("X-user-Id").(uint64)
-	if !ok || userId == 0 {
-		return nil, response.NewError(401, "用户未登录")
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 	if req.RootId == 0 || req.ParentId == 0 {
-		return nil, response.NewError(400, "评论参数无效")
+		return nil, response.ErrorBadRequest("评论参数无效")
 	}
 	if req.Content == "" {
-		return nil, response.NewError(400, "回复内容不能为空")
+		return nil, response.ErrorBadRequest("回复内容不能为空")
 	}
 
 	r, err := l.svcCtx.Core.CreateReply(l.ctx, &core_client.CreateReplyReq{
@@ -49,7 +50,7 @@ func (l *CreateReplyLogic) CreateReply(req *types.CreateReplyReq) (resp *types.C
 		Content:     req.Content,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.CreateReplyData{ReplyId: r.GetReplyId()}, nil

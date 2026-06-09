@@ -3,6 +3,7 @@ package article
 import (
 	"context"
 	"core-rpc/core_client"
+	"gateway/internal/utils/vaild"
 
 	"gateway/internal/response"
 	"gateway/internal/svc"
@@ -26,20 +27,19 @@ func NewDeleteArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteArticleLogic) DeleteArticle(req *types.DeleteArticleReq) error {
-	role := l.ctx.Value("X-user-Role")
-	if role != "admin" {
-		return response.NewError(403, "非管理员，没有权限执行")
+	if ok := vaild.IsAdmin(l.ctx); !ok {
+		return response.ErrorForbidden("非管理员，无权限操作")
 	}
 
-	uid := l.ctx.Value("X-user-Id").(uint64)
-	if uid == 0 {
-		return response.NewError(401, "该用户不存在")
+	uid, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return response.ErrorUnauthorized("该用户不存在")
 	}
 
 	// call core rpc and pass user id explicitly
 	_, err := l.svcCtx.Core.DeleteArticle(l.ctx, &core_client.DeleteArticleReq{Id: req.Id, UserId: uid})
 	if err != nil {
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 
 	return nil

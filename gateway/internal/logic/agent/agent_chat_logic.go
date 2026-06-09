@@ -31,7 +31,7 @@ func NewAgentChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AgentCh
 func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentChatData, err error) {
 	question := strings.TrimSpace(req.Question)
 	if question == "" {
-		return nil, response.NewError(400, "问题不能为空")
+		return nil, response.ErrorBadRequest("问题不能为空")
 	}
 
 	sessionId := strings.TrimSpace(req.SessionId)
@@ -48,7 +48,7 @@ func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentCh
 	})
 	if err != nil {
 		l.Errorf("agent chat failed: %v", err)
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.AgentChatData{

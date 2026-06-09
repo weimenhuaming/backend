@@ -10,6 +10,8 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,9 +31,9 @@ func NewGetUserCommentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (resp *types.GetUserCommentsData, err error) {
-	userId, ok := l.ctx.Value("X-user-Id").(uint64)
-	if !ok || userId == 0 {
-		return nil, response.NewError(401, "用户未登录")
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
 	page := int32(req.Page)
@@ -49,11 +51,11 @@ func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (r
 		Size:   size,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.GetUserCommentsData{
-		Comments: toTypesCommentList(r.GetComments()),
+		Comments: converter.ToCommentList(r.GetComments()),
 		Total:    uint32(r.GetTotal()),
 		Page:     uint32(r.GetPage()),
 		PageSize: uint32(r.GetSize()),

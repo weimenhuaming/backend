@@ -29,7 +29,7 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 	_ = req
 	rpcResp, err := l.svcCtx.Core.ListCategories(l.ctx, &core_client.ListCategoriesReq{})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	var cats []types.CategoryInfo
@@ -41,6 +41,4 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 	}
 
 	return &types.ListCategoriesData{Categories: cats}, nil
-
-	return
 }

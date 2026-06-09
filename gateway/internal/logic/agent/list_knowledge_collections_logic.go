@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 
 	"gateway/internal/response"
 	"gateway/internal/svc"
@@ -28,14 +29,14 @@ func NewListKnowledgeCollectionsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *ListKnowledgeCollectionsLogic) ListKnowledgeCollections(req *types.ListKnowledgeCollectionsReq) (resp *types.ListKnowledgeCollectionsData, err error) {
 	_ = req
 
-	if code, msg, ok := requireAdmin(l.ctx); !ok {
-		return nil, response.NewError(code, msg)
+	if ok := vaild.IsAdmin(l.ctx); !ok {
+		return nil, response.ErrorForbidden("非管理员，无权限操作")
 	}
 
 	r, err := l.svcCtx.Agent.ListCollections(l.ctx, &agent_client.ListCollectionsRequest{})
 	if err != nil {
 		l.Errorf("list knowledge collections failed: %v", err)
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	collections := make([]types.KnowledgeCollectionInfo, 0, len(r.GetCollections()))

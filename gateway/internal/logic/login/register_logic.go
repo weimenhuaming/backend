@@ -4,6 +4,7 @@ import (
 	"context"
 	"core-rpc/core_client"
 	"gateway/internal/utils"
+	"gateway/internal/utils/vaild"
 
 	"gateway/internal/response"
 	"gateway/internal/svc"
@@ -28,20 +29,20 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 	// 1. 参数与格式（BFF 层统一校验）
-	if !utils.IsValidEmail(req.Email) {
-		return response.NewError(400, "邮箱格式不正确")
+	if !vaild.IsValidEmail(req.Email) {
+		return response.ErrorBadRequest("邮箱格式不正确")
 	}
 	if req.Name == "" || req.Password == "" || req.Captcha == "" {
-		return response.NewError(400, "用户名、密码或验证码不能为空")
+		return response.ErrorBadRequest("用户名、密码或验证码不能为空")
 	}
 
 	// 2. 判断验证码是否有效
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
-		return response.NewError(400, "验证码不存在或已过期")
+		return response.ErrorBadRequest("验证码不存在或已过期")
 	}
 	if captcha != req.Captcha {
-		return response.NewError(400, "验证码错误")
+		return response.ErrorBadRequest("验证码错误")
 	}
 
 	// 3.获得rpc响应
@@ -51,7 +52,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 		Password: utils.Bcrypt(req.Password),
 	})
 	if err != nil {
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 
 	return nil

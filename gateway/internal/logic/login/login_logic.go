@@ -30,14 +30,14 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginData, err erro
 	name := req.Name
 	password := req.Password
 	if name == "" || password == "" {
-		return nil, response.NewError(400, "用户名和密码不能为空")
+		return nil, response.ErrorBadRequest("用户名和密码不能为空")
 	}
 	if req.CaptchaId == "" || req.Code == "" {
-		return nil, response.NewError(400, "请填写验证码")
+		return nil, response.ErrorBadRequest("请填写验证码")
 	}
 
 	if !base64Captcha.DefaultMemStore.Verify(req.CaptchaId, req.Code, true) {
-		return nil, response.NewError(400, "验证码错误或已过期")
+		return nil, response.ErrorBadRequest("验证码错误或已过期")
 	}
 
 	rpcResp, err := l.svcCtx.Core.NameLogin(l.ctx, &core_client.NameLoginReq{
@@ -45,17 +45,17 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginData, err erro
 		Password: password,
 	})
 	if err != nil {
-		return nil, response.NewError(400, err.Error())
+		return nil, response.ErrorBadRequest(err.Error())
 	}
 
 	jwt := utils.NewJWT(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.RefreshSecret)
 	accessToken, err := jwt.GetAccessToken(rpcResp.Id, rpcResp.Role, l.svcCtx.Config.Auth.AccessExpire)
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 	refreshToken, err := jwt.GetRefreshToken(rpcResp.Id, rpcResp.Role, l.svcCtx.Config.RefreshExpire)
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.LoginData{

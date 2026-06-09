@@ -7,6 +7,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,22 +27,22 @@ func NewReset_password_by_emailLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetPasswordReq) error {
-	if !utils.IsValidEmail(req.Email) {
-		return response.NewError(400, "邮箱格式不正确")
+	if !vaild.IsValidEmail(req.Email) {
+		return response.ErrorBadRequest("邮箱格式不正确")
 	}
 	if req.NewPassword == "" || req.Captcha == "" {
-		return response.NewError(400, "密码或验证码不能为空")
+		return response.ErrorBadRequest("密码或验证码不能为空")
 	}
 	if req.NewPassword != req.ConfirmPassword {
-		return response.NewError(400, "两次输入的密码不一致")
+		return response.ErrorBadRequest("两次输入的密码不一致")
 	}
 
 	captcha, err := l.svcCtx.Cache.GetCtx(l.ctx, req.Email)
 	if err != nil {
-		return response.NewError(400, "验证码不存在或已过期")
+		return response.ErrorBadRequest("验证码不存在或已过期")
 	}
 	if captcha != req.Captcha {
-		return response.NewError(400, "验证码错误")
+		return response.ErrorBadRequest("验证码错误")
 	}
 
 	_, err = l.svcCtx.Core.ResetPasswordByEmail(l.ctx, &core_client.ResetPasswordEmailReq{
@@ -49,7 +50,7 @@ func (l *Reset_password_by_emailLogic) Reset_password_by_email(req *types.ResetP
 		Password: utils.Bcrypt(req.NewPassword),
 	})
 	if err != nil {
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 
 	return nil

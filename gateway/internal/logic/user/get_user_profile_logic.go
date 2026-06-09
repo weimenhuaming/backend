@@ -7,6 +7,8 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,18 +28,18 @@ func NewGetUserProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 }
 
 func (l *GetUserProfileLogic) GetUserProfile() (resp *types.UserProfile, err error) {
-	userId, ok := currentUserID(l.ctx)
+	userId, ok := vaild.GetUserID(l.ctx)
 	if !ok {
-		return nil, response.NewError(401, "用户未登录")
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
 	r, err := l.svcCtx.Core.GetUserProfile(l.ctx, &core_client.GetUserProfileReq{
 		UserId: userId,
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
-	profile := toTypesUserProfile(r.GetProfile())
+	profile := converter.ToUserProfile(r.GetProfile())
 	return &profile, nil
 }

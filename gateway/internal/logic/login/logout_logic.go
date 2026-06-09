@@ -29,7 +29,7 @@ func (l *LogoutLogic) Logout(req *types.LogoutReq, token string) error {
 		RefreshToken: token,
 	})
 	if err != nil {
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 	return nil
 }

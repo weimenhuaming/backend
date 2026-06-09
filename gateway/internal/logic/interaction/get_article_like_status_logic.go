@@ -27,7 +27,7 @@ func NewGetArticleLikeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLikeStatusReq) (resp *types.GetArticleLikeStatusData, err error) {
 	if req.ArticleId == 0 {
-		return nil, response.NewError(400, "文章ID无效")
+		return nil, response.ErrorBadRequest("文章ID无效")
 	}
 
 	r, err := l.svcCtx.Core.GetArticleLikeStatus(l.ctx, &core_client.GetArticleLikeStatusReq{
@@ -35,7 +35,7 @@ func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLi
 		UserId:    userIDFromCtx(l.ctx),
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	return &types.GetArticleLikeStatusData{Liked: r.GetLiked()}, nil

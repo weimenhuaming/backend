@@ -1,11 +1,11 @@
-package comment
+package converter
 
 import (
 	core_client "core-rpc/core_client"
 	"gateway/internal/types"
 )
 
-func toTypesCommentInfo(c *core_client.CommentInfo) types.CommentInfo {
+func ToCommentInfo(c *core_client.CommentInfo) types.CommentInfo {
 	if c == nil {
 		return types.CommentInfo{}
 	}
@@ -25,16 +25,15 @@ func toTypesCommentInfo(c *core_client.CommentInfo) types.CommentInfo {
 		UserAvatar:  c.GetUserAvatar(),
 	}
 	for _, r := range c.GetReplies() {
-		reply := toTypesCommentInfo(r)
-		info.Replies = append(info.Replies, reply)
+		info.Replies = append(info.Replies, ToCommentInfo(r))
 	}
 	return info
 }
 
-func toTypesCommentList(list []*core_client.CommentInfo) []types.CommentInfo {
+func ToCommentList(list []*core_client.CommentInfo) []types.CommentInfo {
 	out := make([]types.CommentInfo, 0, len(list))
 	for _, item := range list {
-		out = append(out, toTypesCommentInfo(item))
+		out = append(out, ToCommentInfo(item))
 	}
 	return out
 }

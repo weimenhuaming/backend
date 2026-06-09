@@ -28,10 +28,10 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 func (l *LikeArticleLogic) LikeArticle(req *types.LikeArticleReq) (resp *types.LikeArticleData, err error) {
 	userID, ok, msg := likeUserFromCtx(l.ctx)
 	if !ok {
-		return nil, response.NewError(authFailCode(msg), msg)
+		return nil, authFailError(msg)
 	}
 	if req.ArticleId == 0 {
-		return nil, response.NewError(400, "文章ID无效")
+		return nil, response.ErrorBadRequest("文章ID无效")
 	}
 
 	r, err := l.svcCtx.Core.LikeArticle(l.ctx, &core_client.LikeArticleReq{
@@ -39,7 +39,7 @@ func (l *LikeArticleLogic) LikeArticle(req *types.LikeArticleReq) (resp *types.L
 		UserId:    userID,
 	})
 	if err != nil {
-		return nil, response.NewError(likeErrCode(err), err.Error())
+		return nil, likeRPCError(err)
 	}
 
 	return &types.LikeArticleData{LikeCount: r.GetLikeCount()}, nil

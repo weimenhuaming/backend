@@ -10,6 +10,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,12 +30,12 @@ func NewDeleteCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteCommentLogic) DeleteComment(req *types.DeleteCommentReq) error {
-	userId, ok := l.ctx.Value("X-user-Id").(uint64)
-	if !ok || userId == 0 {
-		return response.NewError(401, "用户未登录")
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return response.ErrorUnauthorized("用户未登录")
 	}
 	if req.Id == 0 {
-		return response.NewError(400, "评论ID不存在")
+		return response.ErrorBadRequest("评论ID不存在")
 	}
 
 	_, err := l.svcCtx.Core.DeleteComment(l.ctx, &core_client.DeleteCommentReq{
@@ -42,7 +43,7 @@ func (l *DeleteCommentLogic) DeleteComment(req *types.DeleteCommentReq) error {
 		UserId: userId,
 	})
 	if err != nil {
-		return response.NewError(500, err.Error())
+		return response.ErrorInternalServer(err.Error())
 	}
 
 	return nil

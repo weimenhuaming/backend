@@ -8,6 +8,8 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,9 +29,9 @@ func NewUpdateUserProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileReq) (resp *types.UserProfile, err error) {
-	userId, ok := currentUserID(l.ctx)
+	userId, ok := vaild.GetUserID(l.ctx)
 	if !ok {
-		return nil, response.NewError(401, "用户未登录")
+		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
 	rpcReq := &core_client.UpdateUserProfileReq{
@@ -41,17 +43,17 @@ func (l *UpdateUserProfileLogic) UpdateUserProfile(req *types.UpdateUserProfileR
 	}
 
 	if avatar := strings.TrimSpace(req.Avatar); avatar != "" {
-		if currentUserRole(l.ctx) != "admin" {
-			return nil, response.NewError(403, "仅管理员可修改头像")
+		if !vaild.IsAdmin(l.ctx) {
+			return nil, response.ErrorForbidden("仅管理员可修改头像")
 		}
 		rpcReq.Avatar = avatar
 	}
 
 	r, err := l.svcCtx.Core.UpdateUserProfile(l.ctx, rpcReq)
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
-	profile := toTypesUserProfile(r.GetProfile())
+	profile := converter.ToUserProfile(r.GetProfile())
 	return &profile, nil
 }

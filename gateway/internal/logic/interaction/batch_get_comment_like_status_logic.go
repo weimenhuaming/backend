@@ -35,7 +35,7 @@ func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.Ba
 		UserId:     userIDFromCtx(l.ctx),
 	})
 	if err != nil {
-		return nil, response.NewError(500, err.Error())
+		return nil, response.ErrorInternalServer(err.Error())
 	}
 
 	items := make([]types.CommentLikeStatusItem, 0, len(r.GetItems()))

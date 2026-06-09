@@ -36,19 +36,12 @@ func (l *GetUserCommentsLogic) GetUserComments(req *types.GetUserCommentsReq) (r
 		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
-	page := int32(req.Page)
-	size := int32(req.PageSize)
-	if page <= 0 {
-		page = 1
-	}
-	if size <= 0 {
-		size = 10
-	}
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
 
 	r, err := l.svcCtx.Core.GetUserComments(l.ctx, &core_client.GetUserCommentsReq{
 		UserId: userId,
-		Page:   page,
-		Size:   size,
+		Page:   int32(page),
+		Size:   int32(pageSize),
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

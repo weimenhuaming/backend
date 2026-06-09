@@ -33,14 +33,7 @@ func (l *ListUserLikedArticlesLogic) ListUserLikedArticles(req *types.ListUserLi
 		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
-	page := req.Page
-	pageSize := req.PageSize
-	if page == 0 {
-		page = 1
-	}
-	if pageSize == 0 {
-		pageSize = 10
-	}
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
 
 	r, err := l.svcCtx.Core.ListUserLikedArticles(l.ctx, &core_client.ListUserLikedArticlesReq{
 		UserId:   userId,

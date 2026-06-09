@@ -11,6 +11,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,19 +35,12 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(req *types.GetCommentRepliesR
 		return nil, response.ErrorBadRequest("根评论ID不存在")
 	}
 
-	page := int32(req.Page)
-	size := int32(req.PageSize)
-	if page <= 0 {
-		page = 1
-	}
-	if size <= 0 {
-		size = 10
-	}
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
 
 	r, err := l.svcCtx.Core.GetCommentReplies(l.ctx, &core_client.GetCommentRepliesReq{
 		RootId: req.RootId,
-		Page:   page,
-		Size:   size,
+		Page:   int32(page),
+		Size:   int32(pageSize),
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

@@ -28,6 +28,7 @@ func NewListMyArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp *types.ListMyArticlesData, err error) {
+	// 1. 校验
 	if !vaild.IsAdmin(l.ctx) {
 		return nil, response.ErrorForbidden("非管理员，没有权限执行")
 	}
@@ -37,15 +38,9 @@ func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp
 		return nil, response.ErrorUnauthorized("用户未登录")
 	}
 
-	page := req.Page
-	pageSize := req.PageSize
-	if page == 0 {
-		page = 1
-	}
-	if pageSize == 0 {
-		pageSize = 10
-	}
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
 
+	// 2. call rpc
 	r, err := l.svcCtx.Core.ListUserArticles(l.ctx, &core_client.ListUserArticlesReq{
 		UserId:   userId,
 		Page:     page,

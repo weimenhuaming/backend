@@ -11,6 +11,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,19 +35,12 @@ func (l *GetArticleCommentsLogic) GetArticleComments(req *types.GetArticleCommen
 		return nil, response.ErrorBadRequest("文章ID不存在")
 	}
 
-	page := int32(req.Page)
-	size := int32(req.PageSize)
-	if page <= 0 {
-		page = 1
-	}
-	if size <= 0 {
-		size = 10
-	}
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
 
 	r, err := l.svcCtx.Core.GetArticleComments(l.ctx, &core_client.GetArticleCommentsReq{
 		ArticleId: req.ArticleId,
-		Page:      page,
-		Size:      size,
+		Page:      int32(page),
+		Size:      int32(pageSize),
 		OrderBy:   req.OrderBy,
 	})
 	if err != nil {

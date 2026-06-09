@@ -8,6 +8,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,10 +28,11 @@ func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 }
 
 func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesData, err error) {
-	// call core rpc
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
+
 	r, err := l.svcCtx.Core.ListArticles(l.ctx, &core_client.ListArticlesReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		Page:     page,
+		PageSize: pageSize,
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

@@ -8,6 +8,7 @@ import (
 	"gateway/internal/svc"
 	"gateway/internal/types"
 	"gateway/internal/utils/converter"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,10 +28,12 @@ func NewGetArticlesByCategoryLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(req *types.GetArticlesByCategoryReq) (resp *types.ListArticlesData, err error) {
+	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)
+
 	r, err := l.svcCtx.Core.GetArticlesByCategory(l.ctx, &core_client.GetArticlesByCategoryReq{
 		CategoryId: req.CategoryId,
-		Page:       req.Page,
-		PageSize:   req.PageSize,
+		Page:       page,
+		PageSize:   pageSize,
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

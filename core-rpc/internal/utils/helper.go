@@ -10,7 +10,7 @@ import (
 
 const timeLayout = "2006-01-02 15:04:05"
 
-func formatTime(t time.Time) string {
+func FormatTime(t time.Time) string {
 	if t.IsZero() {
 		return ""
 	}
@@ -55,29 +55,6 @@ func OffsetLimit(page, size int) (offset, limit int) {
 	return (page - 1) * size, size
 }
 
-func ArticleToProto(a *entity.Article, authorName, authorAvatar string) *core.ArticleInfo {
-	if a == nil {
-		return nil
-	}
-	return &core.ArticleInfo{
-		Id:           a.ID,
-		UserId:       a.UserID,
-		CategoryId:   a.CategoryID,
-		Title:        a.Title,
-		Summary:      a.Summary,
-		Content:      a.Content,
-		Cover:        a.Cover,
-		ViewCount:    a.ViewCount,
-		LikeCount:    a.LikeCount,
-		FavorCount:   a.FavorCount,
-		CommentCount: a.CommentCount,
-		CreatedAt:    formatTime(a.CreatedAt),
-		UpdatedAt:    formatTime(a.UpdatedAt),
-		AuthorName:   authorName,
-		AuthorAvatar: authorAvatar,
-	}
-}
-
 func CommentToProto(c *entity.Comment, userName, userAvatar string, replies []*core.CommentInfo) *core.CommentInfo {
 	if c == nil {
 		return nil
@@ -93,7 +70,7 @@ func CommentToProto(c *entity.Comment, userName, userAvatar string, replies []*c
 		Content:     c.Content,
 		LikeCount:   c.LikeCount,
 		ChildCount:  c.ChildCount,
-		CreatedAt:   formatTime(c.CreatedAt),
+		CreatedAt:   FormatTime(c.CreatedAt),
 		UserName:    userName,
 		UserAvatar:  userAvatar,
 		Replies:     replies,

@@ -2,6 +2,7 @@ package comment
 
 import (
 	"context"
+	"core-rpc/internal/model/converter"
 	"core-rpc/internal/utils"
 
 	"core-rpc/internal/svc"
@@ -49,7 +50,7 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(in *core.GetCommentRepliesReq
 	}
 
 	return &core.GetCommentRepliesResp{
-		Replies: commentsToProtoList(replies, userMap, nil),
+		Replies: converter.CommentsToProtoList(replies, userMap, nil),
 		Page:    int32(page),
 		Size:    int32(size),
 		Total:   int32(total),

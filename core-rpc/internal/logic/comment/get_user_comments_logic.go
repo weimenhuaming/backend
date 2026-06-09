@@ -2,6 +2,7 @@ package comment
 
 import (
 	"context"
+	"core-rpc/internal/model/converter"
 	"core-rpc/internal/utils"
 
 	"core-rpc/internal/svc"
@@ -34,14 +35,14 @@ func (l *GetUserCommentsLogic) GetUserComments(in *core.GetUserCommentsReq) (*co
 		return nil, err
 	}
 
-	userIDs := collectUserIDsFromComments(comments)
+	userIDs := converter.CollectUserIDsFromComments(comments)
 	userMap, err := l.svcCtx.UserRepo.FindByIDs(userIDs)
 	if err != nil {
 		return nil, err
 	}
 
 	return &core.GetUserCommentsResp{
-		Comments: commentsToProtoList(comments, userMap, nil),
+		Comments: converter.CommentsToProtoList(comments, userMap, nil),
 		Page:     int32(page),
 		Size:     int32(size),
 		Total:    int32(total),

@@ -1,4 +1,4 @@
-package article
+package interaction
 
 import (
 	"context"

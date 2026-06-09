@@ -1,9 +1,11 @@
 package repo
 
 import (
+	"core-rpc/internal/model/converter"
 	"core-rpc/internal/model/entity"
 	"core-rpc/internal/utils"
 	"core-rpc/pb/core"
+
 	"gorm.io/gorm"
 )
 
@@ -87,7 +89,7 @@ func (m *ArtModel) LoadArticlesWithAuthors(articles []entity.Article) ([]*core.A
 	out := make([]*core.ArticleInfo, 0, len(articles))
 	for i := range articles {
 		name, avatar := utils.UserDisplay(userMap, articles[i].UserID)
-		out = append(out, utils.ArticleToProto(&articles[i], name, avatar))
+		out = append(out, converter.ArticleToProto(&articles[i], name, avatar))
 	}
 	return out, nil
 }

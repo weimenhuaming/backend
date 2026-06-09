@@ -2,6 +2,7 @@ package comment
 
 import (
 	"context"
+	"core-rpc/internal/model/converter"
 	"core-rpc/internal/model/entity"
 	"core-rpc/internal/svc"
 	"core-rpc/internal/utils"
@@ -54,7 +55,7 @@ func (l *GetArticleCommentsLogic) GetArticleComments(in *core.GetArticleComments
 	}
 
 	return &core.GetArticleCommentsResp{
-		Comments: commentsToProtoList(comments, userMap, previewMap),
+		Comments: converter.CommentsToProtoList(comments, userMap, previewMap),
 		Page:     int32(page),
 		Size:     int32(size),
 		Total:    int32(total),

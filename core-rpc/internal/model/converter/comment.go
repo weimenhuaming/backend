@@ -1,4 +1,4 @@
-package comment
+package converter
 
 import (
 	"core-rpc/internal/model/entity"
@@ -6,8 +6,8 @@ import (
 	"core-rpc/pb/core"
 )
 
-// collectUserIDsFromComments extracts unique user ids from comments
-func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
+// CollectUserIDsFromComments extracts unique user ids from comments
+func CollectUserIDsFromComments(comments []entity.Comment) []uint64 {
 	seen := make(map[uint64]struct{})
 	var ids []uint64
 	for _, c := range comments {
@@ -19,8 +19,8 @@ func collectUserIDsFromComments(comments []entity.Comment) []uint64 {
 	return ids
 }
 
-// commentsToProtoList converts comments to proto objects using provided user map and preview replies
-func commentsToProtoList(comments []entity.Comment, userMap map[uint64]entity.User, previewReplies map[uint64][]*core.CommentInfo) []*core.CommentInfo {
+// CommentsToProtoList converts comments to proto objects using provided user map and preview replies
+func CommentsToProtoList(comments []entity.Comment, userMap map[uint64]entity.User, previewReplies map[uint64][]*core.CommentInfo) []*core.CommentInfo {
 	out := make([]*core.CommentInfo, 0, len(comments))
 	for i := range comments {
 		name, avatar := utils.UserDisplay(userMap, comments[i].UserID)

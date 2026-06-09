@@ -2,7 +2,7 @@ package article
 
 import (
 	"context"
-	"core-rpc/internal/utils"
+	"core-rpc/internal/model/converter"
 	"errors"
 
 	"core-rpc/internal/svc"
@@ -43,6 +43,6 @@ func (l *GetArticleDetailLogic) GetArticleDetail(in *core.GetArticleDetailReq) (
 	}
 
 	return &core.GetArticleDetailResp{
-		Article: utils.ArticleToProto(a, authorName, authorAvatar),
+		Article: converter.ArticleToProto(a, authorName, authorAvatar),
 	}, nil
 }

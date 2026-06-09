@@ -136,7 +136,7 @@ func (s *CoreServer) SearchArticles(ctx context.Context, in *core.SearchArticles
 
 // interaction 部分
 func (s *CoreServer) LikeArticle(ctx context.Context, in *core.LikeArticleReq) (*core.LikeArticleResp, error) {
-	l := article.NewLikeArticleLogic(ctx, s.svcCtx)
+	l := interaction.NewLikeArticleLogic(ctx, s.svcCtx)
 	return l.LikeArticle(in)
 }
 
@@ -161,7 +161,7 @@ func (s *CoreServer) ViewArticle(ctx context.Context, in *core.ViewArticleReq) (
 }
 
 func (s *CoreServer) GetArticleLikeStatus(ctx context.Context, in *core.GetArticleLikeStatusReq) (*core.GetArticleLikeStatusResp, error) {
-	l := article.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
+	l := interaction.NewGetArticleLikeStatusLogic(ctx, s.svcCtx)
 	return l.GetArticleLikeStatus(in)
 }
 

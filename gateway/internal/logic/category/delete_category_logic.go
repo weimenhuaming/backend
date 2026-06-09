@@ -27,12 +27,9 @@ func NewDeleteCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DeleteCategoryLogic) DeleteCategory(req *types.DeleteCategoryReq) error {
-	_ = req
-
 	if !vaild.IsAdmin(l.ctx) {
 		return response.ErrorForbidden("非管理员，没有权限执行")
 	}
-
 	if req == nil || req.Id == 0 {
 		return response.ErrorBadRequest("id is required")
 	}

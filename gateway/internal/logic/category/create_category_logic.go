@@ -30,7 +30,6 @@ func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) error
 	if !vaild.IsAdmin(l.ctx) {
 		return response.ErrorForbidden("非管理员，没有权限执行")
 	}
-
 	if req == nil || req.Name == "" {
 		return response.ErrorBadRequest("name is required")
 	}

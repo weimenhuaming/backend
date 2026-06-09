@@ -26,7 +26,6 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesData, err error) {
-	_ = req
 	rpcResp, err := l.svcCtx.Core.ListCategories(l.ctx, &core_client.ListCategoriesReq{})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

@@ -5,11 +5,11 @@ import (
 	"gateway/internal/types"
 )
 
-func ToArticleInfo(a *core_client.ArticleInfo) types.ArticleInfo {
+func ToArticleInfo(a *core_client.ArticleInfo) *types.ArticleInfo {
 	if a == nil {
-		return types.ArticleInfo{}
+		return &types.ArticleInfo{}
 	}
-	return types.ArticleInfo{
+	return &types.ArticleInfo{
 		Id:           a.GetId(),
 		UserId:       a.GetUserId(),
 		CategoryId:   a.GetCategoryId(),
@@ -31,7 +31,7 @@ func ToArticleInfo(a *core_client.ArticleInfo) types.ArticleInfo {
 func ToArticleList(articles []*core_client.ArticleInfo) []types.ArticleInfo {
 	out := make([]types.ArticleInfo, 0, len(articles))
 	for _, a := range articles {
-		out = append(out, ToArticleInfo(a))
+		out = append(out, *ToArticleInfo(a))
 	}
 	return out
 }

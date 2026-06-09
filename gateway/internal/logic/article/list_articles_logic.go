@@ -28,12 +28,10 @@ func NewListArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 
 func (l *ListArticlesLogic) ListArticles(req *types.ListArticlesReq) (resp *types.ListArticlesData, err error) {
 	// call core rpc
-	rpcReq := &core_client.ListArticlesReq{
+	r, err := l.svcCtx.Core.ListArticles(l.ctx, &core_client.ListArticlesReq{
 		Page:     req.Page,
 		PageSize: req.PageSize,
-	}
-
-	r, err := l.svcCtx.Core.ListArticles(l.ctx, rpcReq)
+	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())
 	}

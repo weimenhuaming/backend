@@ -27,13 +27,13 @@ func NewDeleteArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteArticleLogic) DeleteArticle(req *types.DeleteArticleReq) error {
-	if ok := vaild.IsAdmin(l.ctx); !ok {
-		return response.ErrorForbidden("非管理员，无权限操作")
-	}
-
 	uid, ok := vaild.GetUserID(l.ctx)
 	if !ok {
 		return response.ErrorUnauthorized("该用户不存在")
+	}
+
+	if ok = vaild.IsAdmin(l.ctx); !ok {
+		return response.ErrorForbidden("非管理员，无权限操作")
 	}
 
 	// call core rpc and pass user id explicitly

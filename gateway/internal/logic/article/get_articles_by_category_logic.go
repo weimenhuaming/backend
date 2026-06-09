@@ -27,13 +27,11 @@ func NewGetArticlesByCategoryLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetArticlesByCategoryLogic) GetArticlesByCategory(req *types.GetArticlesByCategoryReq) (resp *types.ListArticlesData, err error) {
-	rpcReq := &core_client.GetArticlesByCategoryReq{
+	r, err := l.svcCtx.Core.GetArticlesByCategory(l.ctx, &core_client.GetArticlesByCategoryReq{
 		CategoryId: req.CategoryId,
 		Page:       req.Page,
 		PageSize:   req.PageSize,
-	}
-
-	r, err := l.svcCtx.Core.GetArticlesByCategory(l.ctx, rpcReq)
+	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())
 	}

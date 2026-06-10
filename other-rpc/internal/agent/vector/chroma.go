@@ -17,14 +17,6 @@ var (
 	ErrCollectionNotFound = errors.New("collection 不存在")
 )
 
-// CollectionInfo 描述一个 Chroma collection 的概要信息。
-type CollectionInfo struct {
-	Name       string
-	DocCount   int
-	ChunkCount int
-	Count      int
-}
-
 // Chroma 封装 Chroma HTTP 客户端，复用连接执行 collection 操作。
 type Chroma struct {
 	cfg    config.KnowledgeBaseConf
@@ -152,15 +144,15 @@ func (c *Chroma) DeleteCollection(ctx context.Context, name string) error {
 }
 
 // ListCollections 返回当前数据库下所有 collection 的概要信息。
-func (c *Chroma) ListCollections(ctx context.Context) ([]CollectionInfo, error) {
+func (c *Chroma) ListCollections(ctx context.Context) ([]Collection, error) {
 	collections, err := c.client.ListCollections(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	out := make([]CollectionInfo, 0, len(collections))
+	out := make([]Collection, 0, len(collections))
 	for _, col := range collections {
-		info := CollectionInfo{Name: col.Name()}
+		info := Collection{Name: col.Name()}
 		if meta := col.Metadata(); meta != nil {
 			if docCount, ok := meta.GetInt("doc_count"); ok {
 				info.DocCount = int(docCount)

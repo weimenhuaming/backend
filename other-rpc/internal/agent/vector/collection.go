@@ -13,6 +13,10 @@ import (
 
 // Collection 基于 Chroma v2 API 的向量存储，实现 langchaingo VectorStore。
 type Collection struct {
+	Name       string
+	DocCount   int
+	ChunkCount int
+	Count      int
 	collection chroma.Collection
 	embedder   embeddings.Embedder
 }
@@ -25,6 +29,7 @@ func (c *Chroma) NewCollection(ctx context.Context, name string, embedder embedd
 	}
 
 	return &Collection{
+		Name:       name,
 		collection: collection,
 		embedder:   embedder,
 	}, nil

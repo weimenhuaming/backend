@@ -15,6 +15,8 @@ KnowledgeBase:
   TopK: 4
   ChunkSize: 800
   ChunkOverlap: 100
+  MemoryWindowTurns: 5
+  MemorySessionTTL: 1800
   Chroma:
     URL: http://chroma:8000
     Collection: chenaqi_knowledge

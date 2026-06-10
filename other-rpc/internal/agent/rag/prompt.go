@@ -36,3 +36,11 @@ const qaTemplate = systemPrompt + `
 用户问题：{{.question}}
 
 请回答：`
+
+// condenseQuestionTemplate 将多轮追问改写为可独立检索的问题。
+const condenseQuestionTemplate = `根据以下对话历史和后续问题，将后续问题改写为一个独立的、可单独理解的问题，使用原语言。
+
+对话历史：
+{{.chat_history}}
+后续问题：{{.question}}
+独立问题：`

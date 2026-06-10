@@ -54,7 +54,8 @@ func (l *AgentChatStreamLogic) AgentChatStream(req *types.AgentChatReq, client c
 	defer cancel()
 
 	stream, err := l.svcCtx.Agent.ChatStream(chatCtx, &agent_client.ChatRequest{
-		Question: question,
+		Question:  question,
+		SessionId: sessionId,
 	})
 	if err != nil {
 		l.Errorf("agent chat stream failed: %v", err)

@@ -28,7 +28,7 @@ func NewChatStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatSt
 func (l *ChatStreamLogic) ChatStream(in *agent.ChatRequest, stream agent.Agent_ChatStreamServer) error {
 	question := in.GetQuestion()
 
-	err := l.svcCtx.Agent.ChatStream(l.ctx, question, func(chunk string) error {
+	err := l.svcCtx.Agent.ChatStream(l.ctx, in.GetSessionId(), question, func(chunk string) error {
 		return stream.Send(&agent.ChatStreamChunk{Content: chunk})
 	})
 	if err != nil {

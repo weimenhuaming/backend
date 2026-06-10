@@ -28,6 +28,7 @@ message TestResponse {
 
 message ChatRequest {
   string question = 1;
+  string session_id = 2;
 }
 
 message ChatResponse {

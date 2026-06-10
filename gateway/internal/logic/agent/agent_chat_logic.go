@@ -50,7 +50,8 @@ func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentCh
 	defer cancel()
 
 	r, err := l.svcCtx.Agent.Chat(chatCtx, &agent_client.ChatRequest{
-		Question: question,
+		Question:  question,
+		SessionId: sessionId,
 	})
 	if err != nil {
 		l.Errorf("agent chat failed: %v", err)

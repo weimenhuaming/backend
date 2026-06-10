@@ -8,13 +8,15 @@ type Config struct {
 }
 
 type KnowledgeBaseConf struct {
-	DataPath     string        `json:",default=./data/knowledge"`
-	TopK         int           `json:",default=4"`
-	ChunkSize    int           `json:",default=800"`
-	ChunkOverlap int           `json:",default=100"`
-	Chroma       ChromaConf    `json:",optional"`
-	LLM          LLMConf       `json:",optional"`
-	Embedding    EmbeddingConf `json:",optional"`
+	DataPath          string        `json:",default=./data/knowledge"`
+	TopK              int           `json:",default=4"`
+	ChunkSize         int           `json:",default=800"`
+	ChunkOverlap      int           `json:",default=100"`
+	MemoryWindowTurns int           `json:",default=5"`
+	MemorySessionTTL  int           `json:",default=1800"`
+	Chroma            ChromaConf    `json:",optional"`
+	LLM               LLMConf       `json:",optional"`
+	Embedding         EmbeddingConf `json:",optional"`
 }
 
 type ChromaConf struct {

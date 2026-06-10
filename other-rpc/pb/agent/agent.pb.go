@@ -112,6 +112,7 @@ func (x *TestResponse) GetReply() string {
 type ChatRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Question      string                 `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	SessionId     string                 `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -149,6 +150,13 @@ func (*ChatRequest) Descriptor() ([]byte, []int) {
 func (x *ChatRequest) GetQuestion() string {
 	if x != nil {
 		return x.Question
+	}
+	return ""
+}
+
+func (x *ChatRequest) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
 	}
 	return ""
 }
@@ -701,9 +709,11 @@ const file_desc_agent_proto_rawDesc = "" +
 	"\vTestRequest\x12\x10\n" +
 	"\x03msg\x18\x01 \x01(\tR\x03msg\"$\n" +
 	"\fTestResponse\x12\x14\n" +
-	"\x05reply\x18\x01 \x01(\tR\x05reply\")\n" +
+	"\x05reply\x18\x01 \x01(\tR\x05reply\"H\n" +
 	"\vChatRequest\x12\x1a\n" +
-	"\bquestion\x18\x01 \x01(\tR\bquestion\"&\n" +
+	"\bquestion\x18\x01 \x01(\tR\bquestion\x12\x1d\n" +
+	"\n" +
+	"session_id\x18\x02 \x01(\tR\tsessionId\"&\n" +
 	"\fChatResponse\x12\x16\n" +
 	"\x06answer\x18\x01 \x01(\tR\x06answer\"}\n" +
 	"\x0fChatStreamChunk\x12\x18\n" +

@@ -24,8 +24,6 @@ func NewListCollectionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 }
 
 func (l *ListCollectionsLogic) ListCollections(in *agent.ListCollectionsRequest) (*agent.ListCollectionsResponse, error) {
-	_ = in
-
 	collections, err := l.svcCtx.Chroma.ListCollections(l.ctx)
 	if err != nil {
 		l.Errorf("获取 collection 列表失败: %v", err)

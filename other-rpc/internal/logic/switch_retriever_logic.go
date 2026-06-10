@@ -28,9 +28,6 @@ func NewSwitchRetrieverLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 func (l *SwitchRetrieverLogic) SwitchRetriever(in *agent.SwitchRetrieverRequest) (*agent.SwitchRetrieverResponse, error) {
 	name := in.GetCollection()
-	if name == "" {
-		return nil, status.Error(codes.InvalidArgument, "collection 名称不能为空")
-	}
 
 	retriever, err := l.svcCtx.Chroma.OpenRetriever(l.ctx, name, l.svcCtx.Embedder)
 	if err != nil {

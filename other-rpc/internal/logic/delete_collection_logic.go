@@ -30,9 +30,6 @@ func NewDeleteCollectionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *DeleteCollectionLogic) DeleteCollection(in *agent.DeleteCollectionRequest) (*agent.DeleteCollectionResponse, error) {
 	name := in.GetCollection()
-	if name == "" {
-		return nil, status.Error(codes.InvalidArgument, "collection 名称不能为空")
-	}
 
 	if err := l.svcCtx.Chroma.DeleteCollection(l.ctx, name); err != nil {
 		if errors.Is(err, vector.ErrCollectionNotFound) {

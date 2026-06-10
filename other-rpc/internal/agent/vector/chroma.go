@@ -9,8 +9,6 @@ import (
 	chroma "github.com/amikos-tech/chroma-go/pkg/api/v2"
 	chromaembed "github.com/amikos-tech/chroma-go/pkg/embeddings"
 	"github.com/tmc/langchaingo/embeddings"
-	"github.com/tmc/langchaingo/schema"
-	"github.com/tmc/langchaingo/textsplitter"
 	"github.com/tmc/langchaingo/vectorstores"
 )
 
@@ -45,6 +43,12 @@ func NewChroma(ctx context.Context, cfg config.KnowledgeBaseConf) (*Chroma, erro
 		return nil, err
 	}
 
+	// 结合文章的数量
+	topK := cfg.TopK
+	if topK <= 0 {
+		topK = 4
+	}
+
 	return &Chroma{
 		cfg:    cfg,
 		client: client,
@@ -72,7 +76,7 @@ func (c *Chroma) Load(ctx context.Context, embedder embeddings.Embedder) (vector
 		collection: collection,
 		embedder:   embedder,
 	}
-	return newRetriever(store, c.cfg), nil
+	return vectorstores.ToRetriever(store, c.cfg.TopK), nil
 }
 
 // Build 从知识库目录构建指定名称的 collection；若名称已存在则返回 ErrCollectionExists。
@@ -81,15 +85,18 @@ func (c *Chroma) Build(ctx context.Context, name string, embedder embeddings.Emb
 		return vectorstores.Retriever{}, 0, 0, errors.New("collection 名称不能为空")
 	}
 
+	// 1. 首先判断是否存在
 	if _, err := c.client.GetCollection(ctx, name); err == nil {
 		return vectorstores.Retriever{}, 0, 0, fmt.Errorf("%w: %s", ErrCollectionExists, name)
 	}
 
-	store, err := c.createCollection(ctx, name, embedder)
+	// 2.新建collection
+	store, err := c.NewCollection(ctx, name, embedder)
 	if err != nil {
 		return vectorstores.Retriever{}, 0, 0, fmt.Errorf("创建 Chroma collection 失败: %w", err)
 	}
 
+	// 3.加载和切割文档，存入向量数据库
 	docs, err := LoadDocumentsFromDir(c.cfg.DataPath)
 	if err != nil {
 		return vectorstores.Retriever{}, 0, 0, fmt.Errorf("加载知识库目录失败: %w", err)
@@ -102,11 +109,12 @@ func (c *Chroma) Build(ctx context.Context, name string, embedder embeddings.Emb
 
 	docCount := len(docs)
 
+	// 4.写入元数据
 	if err := c.writeCollectionStats(ctx, name, docCount, chunkCount); err != nil {
 		return vectorstores.Retriever{}, 0, 0, fmt.Errorf("更新 Chroma collection 元数据失败: %w", err)
 	}
 
-	return newRetriever(store, c.cfg), docCount, chunkCount, nil
+	return vectorstores.ToRetriever(store, c.cfg.TopK), docCount, chunkCount, nil
 }
 
 // OpenRetriever 打开已有 collection 并返回检索器。
@@ -124,7 +132,7 @@ func (c *Chroma) OpenRetriever(ctx context.Context, name string, embedder embedd
 		collection: collection,
 		embedder:   embedder,
 	}
-	return newRetriever(store, c.cfg), nil
+	return vectorstores.ToRetriever(store, c.cfg.TopK), nil
 }
 
 // DeleteCollection 删除指定名称的 collection。
@@ -176,7 +184,6 @@ func (c *Chroma) ListCollections(ctx context.Context) ([]CollectionInfo, error) 
 // 背景：chroma-go 在 CreateCollection 时若未指定 EmbeddingFunction，会默认初始化
 // ONNX 本地嵌入（ort.NewDefaultEmbeddingFunction），需加载 libonnxruntime 和 libstdc++.so.6。
 // other-rpc 的 Docker 镜像基于 Alpine，不含 libstdc++.so.6，因此在容器内建库会失败；
-// 本地 Windows 开发环境有该库，所以同样代码在本地可能正常。
 //
 // 本项目实际不向 Chroma 要嵌入：向量由 Ollama 在客户端生成，写入/检索时通过
 // WithEmbeddings / WithQueryEmbeddings 传入（见 collection.go）。
@@ -191,17 +198,7 @@ func collectionCreateOptions() []chroma.CreateCollectionOption {
 	}
 }
 
-func (c *Chroma) createCollection(ctx context.Context, name string, embedder embeddings.Embedder) (*Collection, error) {
-	collection, err := c.client.CreateCollection(ctx, name, collectionCreateOptions()...)
-	if err != nil {
-		return nil, err
-	}
-	return &Collection{
-		collection: collection,
-		embedder:   embedder,
-	}, nil
-}
-
+// 写入元数据
 func (c *Chroma) writeCollectionStats(ctx context.Context, name string, docCount, chunkCount int) error {
 	collection, err := c.client.GetCollection(ctx, name)
 	if err != nil {
@@ -212,42 +209,4 @@ func (c *Chroma) writeCollectionStats(ctx context.Context, name string, docCount
 		"doc_count":   int64(docCount),
 		"chunk_count": int64(chunkCount),
 	}))
-}
-
-func newRetriever(store vectorstores.VectorStore, cfg config.KnowledgeBaseConf) vectorstores.Retriever {
-	topK := cfg.TopK
-	if topK <= 0 {
-		topK = 4
-	}
-	return vectorstores.ToRetriever(store, topK)
-}
-
-func indexDocuments(ctx context.Context, store vectorstores.VectorStore, cfg config.KnowledgeBaseConf, docs []schema.Document) (int, error) {
-	if len(docs) == 0 {
-		return 0, nil
-	}
-
-	chunkSize := cfg.ChunkSize
-	if chunkSize <= 0 {
-		chunkSize = 800
-	}
-	chunkOverlap := cfg.ChunkOverlap
-	if chunkOverlap <= 0 {
-		chunkOverlap = 100
-	}
-	splitter := textsplitter.NewRecursiveCharacter(
-		textsplitter.WithChunkSize(chunkSize),
-		textsplitter.WithChunkOverlap(chunkOverlap),
-	)
-	chunks, err := textsplitter.SplitDocuments(splitter, docs)
-	if err != nil {
-		return 0, fmt.Errorf("切分文档失败: %w", err)
-	}
-	if len(chunks) == 0 {
-		return 0, nil
-	}
-	if _, err = store.AddDocuments(ctx, chunks); err != nil {
-		return 0, err
-	}
-	return len(chunks), nil
 }

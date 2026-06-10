@@ -26,7 +26,7 @@ type LLMConf struct {
 	Provider string `json:",default=openai"`
 	Model    string `json:",optional"`
 	BaseURL  string `json:",optional"`
-	APIKey   string `json:",optional"`
+	APIKey   string `json:",optional" env:"LLMAPIKEY"`
 }
 
 type EmbeddingConf struct {

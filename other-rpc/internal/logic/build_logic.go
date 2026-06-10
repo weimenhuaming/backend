@@ -31,9 +31,6 @@ func NewBuildLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BuildLogic 
 // Build 从知识库目录构建向量索引并持久化（名称重复时返回已存在）。
 func (l *BuildLogic) Build(in *agent.BuildRequest) (*agent.BuildResponse, error) {
 	name := in.GetCollection()
-	if name == "" {
-		return nil, status.Error(codes.InvalidArgument, "collection 名称不能为空")
-	}
 
 	_, docCount, chunkCount, err := l.svcCtx.Chroma.Build(l.ctx, name, l.svcCtx.Embedder)
 	if err != nil {
@@ -46,6 +43,7 @@ func (l *BuildLogic) Build(in *agent.BuildRequest) (*agent.BuildResponse, error)
 
 	msg := fmt.Sprintf("知识库 %q 已构建，文档数: %d, 切片数: %d", name, docCount, chunkCount)
 	l.Infof(msg)
+
 	return &agent.BuildResponse{
 		Message:    msg,
 		DocCount:   int32(docCount),

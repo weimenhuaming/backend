@@ -4,6 +4,7 @@ go 1.25.8
 
 require (
 	github.com/amikos-tech/chroma-go v0.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/tmc/langchaingo v0.1.14
 	github.com/zeromicro/go-zero v1.10.1
 	google.golang.org/grpc v1.81.1

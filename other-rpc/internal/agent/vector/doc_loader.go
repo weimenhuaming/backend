@@ -1,12 +1,17 @@
 package vector
 
 import (
+	"context"
+	"fmt"
 	"io/fs"
 	"os"
+	"other-rpc/internal/config"
 	"path/filepath"
 	"strings"
 
 	"github.com/tmc/langchaingo/schema"
+	"github.com/tmc/langchaingo/textsplitter"
+	"github.com/tmc/langchaingo/vectorstores"
 )
 
 var supportedExts = map[string]struct{}{
@@ -56,4 +61,35 @@ func LoadDocumentsFromDir(dir string) ([]schema.Document, error) {
 		return nil
 	})
 	return docs, err
+}
+
+// 切割数据库文档，存入向量数据库
+func indexDocuments(ctx context.Context, store vectorstores.VectorStore, cfg config.KnowledgeBaseConf, docs []schema.Document) (int, error) {
+	if len(docs) == 0 {
+		return 0, nil
+	}
+
+	chunkSize := cfg.ChunkSize
+	if chunkSize <= 0 {
+		chunkSize = 800
+	}
+	chunkOverlap := cfg.ChunkOverlap
+	if chunkOverlap <= 0 {
+		chunkOverlap = 100
+	}
+	splitter := textsplitter.NewRecursiveCharacter(
+		textsplitter.WithChunkSize(chunkSize),
+		textsplitter.WithChunkOverlap(chunkOverlap),
+	)
+	chunks, err := textsplitter.SplitDocuments(splitter, docs)
+	if err != nil {
+		return 0, fmt.Errorf("切分文档失败: %w", err)
+	}
+	if len(chunks) == 0 {
+		return 0, nil
+	}
+	if _, err = store.AddDocuments(ctx, chunks); err != nil {
+		return 0, err
+	}
+	return len(chunks), nil
 }

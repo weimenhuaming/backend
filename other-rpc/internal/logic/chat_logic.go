@@ -2,9 +2,6 @@ package logic
 
 import (
 	"context"
-	"errors"
-	"strings"
-
 	"other-rpc/internal/svc"
 	"other-rpc/pb/agent"
 
@@ -26,15 +23,10 @@ func NewChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatLogic {
 }
 
 func (l *ChatLogic) Chat(in *agent.ChatRequest) (*agent.ChatResponse, error) {
-	if in == nil || strings.TrimSpace(in.Question) == "" {
-		return nil, errors.New("问题不能为空")
-	}
-
 	answer, err := l.svcCtx.Agent.Chat(l.ctx, in.Question)
 	if err != nil {
 		logx.WithContext(l.ctx).Errorf("知识库问答失败: %v", err)
 		return nil, err
 	}
-
 	return &agent.ChatResponse{Answer: answer}, nil
 }

@@ -28,14 +28,9 @@ func NewListMyArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListMyArticlesLogic) ListMyArticles(req *types.ListMyArticlesReq) (resp *types.ListMyArticlesData, err error) {
-	// 1. 校验
-	if !vaild.IsAdmin(l.ctx) {
-		return nil, response.ErrorForbidden("非管理员，没有权限执行")
-	}
-
-	userId, ok := vaild.GetUserID(l.ctx)
+	userId, ok, msg := vaild.GetAdminUserID(l.ctx)
 	if !ok {
-		return nil, response.ErrorUnauthorized("用户未登录")
+		return nil, response.ErrorAdminAuth(msg)
 	}
 
 	page, pageSize := vaild.NormalizePageSize(req.Page, req.PageSize)

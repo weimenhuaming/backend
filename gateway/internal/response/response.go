@@ -56,6 +56,13 @@ func ErrorActionAuth(msg string) error {
 	return ErrorUnauthorized(msg)
 }
 
+func ErrorAdminAuth(msg string) error {
+	if msg == "非管理员，无权限操作" {
+		return ErrorForbidden(msg)
+	}
+	return ErrorUnauthorized(msg)
+}
+
 func ErrorLikeOperation(err error) error {
 	if err == nil {
 		return ErrorInternalServer("unknown error")

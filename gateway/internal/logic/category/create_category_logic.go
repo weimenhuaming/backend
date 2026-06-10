@@ -27,8 +27,8 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) error {
-	if !vaild.IsAdmin(l.ctx) {
-		return response.ErrorForbidden("非管理员，没有权限执行")
+	if _, ok, msg := vaild.GetAdminUserID(l.ctx); !ok {
+		return response.ErrorAdminAuth(msg)
 	}
 	if req == nil || req.Name == "" {
 		return response.ErrorBadRequest("name is required")

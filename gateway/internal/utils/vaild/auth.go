@@ -33,3 +33,14 @@ func GetActionUserID(ctx context.Context) (userID uint64, ok bool, msg string) {
 	}
 	return userID, true, ""
 }
+
+func GetAdminUserID(ctx context.Context) (userID uint64, ok bool, msg string) {
+	userID, ok = GetUserID(ctx)
+	if !ok {
+		return 0, false, "请先登录"
+	}
+	if !IsAdmin(ctx) {
+		return 0, false, "非管理员，无权限操作"
+	}
+	return userID, true, ""
+}

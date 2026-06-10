@@ -30,8 +30,8 @@ func NewDeleteKnowledgeCollectionLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *DeleteKnowledgeCollectionLogic) DeleteKnowledgeCollection(req *types.DeleteKnowledgeCollectionReq) error {
-	if ok := vaild.IsAdmin(l.ctx); !ok {
-		return response.ErrorForbidden("非管理员，无权限操作")
+	if _, ok, msg := vaild.GetAdminUserID(l.ctx); !ok {
+		return response.ErrorAdminAuth(msg)
 	}
 
 	collection := strings.TrimSpace(req.Collection)

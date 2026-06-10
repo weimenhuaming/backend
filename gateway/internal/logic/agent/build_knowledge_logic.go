@@ -31,8 +31,8 @@ func NewBuildKnowledgeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bu
 }
 
 func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp *types.BuildKnowledgeData, err error) {
-	if ok := vaild.IsAdmin(l.ctx); !ok {
-		return nil, response.ErrorForbidden("非管理员，无权限操作")
+	if _, ok, msg := vaild.GetAdminUserID(l.ctx); !ok {
+		return nil, response.ErrorAdminAuth(msg)
 	}
 
 	collection := strings.TrimSpace(req.Collection)
@@ -40,7 +40,6 @@ func (l *BuildKnowledgeLogic) BuildKnowledge(req *types.BuildKnowledgeReq) (resp
 		return nil, response.ErrorBadRequest("collection 名称不能为空")
 	}
 
-	//
 	buildCtx, cancel := context.WithTimeout(context.WithoutCancel(l.ctx), 2*time.Minute)
 	defer cancel()
 

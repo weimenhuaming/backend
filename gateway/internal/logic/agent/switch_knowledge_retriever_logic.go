@@ -30,8 +30,8 @@ func NewSwitchKnowledgeRetrieverLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *SwitchKnowledgeRetrieverLogic) SwitchKnowledgeRetriever(req *types.SwitchKnowledgeRetrieverReq) (resp *types.SwitchKnowledgeRetrieverData, err error) {
-	if ok := vaild.IsAdmin(l.ctx); !ok {
-		return nil, response.ErrorForbidden("非管理员，无权限操作")
+	if _, ok, msg := vaild.GetAdminUserID(l.ctx); !ok {
+		return nil, response.ErrorAdminAuth(msg)
 	}
 
 	collection := strings.TrimSpace(req.Collection)

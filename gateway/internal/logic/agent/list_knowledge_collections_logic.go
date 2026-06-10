@@ -29,8 +29,8 @@ func NewListKnowledgeCollectionsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *ListKnowledgeCollectionsLogic) ListKnowledgeCollections(req *types.ListKnowledgeCollectionsReq) (resp *types.ListKnowledgeCollectionsData, err error) {
 	_ = req
 
-	if ok := vaild.IsAdmin(l.ctx); !ok {
-		return nil, response.ErrorForbidden("非管理员，无权限操作")
+	if _, ok, msg := vaild.GetAdminUserID(l.ctx); !ok {
+		return nil, response.ErrorAdminAuth(msg)
 	}
 
 	r, err := l.svcCtx.Agent.ListCollections(l.ctx, &agent_client.ListCollectionsRequest{})

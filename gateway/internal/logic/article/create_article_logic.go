@@ -26,13 +26,9 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) error {
-	UserId, ok := vaild.GetUserID(l.ctx)
+	userId, ok, msg := vaild.GetAdminUserID(l.ctx)
 	if !ok {
-		return response.ErrorUnauthorized("用户身份验证失败，请重新登录")
-	}
-
-	if ok = vaild.IsAdmin(l.ctx); !ok {
-		return response.ErrorForbidden("非管理员，无权限操作")
+		return response.ErrorAdminAuth(msg)
 	}
 
 	if req.Title == "" && req.Content == "" {
@@ -45,7 +41,7 @@ func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) error {
 		Summary:    req.Summary,
 		Content:    req.Content,
 		Cover:      req.Cover,
-		UserId:     UserId,
+		UserId:     userId,
 	})
 	if err != nil {
 		return response.ErrorInternalServer(err.Error())

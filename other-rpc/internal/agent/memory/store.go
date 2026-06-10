@@ -25,10 +25,10 @@ type entry struct {
 // NewStore 创建会话记忆存储。windowTurns 为保留的最近轮数，ttl 为会话空闲过期时间。
 func NewStore(windowTurns int, ttl time.Duration) *Store {
 	if windowTurns <= 0 {
-		windowTurns = 5
+		windowTurns = 3
 	}
 	if ttl <= 0 {
-		ttl = 30 * time.Minute
+		ttl = 15 * time.Minute
 	}
 	return &Store{
 		sessions:    make(map[string]*entry),

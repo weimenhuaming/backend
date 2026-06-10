@@ -44,7 +44,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginData, err erro
 	// 3.Call core-rpc
 	rpcResp, err := l.svcCtx.Core.NameLogin(l.ctx, &core_client.NameLoginReq{
 		Name:     req.Name,
-		Password: req.Password,
+		Password: utils.Bcrypt(req.Password),
 	})
 	if err != nil {
 		return nil, response.ErrorBadRequest(err.Error())

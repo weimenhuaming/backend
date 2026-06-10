@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 	"io"
 	"strings"
 	"time"
@@ -30,6 +31,12 @@ func NewAgentChatStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 }
 
 func (l *AgentChatStreamLogic) AgentChatStream(req *types.AgentChatReq, client chan<- *types.AgentChatStreamChunk) error {
+	// 登入之后才可以提问。
+	_, ok, msg := vaild.GetActionUserID(l.ctx)
+	if !ok {
+		return response.ErrorActionAuth(msg)
+	}
+
 	question := strings.TrimSpace(req.Question)
 	if question == "" {
 		return response.ErrorBadRequest("问题不能为空")

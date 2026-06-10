@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"gateway/internal/utils/vaild"
 	"strings"
 	"time"
 
@@ -29,6 +30,11 @@ func NewAgentChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AgentCh
 }
 
 func (l *AgentChatLogic) AgentChat(req *types.AgentChatReq) (resp *types.AgentChatData, err error) {
+	_, ok, msg := vaild.GetActionUserID(l.ctx)
+	if !ok {
+		return nil, response.ErrorActionAuth(msg)
+	}
+
 	question := strings.TrimSpace(req.Question)
 	if question == "" {
 		return nil, response.ErrorBadRequest("问题不能为空")

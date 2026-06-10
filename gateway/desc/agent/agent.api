@@ -83,6 +83,7 @@ service Gateway {
 }
 
 @server (
+	middleware: AuthMiddleware
 	group: agent
 	sse:   true
 )

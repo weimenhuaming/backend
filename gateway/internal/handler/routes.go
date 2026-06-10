@@ -36,13 +36,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/agent/chat/stream",
-				Handler: agent.AgentChatStreamHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/agent/chat/stream",
+					Handler: agent.AgentChatStreamHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithSSE(),
 	)
 

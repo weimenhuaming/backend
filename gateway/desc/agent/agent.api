@@ -31,6 +31,13 @@ type (
 		Timestamp int64  `json:"timestamp"`
 	}
 
+	AgentChatStreamChunk {
+		Content   string `json:"content,optional"`
+		Done      bool   `json:"done"`
+		SessionId string `json:"session_id,optional"`
+		MessageId string `json:"message_id,optional"`
+	}
+
 	KnowledgeCollectionInfo {
 		Name       string `json:"name"`
 		DocCount   int32  `json:"doc_count"`
@@ -73,6 +80,15 @@ service Gateway {
 
 	@handler AgentChat
 	post /agent/chat (AgentChatReq) returns (AgentChatData)
+}
+
+@server (
+	group: agent
+	sse:   true
+)
+service Gateway {
+	@handler AgentChatStream
+	post /agent/chat/stream (AgentChatReq) returns (AgentChatStreamChunk)
 }
 
 @server (

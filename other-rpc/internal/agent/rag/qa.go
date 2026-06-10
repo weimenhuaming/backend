@@ -2,8 +2,6 @@ package rag
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms"
@@ -29,9 +27,16 @@ func NewQA(model llms.Model, retriever vectorstores.Retriever) *QA {
 
 // Ask 对外提供统一问答入口。
 func (q *QA) Ask(ctx context.Context, question string) (string, error) {
-	question = strings.TrimSpace(question)
-	if question == "" {
-		return "", fmt.Errorf("问题不能为空")
-	}
 	return chains.Run(ctx, q.chain, question)
+}
+
+// AskStream 流式问答，每收到 LLM token 即回调 send。
+func (q *QA) AskStream(ctx context.Context, question string, send func(chunk string) error) error {
+	_, err := chains.Run(ctx, q.chain, question, chains.WithStreamingFunc(func(ctx context.Context, chunk []byte) error {
+		if len(chunk) == 0 {
+			return nil
+		}
+		return send(string(chunk))
+	}))
+	return err
 }

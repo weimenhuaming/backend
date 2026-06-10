@@ -58,3 +58,14 @@ func (a *Agent) Chat(ctx context.Context, question string) (string, error) {
 	}
 	return qa.Ask(ctx, question)
 }
+
+// ChatStream 流式 RAG 问答，检索完成后逐 token 回调 send。
+func (a *Agent) ChatStream(ctx context.Context, question string, send func(chunk string) error) error {
+	a.mu.RLock()
+	qa := a.qa
+	a.mu.RUnlock()
+	if qa == nil {
+		return errors.New("检索器未加载，请先构建知识库")
+	}
+	return qa.AskStream(ctx, question, send)
+}

@@ -16,6 +16,13 @@ type AgentChatReq struct {
 	Question  string `json:"question"`
 }
 
+type AgentChatStreamChunk struct {
+	Content   string `json:"content,optional"`
+	Done      bool   `json:"done"`
+	SessionId string `json:"session_id,optional"`
+	MessageId string `json:"message_id,optional"`
+}
+
 type ArticleInfo struct {
 	Id           uint64 `json:"id"`
 	UserId       uint64 `json:"user_id"`

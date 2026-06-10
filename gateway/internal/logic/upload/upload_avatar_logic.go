@@ -28,6 +28,11 @@ func NewUploadAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Uplo
 }
 
 func (l *UploadAvatarLogic) UploadAvatar(r *http.Request) (resp *types.UploadImageData, err error) {
+	_, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return nil, response.ErrorUnauthorized("请先登录")
+	}
+
 	if !vaild.IsAdmin(l.ctx) {
 		return nil, response.ErrorForbidden("仅管理员可上传头像")
 	}

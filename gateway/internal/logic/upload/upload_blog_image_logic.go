@@ -33,6 +33,10 @@ func (l *UploadBlogImageLogic) UploadBlogImage(r *http.Request) (resp *types.Upl
 		return nil, response.ErrorUnauthorized("请先登录")
 	}
 
+	if !vaild.IsAdmin(l.ctx) {
+		return nil, response.ErrorForbidden("仅管理员可上传头像")
+	}
+
 	urlPath, saveErr := utils.SaveUploadedImage(r, "file", "blog")
 	if saveErr != nil {
 		return nil, response.ErrorBadRequest(saveErr.Error())

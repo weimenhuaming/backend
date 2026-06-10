@@ -7,6 +7,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,9 +31,15 @@ func (l *BatchGetCommentLikeStatusLogic) BatchGetCommentLikeStatus(req *types.Ba
 		return &types.BatchGetCommentLikeStatusData{Items: []types.CommentLikeStatusItem{}}, nil
 	}
 
+	// 1. 不存在，则为游客
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return &types.BatchGetCommentLikeStatusData{Items: nil}, nil
+	}
+
 	r, err := l.svcCtx.Core.BatchGetCommentLikeStatus(l.ctx, &core_client.BatchGetCommentLikeStatusReq{
 		CommentIds: req.CommentIds,
-		UserId:     userIDFromCtx(l.ctx),
+		UserId:     userId,
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

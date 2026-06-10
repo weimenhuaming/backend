@@ -7,6 +7,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,9 +27,9 @@ func NewLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeC
 }
 
 func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.LikeCommentData, err error) {
-	userID, ok, msg := likeUserFromCtx(l.ctx)
+	userID, ok, msg := vaild.GetActionUserID(l.ctx)
 	if !ok {
-		return nil, authFailError(msg)
+		return nil, response.ErrorActionAuth(msg)
 	}
 	if req.CommentId == 0 {
 		return nil, response.ErrorBadRequest("评论ID无效")
@@ -39,7 +40,7 @@ func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.L
 		UserId:    userID,
 	})
 	if err != nil {
-		return nil, likeRPCError(err)
+		return nil, response.ErrorLikeOperation(err)
 	}
 
 	return &types.LikeCommentData{LikeCount: r.GetLikeCount()}, nil

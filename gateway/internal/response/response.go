@@ -2,6 +2,7 @@ package response
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
@@ -46,6 +47,24 @@ func ErrorBadRequest(mag string) error {
 
 func ErrorConflict(msg string) error {
 	return &CodeError{Code: http.StatusConflict, Msg: msg}
+}
+
+func ErrorActionAuth(msg string) error {
+	if msg == "游客无法操作" {
+		return ErrorForbidden(msg)
+	}
+	return ErrorUnauthorized(msg)
+}
+
+func ErrorLikeOperation(err error) error {
+	if err == nil {
+		return ErrorInternalServer("unknown error")
+	}
+	msg := err.Error()
+	if strings.Contains(msg, "已经点过赞") || strings.Contains(msg, "尚未点赞") {
+		return ErrorBadRequest(msg)
+	}
+	return ErrorInternalServer(msg)
 }
 
 // Response 统一处理响应

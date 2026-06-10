@@ -7,6 +7,7 @@ import (
 	"gateway/internal/response"
 	"gateway/internal/svc"
 	"gateway/internal/types"
+	"gateway/internal/utils/vaild"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,9 +31,16 @@ func (l *GetArticleLikeStatusLogic) GetArticleLikeStatus(req *types.GetArticleLi
 		return nil, response.ErrorBadRequest("文章ID无效")
 	}
 
+	// 1. 不存在，则为游客
+	userId, ok := vaild.GetUserID(l.ctx)
+	if !ok {
+		return &types.GetArticleLikeStatusData{Liked: false}, nil
+	}
+
+	// 2. 存在传id
 	r, err := l.svcCtx.Core.GetArticleLikeStatus(l.ctx, &core_client.GetArticleLikeStatusReq{
 		ArticleId: req.ArticleId,
-		UserId:    userIDFromCtx(l.ctx),
+		UserId:    userId,
 	})
 	if err != nil {
 		return nil, response.ErrorInternalServer(err.Error())

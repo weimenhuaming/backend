@@ -16,5 +16,7 @@ COPY --from=builder /app/other-rpc .
 COPY etc/agent-docker.yaml etc/agent.yaml
 COPY data/knowledge ./data/knowledge
 
+COPY .env .env
+
 EXPOSE 8081
 CMD ["./other-rpc", "-f", "etc/agent.yaml"]

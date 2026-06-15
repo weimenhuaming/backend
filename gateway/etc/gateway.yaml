@@ -25,6 +25,6 @@ Cache:
 
 Auth:
   AccessSecret: "your-256-bit-secret"
-  AccessExpire: 686400        # Access Token 有效期：24 小时
+  AccessExpire: 300       # Access Token 有效期：5 分钟
 RefreshSecret: "another-random-secret"
 RefreshExpire: 604800        # Refresh Token 有效期：7 天

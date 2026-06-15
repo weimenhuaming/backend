@@ -1,5 +1,9 @@
 FROM golang:1.25.8-alpine3.23 AS builder
 
+ENV GO111MODULE=on \
+    GOPROXY=https://goproxy.cn,direct \
+    GOPRIVATE=""
+
 WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download

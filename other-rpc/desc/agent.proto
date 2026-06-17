@@ -17,6 +17,14 @@ service Agent {
   rpc Build(BuildRequest) returns (BuildResponse);
   rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse);
   rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
+
+  // life section
+  rpc ListLifeMapPreview(ListLifeMapPreviewRequest) returns (ListLifeMapPreviewResponse);
+  rpc ListLifeNotes(ListLifeNotesRequest) returns (ListLifeNotesResponse);
+  rpc GetLifeNote(GetLifeNoteRequest) returns (GetLifeNoteResponse);
+  rpc CreateLifeNote(CreateLifeNoteRequest) returns (CreateLifeNoteResponse);
+  rpc UpdateLifeNote(UpdateLifeNoteRequest) returns (UpdateLifeNoteResponse);
+  rpc DeleteLifeNote(DeleteLifeNoteRequest) returns (DeleteLifeNoteResponse);
 }
 
 message TestRequest {
@@ -30,11 +38,9 @@ message ChatRequest {
   string question = 1;
   string session_id = 2;
 }
-
 message ChatResponse {
   string answer = 1;
 }
-
 message ChatStreamChunk {
   string content = 1;
   bool done = 2;
@@ -45,7 +51,6 @@ message ChatStreamChunk {
 message SwitchRetrieverRequest {
   string collection = 1;
 }
-
 message SwitchRetrieverResponse {
   string message = 1;
 }
@@ -53,7 +58,6 @@ message SwitchRetrieverResponse {
 message BuildRequest {
   string collection = 1;
 }
-
 message BuildResponse {
   string message = 1;
   int32 doc_count = 2;
@@ -61,14 +65,12 @@ message BuildResponse {
 }
 
 message ListCollectionsRequest {}
-
 message CollectionInfo {
   string name = 1;
   int32 doc_count = 2;
   int32 chunk_count = 3;
   int32 count = 4;
 }
-
 message ListCollectionsResponse {
   repeated CollectionInfo collections = 1;
 }
@@ -76,9 +78,60 @@ message ListCollectionsResponse {
 message DeleteCollectionRequest {
   string collection = 1;
 }
-
 message DeleteCollectionResponse {
   string message = 1;
 }
 
+//======================================================================================================================
+// life section — 生活小记
+message LifeNote {
+  int64 id = 1;
+  string photo_url = 2;
+  string description = 3;
+  string city = 4;
+  string province = 5;
+  int64 created_at = 6;
+}
+message ListLifeMapPreviewRequest {}
+message ListLifeMapPreviewResponse {
+  repeated LifeNote notes = 1;
+}
+message ListLifeNotesRequest {
+  string province = 1; // 可选，如 北京市、浙江省
+  string city = 2;     // 可选，如 北京、杭州
+}
+message ListLifeNotesResponse {
+  repeated LifeNote notes = 1;
+}
+message GetLifeNoteRequest {
+  int64 id = 1;
+}
+message GetLifeNoteResponse {
+    LifeNote note = 1;
+}
+message CreateLifeNoteRequest {
+  string photo_url = 1;
+  string description = 2;
+  string city = 3;
+  string province = 4;
+}
+message CreateLifeNoteResponse {
+  LifeNote note = 1;
+}
+message UpdateLifeNoteRequest {
+  int64 id = 1;
+  string photo_url = 2;
+  string description = 3;
+  string city = 4;
+  string province = 5;
+}
+message UpdateLifeNoteResponse {
+  LifeNote note = 1;
+}
+message DeleteLifeNoteRequest {
+  int64 id = 1;
+}
+message DeleteLifeNoteResponse {
+  string message = 1;
+}
 

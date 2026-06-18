@@ -24,10 +24,12 @@ KnowledgeBase:
     # 对话模型：智谱（OpenAI 兼容）
     Provider: openai
     BaseURL: https://open.bigmodel.cn/api/paas/v4
-    APIKey: aec6ba32d6464b329efd63cff837feb3.W0eFMQFiJD0S25ge
+    APIKey: ${LLMAPIKEY}
     Model: glm-4v-flash
   Embedding:
-    # 向量模型：本地 Ollama（docker-compose 服务名 ollama）
-    Provider: ollama
-    BaseURL: http://ollama:11434
-    Model: nomic-embed-text
+    # 目前支持 Ollama 和 aliyun
+    Provider: aliyun
+    BaseURL: https://dashscope.aliyuncs.com/api/v1/services/embeddings/multimodal-embedding/multimodal-embedding
+    APIKey: ${DASHSCOPE_API_KEY}
+    Model: qwen3-vl-embedding
+    Dimension: 1024

@@ -24,6 +24,6 @@ Cache:
 
 Auth:
   AccessSecret: "your-256-bit-secret"
-  AccessExpire: 686400
+  AccessExpire: 3000
 RefreshSecret: "another-random-secret"
 RefreshExpire: 604800

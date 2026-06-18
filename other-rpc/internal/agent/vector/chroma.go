@@ -177,7 +177,7 @@ func (c *Chroma) ListCollections(ctx context.Context) ([]Collection, error) {
 // ONNX 本地嵌入（ort.NewDefaultEmbeddingFunction），需加载 libonnxruntime 和 libstdc++.so.6。
 // other-rpc 的 Docker 镜像基于 Alpine，不含 libstdc++.so.6，因此在容器内建库会失败；
 //
-// 本项目实际不向 Chroma 要嵌入：向量由 Ollama 在客户端生成，写入/检索时通过
+// 本项目实际不向 Chroma 要嵌入：向量由外部 Embedding 服务在客户端生成，写入/检索时通过
 // WithEmbeddings / WithQueryEmbeddings 传入（见 collection.go）。
 //
 // 因此这里：

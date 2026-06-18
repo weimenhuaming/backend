@@ -3,7 +3,6 @@ package embedding
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"other-rpc/internal/config"
 
@@ -11,22 +10,17 @@ import (
 	"github.com/tmc/langchaingo/llms/ollama"
 )
 
-// NewEmbedder 按配置初始化 Embedding 模块。
-func NewEmbedder(cfg config.EmbeddingConf) (embeddings.Embedder, error) {
-	provider := strings.ToLower(strings.TrimSpace(cfg.Provider))
-
-	if provider != "" && provider != "ollama" {
-		return nil, fmt.Errorf("不支持的 Embedding Provider: %s", cfg.Provider)
+func newOllamaEmbedder(cfg config.EmbeddingConf) (embeddings.Embedder, error) {
+	if cfg.Model == "" {
+		return nil, errors.New("embedding model 未配置")
+	}
+	if cfg.BaseURL == "" {
+		return nil, errors.New("embedding BaseURL 未配置")
 	}
 
-	model := cfg.Model
-	if model == "" {
-		return nil, errors.New("embedding model is not find")
-	}
-
-	opts := []ollama.Option{ollama.WithModel(model)}
-	if cfg.BaseURL != "" {
-		opts = append(opts, ollama.WithServerURL(cfg.BaseURL))
+	opts := []ollama.Option{
+		ollama.WithModel(cfg.Model),
+		ollama.WithServerURL(cfg.BaseURL),
 	}
 
 	embedLLM, err := ollama.New(opts...)

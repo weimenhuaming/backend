@@ -32,8 +32,9 @@ type LLMConf struct {
 }
 
 type EmbeddingConf struct {
-	Provider string `json:",default=ollama"`
-	Model    string `json:",optional"`
-	BaseURL  string `json:",optional"`
-	APIKey   string `json:",optional"`
+	Provider  string `json:",optional"`
+	Model     string `json:",optional"`
+	BaseURL   string `json:",optional"`
+	APIKey    string `json:",optional"`
+	Dimension int    `json:",optional"`
 }

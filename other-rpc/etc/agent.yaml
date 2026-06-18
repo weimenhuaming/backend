@@ -27,7 +27,9 @@ KnowledgeBase:
     APIKey: ${LLMAPIKEY}
     Model: glm-4v-flash
   Embedding:
-    # 向量模型：本地 Ollama
-    Provider: ollama
-    BaseURL: http://127.0.0.1:11434
-    Model: nomic-embed-text
+    # 向量模型：阿里云百炼 qwen3-vl-embedding（以下字段均为必填）
+    Provider: aliyun
+    BaseURL: https://dashscope.aliyuncs.com/api/v1/services/embeddings/multimodal-embedding/multimodal-embedding
+    APIKey: ${DASHSCOPE_API_KEY}
+    Model: qwen3-vl-embedding
+    Dimension: 1024

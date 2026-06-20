@@ -2,7 +2,7 @@
 # 注意：docker-compose 的 build context 为仓库根目录（..），因此路径以根目录为基准
 
 # ---------- 编译阶段 ----------
-FROM golang:1.25.8-alpine3.23 AS builder
+FROM docker.m.daocloud.io/library/golang:1.25.8-alpine3.23 AS builder
 
 # Go 模块与国内代理配置，加速依赖下载
 ENV GO111MODULE=on \
@@ -24,7 +24,7 @@ COPY gateway/ ./
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/gateway gateway.go
 
 # ---------- 运行阶段 ----------
-FROM alpine:3.20
+FROM docker.m.daocloud.io/library/alpine:3.20
 
 # CA 证书（HTTPS）与时区数据
 RUN apk add --no-cache ca-certificates tzdata

@@ -65,6 +65,9 @@ services:
       context: ../core-rpc
       dockerfile: Dockerfile
     container_name: core-rpc
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      REDIS_PASSWORD: ""
     depends_on:
       etcd:
         condition: service_started
@@ -101,6 +104,8 @@ services:
       context: ..
       dockerfile: gateway/Dockerfile
     container_name: gateway
+    environment:
+      REDIS_PASSWORD: ""
     depends_on:
       - etcd
       - redis

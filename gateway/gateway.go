@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	conf.MustLoad(*configFile, &c, conf.UseEnv())
 
 	staticDir := resolveStaticDir(*configFile)
 	utils.InitStaticRoot(staticDir)

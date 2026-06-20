@@ -1,4 +1,4 @@
-FROM golang:1.25.8-alpine3.23 AS builder
+FROM docker.m.daocloud.io/library/golang:1.25.8-alpine3.23 AS builder
 
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct \
@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/other-rpc agent.go
 
-FROM alpine:3.20
+FROM docker.m.daocloud.io/library/alpine:3.20
 RUN apk add --no-cache ca-certificates tzdata
 ENV TZ=Asia/Shanghai
 WORKDIR /app

@@ -94,6 +94,68 @@ docker compose down        # 保留数据卷
 docker compose down -v     # 同时删除数据卷
 ```
 
+### 生产环境（阿里云 Ubuntu）
+
+服务器路径 `~/chenaqiweb/backend`，使用 `docker-compose.prod.yml`（无 Ollama，Embedding 走阿里云 DashScope，与 `docker-compose.aliyun.yml` 一致）：
+
+```bash
+cd ~/chenaqiweb/backend/other-rpc
+cp .env.example .env
+# 填写 LLMAPIKEY、DASHSCOPE_API_KEY
+
+cd ~/chenaqiweb/backend/deploy
+# MySQL / Redis 密码见 docker-compose.prod.yml 各服务 environment，部署前请修改
+# 首次部署前创建数据目录，见 frontend/deploy/README.md
+
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps
+```
+
+MySQL、Redis 仅绑定服务器本机 `127.0.0.1`（不对外网开放），Windows 通过 **SSH 隧道** 连接，见下方 [远程连接 MySQL / Redis](#远程连接-mysql--redis-windows)。
+
+**启动顺序：** 与 frontend/deploy 共用 `chenaqi-net`，谁先启动都可以。
+
+前端部署见 [frontend/deploy/README.md](../frontend/deploy/README.md#生产环境阿里云-ubuntu--chena7cn)。
+
+### 远程连接 MySQL / Redis（Windows）
+
+生产环境 MySQL、Redis **不会**暴露在公网，需在 Windows 上先建 SSH 隧道，再用客户端连本机端口。
+
+**1. 服务器上应用最新 compose（若已改端口映射）**
+
+```bash
+cd ~/chenaqiweb/backend/deploy
+docker compose -f docker-compose.prod.yml up -d mysql redis
+```
+
+**2. Windows 建立隧道（PowerShell / CMD）**
+
+一条命令同时转发 MySQL 和 Redis：
+
+```powershell
+ssh -L 3306:127.0.0.1:3306 -L 6379:127.0.0.1:6379 你的用户名@服务器公网IP
+```
+
+保持该窗口**不要关闭**，隧道才有效。
+
+**3. 客户端连接参数**
+
+| 服务 | Host | Port | 用户名 | 密码 |
+|------|------|------|--------|------|
+| MySQL | `127.0.0.1` | `3306` | `root` | `docker-compose.prod.yml` 中 `MYSQL_ROOT_PASSWORD` |
+| Redis | `127.0.0.1` | `6379` | — | 无密码（与 gateway-docker.yaml 一致） |
+
+- MySQL 库名：`test`（见 compose 中 `MYSQL_DATABASE`）
+- Redis 可用 **Another Redis Desktop Manager**、**RedisInsight**、**Navicat** 等
+
+**注意：** 若本机已有 MySQL/Redis 占用 3306、6379，可改用其他本地端口，例如：
+
+```powershell
+ssh -L 13306:127.0.0.1:3306 -L 16379:127.0.0.1:6379 你的用户名@服务器公网IP
+```
+
+此时客户端 Host 仍为 `127.0.0.1`，Port 改为 `13306` / `16379`。
+
 ### 验证
 
 | 检查项 | 命令 / 地址 |
@@ -246,15 +308,15 @@ cd other-rpc && make agent-protos
 
 ## 网络与前端联调
 
-Compose 会创建名为 **`chenaqi-net`** 的 Docker 网络。同一网络内的容器可通过服务名互相访问（如 `gateway:9000`）。
+Compose 使用名为 **`chenaqi-net`** 的 Docker 网络（前后端 compose 同名自动创建或加入，**谁先启动都可以**）。
 
-前端容器联调示例（在 `frontend/deploy` 目录）：
+前端容器联调示例（在 `frontend/deploy` 目录，顺序任意）：
 
 ```bash
-# 1. 先启后端（创建 chenaqi-net）
+# 后端
 cd backend/deploy && docker compose up -d --build
 
-# 2. 再启前端（加入 chenaqi-net）
+# 前端
 cd frontend/deploy
 docker compose -f docker-compose.network.yml up -d --build
 ```
@@ -298,7 +360,7 @@ docker compose -f docker-compose.local.yml up -d --build
 <details>
 <summary><strong>前端容器报 network chenaqi-net not found？</strong></summary>
 
-使用 `docker-compose.network.yml` 前须先启动本目录的后端 Compose，以创建 `chenaqi-net` 网络。仅联调宿主机 Gateway 时使用 `docker-compose.local.yml`。
+前后端 compose 均已配置同名 `chenaqi-net`，任意一方先启动即可创建网络。若仍报错，执行 `docker network create chenaqi-net` 后重试。仅联调宿主机 Gateway 时使用 `docker-compose.local.yml`。
 </details>
 
 <details>

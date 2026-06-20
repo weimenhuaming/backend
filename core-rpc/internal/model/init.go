@@ -40,7 +40,6 @@ func InitGorm(dsn string, logLevel logger.LogLevel, maxIdleConn, maxOpenConn int
 		&entity.Category{},
 		&entity.Comment{},
 		&entity.InteractionLike{},
-		&entity.TokenBlacklist{},
 	); err != nil {
 		log.Printf("auto migrate failed: %v", err)
 		os.Exit(1)

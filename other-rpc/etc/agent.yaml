@@ -5,11 +5,8 @@ Etcd:
   - 127.0.0.1:2379
   Key: agent.rpc
 
-
 Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
-
-# 个人知识库 Agent（langchaingo RAG）
 KnowledgeBase:
   DataPath: ./data/knowledge
   TopK: 4

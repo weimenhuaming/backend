@@ -5,7 +5,6 @@ import (
 	"errors"
 	"other-rpc/internal/agent/memory"
 	"sync"
-	"time"
 
 	"other-rpc/internal/agent/llm"
 	"other-rpc/internal/agent/rag"
@@ -33,10 +32,7 @@ func NewAgent(cfg config.KnowledgeBaseConf, retriever vectorstores.Retriever) (*
 		return nil, err
 	}
 
-	sessions := memory.NewStore(
-		cfg.MemoryWindowTurns,
-		time.Duration(cfg.MemorySessionTTL)*time.Second,
-	)
+	sessions := memory.NewStore(cfg.Memory)
 
 	a := &Agent{
 		cfg:       cfg,

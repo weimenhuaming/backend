@@ -28,7 +28,7 @@
 
 - 存储位置：other-rpc 进程内存，重启后清空，不落库。
 - 绑定键：gRPC `ChatRequest.session_id`（Gateway 生成或前端传入，需多轮时保持一致）。
-- 保留策略：最近 `MemoryWindowTurns` 轮（默认 5），会话空闲 `MemorySessionTTL` 秒后过期（默认 1800）。
+- 保留策略：最近 `Memory.WindowTurns` 轮（默认 5），会话空闲 `Memory.SessionTTL` 秒后过期（默认 1800）。
 - 实现：`ConversationalRetrievalQA` + `ConversationWindowBuffer`，有历史时会先改写追问再检索。
 
 ## 配置
@@ -39,6 +39,9 @@ KnowledgeBase:
   Chroma:
     URL: http://127.0.0.1:8000
     Collection: chenaqi_knowledge
+  Memory:
+    WindowTurns: 5
+    SessionTTL: 1800
 ```
 
 ## 初始化入口

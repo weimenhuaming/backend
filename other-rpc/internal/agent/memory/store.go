@@ -1,6 +1,9 @@
+// 调用方（rag.QA）每次问答前通过 Store.Memory(sessionID) 取到该会话的记忆对象；
+// langchaingo 的 ConversationalRetrievalQA 会在问答过程中自动读写该对象。
 package memory
 
 import (
+	"other-rpc/internal/config"
 	"strings"
 	"sync"
 	"time"
@@ -9,7 +12,6 @@ import (
 	"github.com/tmc/langchaingo/schema"
 )
 
-// Store 按 session_id 保存短期对话记忆（进程内，重启后丢失）。
 type Store struct {
 	mu          sync.RWMutex
 	sessions    map[string]*entry
@@ -18,15 +20,16 @@ type Store struct {
 }
 
 type entry struct {
-	mem      schema.Memory
-	lastSeen time.Time
+	mem      schema.Memory // langchaingo 的对话窗口缓冲，问答链会直接读写
+	lastSeen time.Time     // 最近一次 Memory(sessionID) 被调用的时间
 }
 
-// NewStore 创建会话记忆存储。windowTurns 为保留的最近轮数，ttl 为会话空闲过期时间。
-func NewStore(windowTurns int, ttl time.Duration) *Store {
+func NewStore(cfg config.MemoryConf) *Store {
+	windowTurns := cfg.WindowTurns
 	if windowTurns <= 0 {
 		windowTurns = 3
 	}
+	ttl := time.Duration(cfg.SessionTTL) * time.Second
 	if ttl <= 0 {
 		ttl = 15 * time.Minute
 	}
@@ -37,10 +40,11 @@ func NewStore(windowTurns int, ttl time.Duration) *Store {
 	}
 }
 
-// Memory 返回指定会话的记忆；sessionID 为空时使用不落库的临时记忆。
+// Memory 返回指定会话的记忆对象，供 RAG 链挂载使用。
 func (s *Store) Memory(sessionID string) schema.Memory {
 	sessionID = strings.TrimSpace(sessionID)
 	if sessionID == "" {
+		// 无 session：不跨请求保留历史
 		return s.newBuffer()
 	}
 
@@ -56,11 +60,14 @@ func (s *Store) Memory(sessionID string) schema.Memory {
 		return e.mem
 	}
 
+	// 新会话：创建空缓冲，后续问答会自动追加 Q&A
 	buf := s.newBuffer()
 	s.sessions[sessionID] = &entry{mem: buf, lastSeen: now}
 	return buf
 }
 
+// newBuffer 创建滑动窗口对话缓冲。
+// InputKey/OutputKey 须与 rag 链传入的字段名一致（question → text）。
 func (s *Store) newBuffer() schema.Memory {
 	return memory.NewConversationWindowBuffer(
 		s.windowTurns,
@@ -69,6 +76,7 @@ func (s *Store) newBuffer() schema.Memory {
 	)
 }
 
+// evictExpiredLocked 删除长时间未访问的会话。调用方需已持有 s.mu。
 func (s *Store) evictExpiredLocked(now time.Time) {
 	for id, e := range s.sessions {
 		if now.Sub(e.lastSeen) > s.ttl {

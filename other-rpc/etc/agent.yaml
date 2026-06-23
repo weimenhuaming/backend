@@ -12,11 +12,12 @@ KnowledgeBase:
   TopK: 4
   ChunkSize: 800
   ChunkOverlap: 100
-  MemoryWindowTurns: 3
-  MemorySessionTTL: 900
   Chroma:
     URL: http://127.0.0.1:8000
     Collection: chenaqi_knowledge
+  Memory:
+    WindowTurns: 3
+    SessionTTL: 900
   LLM:
     # 对话模型：智谱（OpenAI 兼容）
     Provider: openai

@@ -8,6 +8,10 @@ Etcd:
 
 Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: "${REDIS_PASSWORD}"
 
 # 个人知识库 Agent（langchaingo RAG）
 KnowledgeBase:

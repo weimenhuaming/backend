@@ -12,6 +12,7 @@ import (
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/vectorstores"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 // Agent 聚合 LLM、检索器与 RAG 问答链，仅负责对话。
@@ -26,13 +27,13 @@ type Agent struct {
 }
 
 // NewAgent 创建 Agent 运行时：加载 LLM 与已有检索器，不会在启动时重建索引。
-func NewAgent(cfg config.KnowledgeBaseConf, retriever vectorstores.Retriever) (*Agent, error) {
+func NewAgent(cfg config.KnowledgeBaseConf, retriever vectorstores.Retriever, cache *redis.Redis) (*Agent, error) {
 	chatModel, err := llm.NewChatModel(cfg.LLM)
 	if err != nil {
 		return nil, err
 	}
 
-	sessions := memory.NewStore(cfg.Memory)
+	sessions := memory.NewStore(cfg.Memory, cache)
 
 	a := &Agent{
 		cfg:       cfg,

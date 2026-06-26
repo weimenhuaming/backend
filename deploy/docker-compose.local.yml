@@ -86,10 +86,14 @@ services:
       context: ../other-rpc
       dockerfile: Dockerfile
     container_name: other-rpc
+    environment:
+      REDIS_PASSWORD: ""
     depends_on:
       etcd:
         condition: service_started
       chroma:
+        condition: service_started
+      redis:
         condition: service_started
     ports:
       - "8081:8081"

@@ -4,83 +4,52 @@ package memory
 
 import (
 	"other-rpc/internal/config"
-	"strings"
-	"sync"
-	"time"
 
 	"github.com/tmc/langchaingo/memory"
 	"github.com/tmc/langchaingo/schema"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type Store struct {
-	mu          sync.RWMutex
-	sessions    map[string]*entry
+	redis       *redis.Redis
 	windowTurns int
-	ttl         time.Duration
+	ttlSeconds  int
 }
 
-type entry struct {
-	mem      schema.Memory // langchaingo 的对话窗口缓冲，问答链会直接读写
-	lastSeen time.Time     // 最近一次 Memory(sessionID) 被调用的时间
-}
-
-func NewStore(cfg config.MemoryConf) *Store {
-	windowTurns := cfg.WindowTurns
-	if windowTurns <= 0 {
-		windowTurns = 3
-	}
-	ttl := time.Duration(cfg.SessionTTL) * time.Second
-	if ttl <= 0 {
-		ttl = 15 * time.Minute
-	}
+func NewStore(cfg config.MemoryConf, client *redis.Redis) *Store {
 	return &Store{
-		sessions:    make(map[string]*entry),
-		windowTurns: windowTurns,
-		ttl:         ttl,
+		redis:       client,
+		windowTurns: cfg.WindowTurns,
+		ttlSeconds:  cfg.SessionTTL,
 	}
 }
 
 // Memory 返回指定会话的记忆对象，供 RAG 链挂载使用。
 func (s *Store) Memory(sessionID string) schema.Memory {
-	sessionID = strings.TrimSpace(sessionID)
+	//  1. sessionID 为空 → 返回临时缓冲，不跨请求保留历史
 	if sessionID == "" {
-		// 无 session：不跨请求保留历史
-		return s.newBuffer()
+		return s.newBuffer(nil)
 	}
 
-	now := time.Now()
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	s.evictExpiredLocked(now)
-
-	if e, ok := s.sessions[sessionID]; ok {
-		e.lastSeen = now
-		return e.mem
-	}
-
-	// 新会话：创建空缓冲，后续问答会自动追加 Q&A
-	buf := s.newBuffer()
-	s.sessions[sessionID] = &entry{mem: buf, lastSeen: now}
-	return buf
+	//  2. sessionID 非空 → 使用 Redis 缓存读写，多实例共享
+	history := NewRedisChatMessageHistory(s.redis, sessionID, s.ttlSeconds)
+	return s.newBuffer(history)
 }
 
-// newBuffer 创建滑动窗口对话缓冲。
-// InputKey/OutputKey 须与 rag 链传入的字段名一致（question → text）。
-func (s *Store) newBuffer() schema.Memory {
-	return memory.NewConversationWindowBuffer(
-		s.windowTurns,
+func (s *Store) newBuffer(history schema.ChatMessageHistory) schema.Memory {
+	// WithInputKey / WithOutputKey 必须与 RAG 链 SaveContext 时传入的字段名一致：
+	//   - 用户提问 → inputValues["question"]
+	//   - 模型回答 → outputValues["text"]
+	// 若 key 对不上，SaveContext 会报 ErrInvalidInputValues，历史写不进 Redis。
+	opts := []memory.ConversationBufferOption{
 		memory.WithInputKey("question"),
 		memory.WithOutputKey("text"),
-	)
-}
-
-// evictExpiredLocked 删除长时间未访问的会话。调用方需已持有 s.mu。
-func (s *Store) evictExpiredLocked(now time.Time) {
-	for id, e := range s.sessions {
-		if now.Sub(e.lastSeen) > s.ttl {
-			delete(s.sessions, id)
-		}
 	}
+
+	if history != nil {
+		opts = append(opts, memory.WithChatHistory(history))
+	}
+
+	// 超出窗口后，Buffer 会调用 history.SetMessages 裁剪并写回 Redis。
+	return memory.NewConversationWindowBuffer(s.windowTurns, opts...)
 }

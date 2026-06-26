@@ -6,7 +6,7 @@
 - `embedding/`：只负责 Embedding 初始化。
 - `vector/`：负责知识库文档加载、切分、向量化，以及 **Chroma** 向量库读写。
 - `rag/`：负责检索问答链封装（`Ask`）。
-- `sessionmemory/`：按 `session_id` 保存进程内短期对话记忆（滑动窗口 + TTL）。
+- `memory/`：按 `session_id` 将短期对话记忆写入 Redis 缓存（滑动窗口 + TTL）。
 - `agent.go`：最终 Agent 运行时，聚合以上模块并对外提供 `Chat` / `Build`。
 
 ## 调用链路
@@ -26,14 +26,19 @@
 
 ## 短期记忆
 
-- 存储位置：other-rpc 进程内存，重启后清空，不落库。
-- 绑定键：gRPC `ChatRequest.session_id`（Gateway 生成或前端传入，需多轮时保持一致）。
-- 保留策略：最近 `Memory.WindowTurns` 轮（默认 5），会话空闲 `Memory.SessionTTL` 秒后过期（默认 1800）。
-- 实现：`ConversationalRetrievalQA` + `ConversationWindowBuffer`，有历史时会先改写追问再检索。
+- 存储位置：Redis 缓存（key: `agent:session:{session_id}:history`），多实例共享。
+- 绑定键：gRPC `ChatRequest.session_id`（前端创建，多轮时需保持一致）。
+- 保留策略：`Memory.WindowTurns` 控制最近几轮问答（默认 5），`Memory.SessionTTL` 控制 Redis key 过期秒数（默认 1800）。
+- 实现：`ConversationalRetrievalQA` + `ConversationWindowBuffer` + `RedisChatMessageHistory`。
 
 ## 配置
 
 ```yaml
+Cache:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass: ""
+
 KnowledgeBase:
   DataPath: ./data/knowledge
   Chroma:
@@ -48,5 +53,5 @@ KnowledgeBase:
 
 `internal/svc/service_context.go`：
 
-- `agent.New(c.KnowledgeBase)` 初始化完整 Agent；
+- 连接 Redis 缓存后调用 `agent.NewAgent` 初始化完整 Agent；
 - 启动时连接 Chroma 并验证 collection 中已有向量数据。

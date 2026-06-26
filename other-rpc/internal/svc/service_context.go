@@ -9,6 +9,7 @@ import (
 	"other-rpc/internal/config"
 
 	"github.com/tmc/langchaingo/embeddings"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type ServiceContext struct {
@@ -34,7 +35,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		log.Fatal("vector 初始化失败:", err)
 	}
 
-	kbAgent, err := agent.NewAgent(c.KnowledgeBase, retriever)
+	cache := redis.MustNewRedis(c.Cache[0])
+	log.Println("Redis 连接成功（会话短期记忆）")
+
+	kbAgent, err := agent.NewAgent(c.KnowledgeBase, retriever, cache)
 	if err != nil {
 		log.Fatalf("Agent 构建失败:", err)
 	}

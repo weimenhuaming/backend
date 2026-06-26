@@ -7,6 +7,11 @@ Etcd:
 
 Timeout: 120000  # gRPC 超时（毫秒），RAG + LLM 调用较慢
 
+Cache:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass: ""
+
 KnowledgeBase:
   DataPath: ./data/knowledge
   TopK: 4

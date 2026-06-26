@@ -23,6 +23,7 @@ func NewChatModel(cfg config.LLMConf) (llms.Model, error) {
 	}
 }
 
+// newOpenAIChatModel 目前只支持openai接口的
 func newOpenAIChatModel(cfg config.LLMConf) (llms.Model, error) {
 	opts := []openai.Option{}
 	if cfg.APIKey != "" {

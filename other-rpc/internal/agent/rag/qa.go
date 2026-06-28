@@ -24,6 +24,7 @@ type QA struct {
 	retriever vectorstores.Retriever
 	// 短期记忆
 	chatHistory schema.ChatMessageHistory
+	// 窗口大小
 	windowTurns int
 }
 

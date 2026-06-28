@@ -71,10 +71,6 @@ func (a *Agent) ChatStream(ctx context.Context, sessionID, question string, send
 	cache := a.cache
 	a.mu.RUnlock()
 
-	if retriever == nil {
-		return errors.New("检索器未加载，请先构建知识库")
-	}
-
 	chatHistory := memory.NewRedisChatMessageHistory(cache, sessionID, memoryCfg.SessionTTL)
 	qa := rag.NewQA(brain, retriever, chatHistory, memoryCfg.WindowTurns)
 	return qa.AskStream(ctx, question, send)

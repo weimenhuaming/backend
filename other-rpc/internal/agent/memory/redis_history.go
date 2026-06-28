@@ -66,6 +66,9 @@ func (h *RedisChatMessageHistory) Messages(ctx context.Context) ([]llms.ChatMess
 	if err != nil {
 		return nil, err
 	}
+	if raw == "" {
+		return []llms.ChatMessage{}, nil
+	}
 
 	var stored []storedMessage
 	if err := json.Unmarshal([]byte(raw), &stored); err != nil {

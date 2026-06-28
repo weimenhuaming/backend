@@ -1,6 +1,9 @@
 Name: core.rpc
 ListenOn: 127.0.0.1:8080
 
+Log:
+  Stat: false  # 关闭 CPU/MEMORY、shedding_stat 等周期性 stat 日志
+
 Etcd:
   Hosts:
   - 127.0.0.1:2379

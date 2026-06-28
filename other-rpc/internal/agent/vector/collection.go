@@ -67,6 +67,32 @@ func (s *Collection) AddDocuments(ctx context.Context, docs []schema.Document, _
 	return nil, nil
 }
 
+func toDocumentMetadata(meta map[string]any) chroma.DocumentMetadata {
+	if len(meta) == 0 {
+		return chroma.NewDocumentMetadata()
+	}
+	attrs := make([]*chroma.MetaAttribute, 0, len(meta))
+	for key, value := range meta {
+		switch v := value.(type) {
+		case string:
+			attrs = append(attrs, chroma.NewStringAttribute(key, v))
+		case int:
+			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
+		case int32:
+			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
+		case int64:
+			attrs = append(attrs, chroma.NewIntAttribute(key, v))
+		case float64:
+			attrs = append(attrs, chroma.NewFloatAttribute(key, v))
+		case bool:
+			attrs = append(attrs, chroma.NewBoolAttribute(key, v))
+		default:
+			attrs = append(attrs, chroma.NewStringAttribute(key, fmt.Sprint(v)))
+		}
+	}
+	return chroma.NewDocumentMetadata(attrs...)
+}
+
 func (s *Collection) SimilaritySearch(ctx context.Context, query string, numDocuments int, _ ...vectorstores.Option) ([]schema.Document, error) {
 	if numDocuments <= 0 {
 		numDocuments = 4
@@ -105,32 +131,6 @@ func (s *Collection) SimilaritySearch(ctx context.Context, query string, numDocu
 		out = append(out, item)
 	}
 	return out, nil
-}
-
-func toDocumentMetadata(meta map[string]any) chroma.DocumentMetadata {
-	if len(meta) == 0 {
-		return chroma.NewDocumentMetadata()
-	}
-	attrs := make([]*chroma.MetaAttribute, 0, len(meta))
-	for key, value := range meta {
-		switch v := value.(type) {
-		case string:
-			attrs = append(attrs, chroma.NewStringAttribute(key, v))
-		case int:
-			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
-		case int32:
-			attrs = append(attrs, chroma.NewIntAttribute(key, int64(v)))
-		case int64:
-			attrs = append(attrs, chroma.NewIntAttribute(key, v))
-		case float64:
-			attrs = append(attrs, chroma.NewFloatAttribute(key, v))
-		case bool:
-			attrs = append(attrs, chroma.NewBoolAttribute(key, v))
-		default:
-			attrs = append(attrs, chroma.NewStringAttribute(key, fmt.Sprint(v)))
-		}
-	}
-	return chroma.NewDocumentMetadata(attrs...)
 }
 
 func fromDocumentMetadata(meta chroma.DocumentMetadata) map[string]any {

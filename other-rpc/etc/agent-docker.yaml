@@ -1,5 +1,9 @@
 Name: agent.rpc
 ListenOn: 0.0.0.0:8081
+
+Log:
+  Stat: false
+
 Etcd:
   Hosts:
     - etcd:2379

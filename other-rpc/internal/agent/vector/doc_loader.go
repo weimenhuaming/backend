@@ -15,10 +15,11 @@ import (
 )
 
 var supportedExts = map[string]struct{}{
-	".txt": {}, ".md": {}, ".markdown": {},
+	".txt":      {},
+	".md":       {},
+	".markdown": {},
 }
 
-// LoadDocumentsFromDir 从目录加载文本/Markdown 为 Document。
 func LoadDocumentsFromDir(dir string) ([]schema.Document, error) {
 	info, err := os.Stat(dir)
 	if err != nil {

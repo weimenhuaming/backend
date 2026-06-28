@@ -2,6 +2,9 @@ Name: Gateway
 Host: 127.0.0.1
 Port: 9000
 
+Log:
+  Stat: false  # 关闭 CPU/MEMORY、shedding_stat 等周期性 stat 日志
+
 Timeout: 120000  # HTTP 超时（毫秒），Agent 问答需较长时间
 
 # 下面这个配置通过etcd服务发现和注册的配置

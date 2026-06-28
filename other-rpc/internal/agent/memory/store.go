@@ -1,12 +1,11 @@
-// 调用方（rag.QA）每次问答前通过 Store.Memory(sessionID) 取到该会话的记忆对象；
-// langchaingo 的 ConversationalRetrievalQA 会在问答过程中自动读写该对象。
 package memory
 
 import (
+	"context"
+
 	"other-rpc/internal/config"
 
-	"github.com/tmc/langchaingo/memory"
-	"github.com/tmc/langchaingo/schema"
+	"github.com/tmc/langchaingo/llms"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
@@ -24,32 +23,69 @@ func NewStore(cfg config.MemoryConf, client *redis.Redis) *Store {
 	}
 }
 
-// Memory 返回指定会话的记忆对象，供 RAG 链挂载使用。
-func (s *Store) Memory(sessionID string) schema.Memory {
-	//  1. sessionID 为空 → 返回临时缓冲，不跨请求保留历史
-	if sessionID == "" {
-		return s.newBuffer(nil)
+// LoadHistoryText 读取当前会话已有问答，格式化为 Human/AI 文本供 Prompt 使用。
+// 不包含本轮尚未写入的问题。
+func (s *Store) LoadHistoryText(ctx context.Context, sessionID string) (string, error) {
+	msgs, err := s.loadMessages(ctx, sessionID)
+	if err != nil {
+		return "", err
 	}
-
-	//  2. sessionID 非空 → 使用 Redis 缓存读写，多实例共享
-	history := NewRedisChatMessageHistory(s.redis, sessionID, s.ttlSeconds)
-	return s.newBuffer(history)
+	if len(msgs) == 0 {
+		return "", nil
+	}
+	return llms.GetBufferString(msgs, "Human", "AI")
 }
 
-func (s *Store) newBuffer(history schema.ChatMessageHistory) schema.Memory {
-	// WithInputKey / WithOutputKey 必须与 RAG 链 SaveContext 时传入的字段名一致：
-	//   - 用户提问 → inputValues["question"]
-	//   - 模型回答 → outputValues["text"]
-	// 若 key 对不上，SaveContext 会报 ErrInvalidInputValues，历史写不进 Redis。
-	opts := []memory.ConversationBufferOption{
-		memory.WithInputKey("question"),
-		memory.WithOutputKey("text"),
+// LastHumanQuestion 返回对话历史中最后一条用户消息（即上一轮用户问题）。
+// 本轮 question 尚未写入 Redis，因此不会与当前问题混淆。
+func (s *Store) LastHumanQuestion(ctx context.Context, sessionID string) (string, error) {
+	msgs, err := s.loadMessages(ctx, sessionID)
+	if err != nil {
+		return "", err
+	}
+	for i := len(msgs) - 1; i >= 0; i-- {
+		if msgs[i].GetType() == llms.ChatMessageTypeHuman {
+			return msgs[i].GetContent(), nil
+		}
+	}
+	return "", nil
+}
+
+func (s *Store) loadMessages(ctx context.Context, sessionID string) ([]llms.ChatMessage, error) {
+	if sessionID == "" {
+		return nil, nil
+	}
+	history := NewRedisChatMessageHistory(s.redis, sessionID, s.ttlSeconds)
+	return history.Messages(ctx)
+}
+
+// AppendTurn 将本轮问答追加到 Redis，并按窗口大小裁剪。
+func (s *Store) AppendTurn(ctx context.Context, sessionID, question, answer string) error {
+	if sessionID == "" {
+		return nil
 	}
 
-	if history != nil {
-		opts = append(opts, memory.WithChatHistory(history))
+	history := NewRedisChatMessageHistory(s.redis, sessionID, s.ttlSeconds)
+	msgs, err := history.Messages(ctx)
+	if err != nil {
+		return err
 	}
 
-	// 超出窗口后，Buffer 会调用 history.SetMessages 裁剪并写回 Redis。
-	return memory.NewConversationWindowBuffer(s.windowTurns, opts...)
+	msgs = append(msgs,
+		llms.HumanChatMessage{Content: question},
+		llms.AIChatMessage{Content: answer},
+	)
+	msgs = trimMessages(msgs, s.windowTurns)
+	return history.SetMessages(ctx, msgs)
+}
+
+func trimMessages(msgs []llms.ChatMessage, windowTurns int) []llms.ChatMessage {
+	if windowTurns <= 0 {
+		windowTurns = 5
+	}
+	maxMessages := windowTurns * 2
+	if len(msgs) <= maxMessages {
+		return msgs
+	}
+	return msgs[len(msgs)-maxMessages:]
 }

@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"other-rpc/internal/agent"
 	"other-rpc/internal/agent/embedding"
@@ -24,11 +25,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err != nil {
 		log.Fatal("初始化 Embedding 模块失败:", err)
 	}
+	fmt.Println("Embedding model 连接成功")
 
 	ch, err := vector.NewChroma(context.Background(), c.KnowledgeBase)
 	if err != nil {
 		log.Fatal("Chroma 初始化失败:", err)
 	}
+	fmt.Println("Chroma 连接成功")
 
 	retriever, err := ch.Load(context.Background(), embedder)
 	if err != nil {
@@ -36,12 +39,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	cache := redis.MustNewRedis(c.Cache[0])
-	log.Println("Redis 连接成功（会话短期记忆）")
+	fmt.Println("Redis 连接成功")
 
 	kbAgent, err := agent.NewAgent(c.KnowledgeBase, retriever, cache)
 	if err != nil {
 		log.Fatalf("Agent 构建失败:", err)
 	}
+	fmt.Println("Agent 构建成功")
 
 	return &ServiceContext{
 		Config:   c,

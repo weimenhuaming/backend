@@ -2,6 +2,9 @@ Name: Gateway
 Host: 0.0.0.0
 Port: 9000
 
+Log:
+  Stat: false
+
 Timeout: 120000  # HTTP 超时（毫秒），Agent 问答需较长时间
 
 CoreRpc:

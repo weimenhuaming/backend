@@ -37,9 +37,13 @@ type storedMessage struct {
 // RedisChatMessageHistory 按 session_id 读写 Redis 中的对话历史。
 
 type RedisChatMessageHistory struct {
-	client    *redis.Redis
+	client *redis.Redis
+
+	// sessionID 是当前会话的唯一标识，在chat的时候构建对应的memory
 	sessionID string
-	ttl       int
+
+	// 短期记忆的记忆时间
+	ttl int
 }
 
 // 编译期断言：确保实现了 langchaingo 要求的 ChatMessageHistory 接口。

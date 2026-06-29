@@ -39,28 +39,31 @@ type storedMessage struct {
 type RedisChatMessageHistory struct {
 	client *redis.Redis
 
-	// sessionID 是当前会话的唯一标识，在chat的时候构建对应的memory
-	sessionID string
+	// sessionID 是当前会话的唯一标识
+	SessionID string
 
 	// 短期记忆的记忆时间
 	ttl int
+
+	// 窗口大小
+	windowTurns int
 }
 
 // 编译期断言：确保实现了 langchaingo 要求的 ChatMessageHistory 接口。
 var _ schema.ChatMessageHistory = (*RedisChatMessageHistory)(nil)
 
 // NewRedisChatMessageHistory 创建绑定到指定会话的 Redis 历史存储。
-func NewRedisChatMessageHistory(client *redis.Redis, sessionID string, ttlSeconds int) *RedisChatMessageHistory {
+func NewRedisChatMessageHistory(client *redis.Redis, ttlSeconds, windowTurns int) *RedisChatMessageHistory {
 	return &RedisChatMessageHistory{
-		client:    client,
-		sessionID: sessionID,
-		ttl:       ttlSeconds,
+		client:      client,
+		ttl:         ttlSeconds,
+		windowTurns: windowTurns,
 	}
 }
 
 // redisKey 返回当前会话在 Redis 中的 key。
 func (h *RedisChatMessageHistory) redisKey() string {
-	return redisKeyPrefix + h.sessionID + ":history"
+	return redisKeyPrefix + h.SessionID + ":history"
 }
 
 // Messages 从 Redis 读取全部历史并还原为 langchaingo 消息列表。
@@ -107,9 +110,13 @@ func (h *RedisChatMessageHistory) Clear(ctx context.Context) error {
 	return err
 }
 
-// SetMessages 用新列表整体替换历史。
-// ConversationWindowBuffer 在超出 WindowTurns 后会裁剪消息并调用此方法写回。
+// SetMessages 用新列表整体替换历史；超出 windowTurns 轮时保留最近若干条。
 func (h *RedisChatMessageHistory) SetMessages(ctx context.Context, messages []llms.ChatMessage) error {
+	maxMessages := h.windowTurns * 2
+	if len(messages) > maxMessages {
+		messages = messages[len(messages)-maxMessages:]
+	}
+
 	stored := make([]storedMessage, 0, len(messages))
 	for _, msg := range messages {
 		stored = append(stored, toStored(msg))
@@ -124,15 +131,9 @@ func (h *RedisChatMessageHistory) addMessage(ctx context.Context, message llms.C
 		return err
 	}
 	msgs = append(msgs, message)
-
-	stored := make([]storedMessage, 0, len(msgs))
-	for _, msg := range msgs {
-		stored = append(stored, toStored(msg))
-	}
-	return h.save(ctx, stored)
+	return h.SetMessages(ctx, msgs)
 }
 
-// save 将历史序列化为 JSON 写入 Redis；ttl > 0 时使用 SETEX 并刷新过期时间。
 func (h *RedisChatMessageHistory) save(ctx context.Context, stored []storedMessage) error {
 	raw, err := json.Marshal(stored)
 	if err != nil {

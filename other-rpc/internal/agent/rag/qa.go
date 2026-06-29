@@ -2,6 +2,7 @@ package rag
 
 import (
 	"context"
+	"other-rpc/internal/agent/memory"
 	"strings"
 
 	"github.com/tmc/langchaingo/llms"
@@ -23,18 +24,15 @@ type QA struct {
 	// 检索器内容
 	retriever vectorstores.Retriever
 	// 短期记忆
-	chatHistory schema.ChatMessageHistory
-	// 窗口大小
-	windowTurns int
+	chatHistory *memory.RedisChatMessageHistory
 }
 
 // NewQA 使用 LLM + Retriever 构建问答链；流式场景需传入绑定 session 的 chatHistory。
-func NewQA(model llms.Model, retriever vectorstores.Retriever, chatHistory schema.ChatMessageHistory, windowTurns int) *QA {
+func NewQA(model llms.Model, retriever vectorstores.Retriever, chatHistory *memory.RedisChatMessageHistory) *QA {
 	return &QA{
 		model:       model,
 		retriever:   retriever,
 		chatHistory: chatHistory,
-		windowTurns: windowTurns,
 	}
 }
 
@@ -46,7 +44,7 @@ func (q *QA) Ask(ctx context.Context, question string) (string, error) {
 	}
 
 	promptValue, err := simpleQAPrompt.FormatPrompt(map[string]any{
-		"context":  joinDocuments(docs),
+		"context":  toDocuments(docs),
 		"question": question,
 	})
 	if err != nil {
@@ -59,32 +57,29 @@ func (q *QA) Ask(ctx context.Context, question string) (string, error) {
 //======================================================================================================================
 
 // AskStream 流式问答，每收到 LLM token 即回调 send。
-func (q *QA) AskStream(ctx context.Context, question string, send func(chunk string) error) error {
+func (q *QA) AskStream(ctx context.Context, sessionID, question string, send func(chunk string) error) error {
+	q.chatHistory.SessionID = sessionID
+
 	// 1.拿到短期记忆的内容，转为话string格式
 	memoryMsg, err := q.chatHistory.Messages(ctx)
 	if err != nil {
 		return err
 	}
 
-	history, err := llms.GetBufferString(memoryMsg, "Human", "AI")
-	if err != nil {
-		return err
-	}
-
-	// 2.问题改写或者上下文压缩
-	retrievalQuestion, err := q.rewriteForRetrieval(ctx, history, question)
-	if err != nil {
-		return err
-	}
+	// 2.问题改写或者上下文压缩 => 处理完是短期记忆
+	//retrievalQuestion, err := q.summary(ctx, memoryMsg, question)
+	//if err != nil {
+	//	return err
+	//}
 
 	// 3，通过检索器拿到匹配的文章
-	docs, err := q.retriever.GetRelevantDocuments(ctx, retrievalQuestion)
+	docs, err := q.retriever.GetRelevantDocuments(ctx, question)
 	if err != nil {
 		return err
 	}
 
 	// 4.组装最后的提示词
-	prompt, err := formatQAPrompt(history, joinDocuments(docs), question)
+	prompt, err := formatQAPrompt(memoryMsg, toDocuments(docs), question)
 	if err != nil {
 		return err
 	}
@@ -107,12 +102,14 @@ func (q *QA) AskStream(ctx context.Context, question string, send func(chunk str
 		llms.HumanChatMessage{Content: question},
 		llms.AIChatMessage{Content: answer},
 	)
-	return q.chatHistory.SetMessages(ctx, trimMessages(memoryMsg, q.windowTurns))
+	return q.chatHistory.SetMessages(ctx, memoryMsg)
 }
 
-func (q *QA) rewriteForRetrieval(ctx context.Context, history, question string) (string, error) {
-	if strings.TrimSpace(history) == "" {
-		return question, nil
+// summary 对历史记忆进行压缩
+func (q *QA) summary(ctx context.Context, memory []llms.ChatMessage, question string) (string, error) {
+	history, err := llms.GetBufferString(memory, "Human", "AI")
+	if err != nil {
+		return "", err
 	}
 
 	promptValue, err := condensePrompt.FormatPrompt(map[string]any{
@@ -135,18 +132,8 @@ func (q *QA) rewriteForRetrieval(ctx context.Context, history, question string) 
 	return rewritten, nil
 }
 
-func trimMessages(msgs []llms.ChatMessage, windowTurns int) []llms.ChatMessage {
-	if windowTurns <= 0 {
-		windowTurns = 5
-	}
-	maxMessages := windowTurns * 2
-	if len(msgs) <= maxMessages {
-		return msgs
-	}
-	return msgs[len(msgs)-maxMessages:]
-}
-
-func joinDocuments(docs []schema.Document) string {
+// toDocuments 列表拼接为一个字符串，文档之间用两个换行符分隔。
+func toDocuments(docs []schema.Document) string {
 	if len(docs) == 0 {
 		return ""
 	}
@@ -160,7 +147,12 @@ func joinDocuments(docs []schema.Document) string {
 	return strings.Join(parts, "\n\n")
 }
 
-func formatQAPrompt(history, context, question string) (string, error) {
+func formatQAPrompt(memory []llms.ChatMessage, context, question string) (string, error) {
+	history, err := llms.GetBufferString(memory, "Human", "AI")
+	if err != nil {
+		return "", err
+	}
+
 	promptValue, err := qaPrompt.FormatPrompt(map[string]any{
 		"chat_history": history,
 		"context":      context,

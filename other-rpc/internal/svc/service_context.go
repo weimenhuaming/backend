@@ -43,7 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	kbAgent, err := agent.NewAgent(c.KnowledgeBase, retriever, cache)
 	if err != nil {
-		log.Fatalf("Agent 构建失败:", err)
+		log.Fatal("Agent 构建失败:", err)
 	}
 	fmt.Println("Agent 构建成功")
 

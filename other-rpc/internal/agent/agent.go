@@ -2,9 +2,6 @@ package agent
 
 import (
 	"context"
-	"errors"
-	"sync"
-
 	"other-rpc/internal/agent/llm"
 	"other-rpc/internal/agent/memory"
 	"other-rpc/internal/agent/rag"
@@ -17,13 +14,20 @@ import (
 
 // Agent 聚合 LLM、检索器与 RAG 问答链，仅负责对话。
 type Agent struct {
-	cfg   config.KnowledgeBaseConf
-	brain llms.Model
-	cache *redis.Redis
+	// 知识库配置
+	cfg config.KnowledgeBaseConf
 
-	mu        sync.RWMutex
+	// llm大脑
+	brain llms.Model
+
+	// 短期记忆
+	memory *memory.RedisChatMessageHistory
+
+	// 检索器
 	retriever vectorstores.Retriever
-	qa        *rag.QA
+
+	// RAG处理
+	qa *rag.QA
 }
 
 // NewAgent 创建 Agent 运行时：加载 LLM 与已有检索器，不会在启动时重建索引。
@@ -33,45 +37,29 @@ func NewAgent(cfg config.KnowledgeBaseConf, retriever vectorstores.Retriever, ca
 		return nil, err
 	}
 
-	a := &Agent{
+	memoryInRedis := memory.NewRedisChatMessageHistory(cache, cfg.Memory.SessionTTL, cfg.Memory.WindowTurns)
+
+	return &Agent{
 		cfg:       cfg,
 		brain:     chatModel,
-		cache:     cache,
+		memory:    memoryInRedis,
 		retriever: retriever,
-	}
-	a.qa = rag.NewQA(chatModel, retriever, nil, cfg.Memory.WindowTurns)
-	return a, nil
+		qa:        rag.NewQA(chatModel, retriever, memoryInRedis),
+	}, nil
 }
 
-// SetRetriever 切换当前问答使用的检索器。
+// SetRetriever 切换当前问答使用的检索器。(不同向量数据库)
 func (a *Agent) SetRetriever(retriever vectorstores.Retriever) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
 	a.retriever = retriever
-	a.qa = rag.NewQA(a.brain, retriever, nil, a.cfg.Memory.WindowTurns)
+	a.qa = rag.NewQA(a.brain, retriever, a.memory)
 }
 
-// Chat 只有 RAG，无 Memory。
-func (a *Agent) Chat(ctx context.Context, sessionID, question string) (string, error) {
-	a.mu.RLock()
-	qa := a.qa
-	a.mu.RUnlock()
-	if qa == nil {
-		return "", errors.New("检索器未加载，请先构建知识库")
-	}
-	return qa.Ask(ctx, question)
+// Chat 只有 RAG，无 Memory,也就不需要sessionId
+func (a *Agent) Chat(ctx context.Context, question string) (string, error) {
+	return a.qa.Ask(ctx, question)
 }
 
 // ChatStream 流式 RAG 问答，检索完成后逐 token 回调 send。
 func (a *Agent) ChatStream(ctx context.Context, sessionID, question string, send func(chunk string) error) error {
-	a.mu.RLock()
-	brain := a.brain
-	retriever := a.retriever
-	memoryCfg := a.cfg.Memory
-	cache := a.cache
-	a.mu.RUnlock()
-
-	chatHistory := memory.NewRedisChatMessageHistory(cache, sessionID, memoryCfg.SessionTTL)
-	qa := rag.NewQA(brain, retriever, chatHistory, memoryCfg.WindowTurns)
-	return qa.AskStream(ctx, question, send)
+	return a.qa.AskStream(ctx, sessionID, question, send)
 }

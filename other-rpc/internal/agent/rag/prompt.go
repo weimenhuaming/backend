@@ -27,7 +27,7 @@ const systemPrompt = `你是一位专业、热情且细心的个人博客助手�
 const qaTemplate = systemPrompt + `
 
 ---
-对话历史（本会话此前完整问答，不含本轮）：
+对话历史（本会话此前完整问答，不含本轮，轮数是从上向下）：
 {{.chat_history}}
 
 ---
